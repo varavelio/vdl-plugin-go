@@ -3,7 +3,10 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "scripts": {},
+  "scripts": {
+    "format": "npm run format:dprint",
+    "format:dprint": "dprint fmt --config ./dprint.json --log-level warn"
+  },
   "devDependencies": {
     "dprint": "0.52.0"
   }
