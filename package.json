@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {},
-  "dependencies": {},
-  "devDependencies": {}
+  "devDependencies": {
+    "dprint": "0.52.0"
+  }
 }
