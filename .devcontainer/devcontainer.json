@@ -12,7 +12,12 @@
   "postCreateCommand": "npm install",
   "customizations": {
     "vscode": {
-      "extensions": ["varavel.vdl", "dprint.dprint", "biomejs.biome", "vitest.explorer"],
+      "extensions": [
+        "varavel.vdl",
+        "dprint.dprint",
+        "biomejs.biome",
+        "vitest.explorer"
+      ],
       "settings": {
         "editor.formatOnSave": true,
         "editor.defaultFormatter": "dprint.dprint",
