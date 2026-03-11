@@ -11,7 +11,8 @@
     "format:biome": "biome format --write --config-path ./biome.json --log-level warn --no-errors-on-unmatched .",
     "lint": "npm run lint:dprint && npm run lint:biome",
     "lint:dprint": "dprint check --config ./dprint.json --log-level warn",
-    "lint:biome": "biome check --config-path ./biome.json --log-level warn --no-errors-on-unmatched ."
+    "lint:biome": "biome check --config-path ./biome.json --log-level warn --no-errors-on-unmatched .",
+    "test": "vitest run"
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.6",
