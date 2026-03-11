@@ -8,6 +8,7 @@
     "format:dprint": "dprint fmt --config ./dprint.json --log-level warn"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.4.6",
     "dprint": "0.52.0"
   }
 }
