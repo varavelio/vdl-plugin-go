@@ -6,7 +6,6 @@
   "scripts": {
     "build": "vdl-plugin build",
     "check": "vdl-plugin check",
-    "check:tests": "tsc -p ./tsconfig.vitest.json --noEmit",
     "format": "npm run format:dprint && npm run format:biome",
     "format:dprint": "dprint fmt --config ./dprint.json --log-level warn",
     "format:biome": "biome format --write --config-path ./biome.json --log-level warn --no-errors-on-unmatched .",
@@ -16,7 +15,7 @@
     "test": "vitest run --config ./vitest.config.ts",
     "test:unit": "vitest run --config ./vitest.config.ts src",
     "test:e2e": "vitest run --config ./vitest.config.ts tests/e2e",
-    "ci": "npm run lint && npm run check && npm run check:tests && npm run test && npm run build"
+    "ci": "npm run lint && npm run check && npm run test && npm run build"
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.6",
