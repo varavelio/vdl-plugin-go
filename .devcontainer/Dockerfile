@@ -1,6 +1,10 @@
 # Use node as the base image
 FROM node:24.14.0-trixie
 
+# Install Golang
+COPY --from=golang:1.26-trixie /usr/local/go /usr/local/go
+ENV PATH="/usr/local/go/bin:${PATH}"
+
 # Set environment variables
 ENV DEBIAN_FRONTEND="noninteractive"
 
@@ -15,7 +19,6 @@ RUN set -e && \
 WORKDIR /app
 
 # Add the startup script on every bash session
-RUN rm -f /root/.bashrc
 COPY .devcontainer/.bashrc /root/.bashrc
 
 # Command just to keep the container running
