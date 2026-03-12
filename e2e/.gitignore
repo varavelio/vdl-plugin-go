@@ -1,0 +1,4 @@
+vdl.lock
+go.mod
+**/gen
+**/generated
