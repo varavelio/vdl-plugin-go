@@ -1,22 +1,12 @@
+import { irb } from "@varavel/vdl-plugin-sdk/testing";
 import { describe, expect, it } from "vitest";
-import {
-  annotation,
-  enumDef,
-  enumMember,
-  field,
-  objectType,
-  primitiveType,
-  schema,
-  stringLiteral,
-  typeDef,
-} from "../../tests/helpers/builders";
 import { createGeneratorContext } from "../context";
 import { generateTypesFile } from "./types";
 
 describe("generateTypesFile", () => {
   it("returns undefined when there is nothing to generate", () => {
     const result = createGeneratorContext({
-      schema: schema(),
+      schema: irb.schema(),
       generatorOptions: {
         packageName: "vdl",
         genConsts: true,
@@ -28,13 +18,13 @@ describe("generateTypesFile", () => {
 
   it("renders imports, docs, deprecated comments, and getters", () => {
     const result = createGeneratorContext({
-      schema: schema({
+      schema: irb.schema({
         enums: [
-          enumDef(
+          irb.enumDef(
             "Priority",
             "int",
             [
-              enumMember(
+              irb.enumMember(
                 "Low",
                 {
                   kind: "int",
@@ -44,9 +34,9 @@ describe("generateTypesFile", () => {
                 {
                   doc: "Low priority.",
                   annotations: [
-                    annotation(
+                    irb.annotation(
                       "deprecated",
-                      stringLiteral("Use Medium instead."),
+                      irb.stringLiteral("Use Medium instead."),
                     ),
                   ],
                 },
@@ -58,13 +48,13 @@ describe("generateTypesFile", () => {
           ),
         ],
         types: [
-          typeDef(
+          irb.typeDef(
             "Timeline",
-            objectType([
-              field("createdAt", primitiveType("datetime"), {
+            irb.objectType([
+              irb.field("createdAt", irb.primitiveType("datetime"), {
                 doc: "Creation time.",
               }),
-              field("note", primitiveType("string"), {
+              irb.field("note", irb.primitiveType("string"), {
                 optional: true,
               }),
             ]),

@@ -1,36 +1,26 @@
+import { irb } from "@varavel/vdl-plugin-sdk/testing";
 import { describe, expect, it } from "vitest";
-import {
-  annotation,
-  arrayType,
-  enumDef,
-  enumMember,
-  field,
-  mapType,
-  objectType,
-  primitiveType,
-  schema,
-  stringLiteral,
-  typeDef,
-} from "../tests/helpers/builders";
 import { createGeneratorContext } from "./context";
 
 describe("context", () => {
   it("collects nested inline object types under arrays and maps", () => {
     const result = createGeneratorContext({
-      schema: schema({
+      schema: irb.schema({
         types: [
-          typeDef(
+          irb.typeDef(
             "Envelope",
-            objectType([
-              field(
+            irb.objectType([
+              irb.field(
                 "locations",
-                arrayType(
-                  objectType([
-                    field("city", primitiveType("string")),
-                    field(
+                irb.arrayType(
+                  irb.objectType([
+                    irb.field("city", irb.primitiveType("string")),
+                    irb.field(
                       "tags",
-                      mapType(
-                        objectType([field("label", primitiveType("string"))]),
+                      irb.mapType(
+                        irb.objectType([
+                          irb.field("label", irb.primitiveType("string")),
+                        ]),
                       ),
                     ),
                   ]),
@@ -57,16 +47,16 @@ describe("context", () => {
 
   it("preserves Go names for enums and constants with acronyms", () => {
     const result = createGeneratorContext({
-      schema: schema({
+      schema: irb.schema({
         enums: [
-          enumDef("OrderStatus", "string", [
-            enumMember("HTTPReady", stringLiteral("ready")),
+          irb.enumDef("OrderStatus", "string", [
+            irb.enumMember("HTTPReady", irb.stringLiteral("ready")),
           ]),
         ],
         constants: [],
         types: [
-          typeDef("UserID", primitiveType("string"), {
-            annotations: [annotation("format", stringLiteral("uuid"))],
+          irb.typeDef("UserID", irb.primitiveType("string"), {
+            annotations: [irb.annotation("format", irb.stringLiteral("uuid"))],
           }),
         ],
       }),
@@ -85,10 +75,10 @@ describe("context", () => {
 
   it("reports colliding generated type names", () => {
     const result = createGeneratorContext({
-      schema: schema({
+      schema: irb.schema({
         types: [
-          typeDef("UserId", primitiveType("string")),
-          typeDef("user_id", primitiveType("string")),
+          irb.typeDef("UserId", irb.primitiveType("string")),
+          irb.typeDef("user_id", irb.primitiveType("string")),
         ],
       }),
       generatorOptions: {

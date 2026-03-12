@@ -1,10 +1,10 @@
+import { irb } from "@varavel/vdl-plugin-sdk/testing";
 import { describe, expect, it } from "vitest";
-import { pluginInput } from "../tests/helpers/builders";
 import { resolveGeneratorOptions } from "./options";
 
 describe("options", () => {
   it("resolves defaults", () => {
-    const result = resolveGeneratorOptions(pluginInput());
+    const result = resolveGeneratorOptions(irb.pluginInput());
 
     expect(result.errors).toEqual([]);
     expect(result.options).toEqual({
@@ -15,7 +15,7 @@ describe("options", () => {
 
   it("parses boolean options", () => {
     const result = resolveGeneratorOptions(
-      pluginInput({
+      irb.pluginInput({
         options: {
           package: "catalog",
           genConsts: "off",
@@ -32,7 +32,7 @@ describe("options", () => {
 
   it("falls back for invalid boolean strings", () => {
     const result = resolveGeneratorOptions(
-      pluginInput({
+      irb.pluginInput({
         options: {
           genConsts: "definitely",
         },
@@ -45,7 +45,7 @@ describe("options", () => {
 
   it("rejects an invalid Go package name", () => {
     const result = resolveGeneratorOptions(
-      pluginInput({
+      irb.pluginInput({
         options: {
           package: "NotValid",
         },

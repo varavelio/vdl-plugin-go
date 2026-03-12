@@ -1,36 +1,24 @@
+import { irb } from "@varavel/vdl-plugin-sdk/testing";
 import { describe, expect, it } from "vitest";
-import {
-  arrayLiteral,
-  arrayType,
-  constantDef,
-  enumDef,
-  enumMember,
-  enumType,
-  namedType,
-  primitiveType,
-  schema,
-  stringLiteral,
-  typeDef,
-} from "../../tests/helpers/builders";
 import { createGeneratorContext } from "../context";
 import { generateConstantsFile } from "./constants";
 
 describe("generateConstantsFile", () => {
   it("returns undefined when constants are disabled or absent", () => {
     const empty = createGeneratorContext({
-      schema: schema(),
+      schema: irb.schema(),
       generatorOptions: {
         packageName: "vdl",
         genConsts: true,
       },
     });
     const disabled = createGeneratorContext({
-      schema: schema({
+      schema: irb.schema({
         constants: [
-          constantDef(
+          irb.constantDef(
             "apiVersion",
-            primitiveType("string"),
-            stringLiteral("1.0.0"),
+            irb.primitiveType("string"),
+            irb.stringLiteral("1.0.0"),
           ),
         ],
       }),
@@ -48,33 +36,38 @@ describe("generateConstantsFile", () => {
 
   it("renders const and var declarations for mixed value shapes", () => {
     const result = createGeneratorContext({
-      schema: schema({
+      schema: irb.schema({
         enums: [
-          enumDef("Status", "string", [
-            enumMember("Active", stringLiteral("active")),
+          irb.enumDef("Status", "string", [
+            irb.enumMember("Active", irb.stringLiteral("active")),
           ]),
         ],
-        types: [typeDef("Tags", arrayType(primitiveType("string")))],
+        types: [
+          irb.typeDef("Tags", irb.arrayType(irb.primitiveType("string"))),
+        ],
         constants: [
-          constantDef(
+          irb.constantDef(
             "serviceName",
-            primitiveType("string"),
-            stringLiteral("billing"),
+            irb.primitiveType("string"),
+            irb.stringLiteral("billing"),
           ),
-          constantDef(
+          irb.constantDef(
             "defaultStatus",
-            enumType("Status", "string"),
-            stringLiteral("active"),
+            irb.enumType("Status", "string"),
+            irb.stringLiteral("active"),
           ),
-          constantDef(
+          irb.constantDef(
             "defaultTags",
-            namedType("Tags"),
-            arrayLiteral([stringLiteral("featured"), stringLiteral("popular")]),
+            irb.namedType("Tags"),
+            irb.arrayLiteral([
+              irb.stringLiteral("featured"),
+              irb.stringLiteral("popular"),
+            ]),
           ),
-          constantDef(
+          irb.constantDef(
             "defaultConfig",
-            primitiveType("string"),
-            stringLiteral("noop"),
+            irb.primitiveType("string"),
+            irb.stringLiteral("noop"),
           ),
         ],
       }),

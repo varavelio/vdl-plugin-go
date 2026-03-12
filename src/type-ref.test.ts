@@ -1,18 +1,5 @@
+import { irb } from "@varavel/vdl-plugin-sdk/testing";
 import { describe, expect, it } from "vitest";
-import {
-  arrayType,
-  enumDef,
-  enumMember,
-  enumType,
-  field,
-  mapType,
-  namedType,
-  objectType,
-  primitiveType,
-  schema,
-  stringLiteral,
-  typeDef,
-} from "../tests/helpers/builders";
 import { createGeneratorContext } from "./context";
 import { ImportSet } from "./imports";
 import {
@@ -25,13 +12,13 @@ import {
 describe("type-ref", () => {
   it("renders named, array, map, and inline object types", () => {
     const result = createGeneratorContext({
-      schema: schema({
+      schema: irb.schema({
         enums: [
-          enumDef("OrderStatus", "string", [
-            enumMember("Pending", stringLiteral("pending")),
+          irb.enumDef("OrderStatus", "string", [
+            irb.enumMember("Pending", irb.stringLiteral("pending")),
           ]),
         ],
-        types: [typeDef("UserID", primitiveType("string"))],
+        types: [irb.typeDef("UserID", irb.primitiveType("string"))],
       }),
       generatorOptions: {
         packageName: "vdl",
@@ -41,24 +28,28 @@ describe("type-ref", () => {
 
     const context = expectContext(result.context);
 
-    expect(renderGoType(primitiveType("string"), context, undefined)).toBe(
+    expect(renderGoType(irb.primitiveType("string"), context, undefined)).toBe(
       "string",
     );
-    expect(renderGoType(namedType("UserID"), context, undefined)).toBe(
+    expect(renderGoType(irb.namedType("UserID"), context, undefined)).toBe(
       "UserID",
     );
     expect(
-      renderGoType(enumType("OrderStatus", "string"), context, undefined),
+      renderGoType(irb.enumType("OrderStatus", "string"), context, undefined),
     ).toBe("OrderStatus");
     expect(
-      renderGoType(arrayType(primitiveType("int"), 2), context, undefined),
+      renderGoType(
+        irb.arrayType(irb.primitiveType("int"), 2),
+        context,
+        undefined,
+      ),
     ).toBe("[][]int64");
-    expect(renderGoType(mapType(namedType("UserID")), context, undefined)).toBe(
-      "map[string]UserID",
-    );
+    expect(
+      renderGoType(irb.mapType(irb.namedType("UserID")), context, undefined),
+    ).toBe("map[string]UserID");
     expect(
       renderGoType(
-        objectType([field("city", primitiveType("string"))]),
+        irb.objectType([irb.field("city", irb.primitiveType("string"))]),
         context,
         "UserAddress",
       ),
@@ -67,16 +58,16 @@ describe("type-ref", () => {
 
   it("renders anonymous object expressions for composite literals", () => {
     const result = createGeneratorContext({
-      schema: schema(),
+      schema: irb.schema(),
       generatorOptions: {
         packageName: "vdl",
         genConsts: true,
       },
     });
 
-    const object = objectType([
-      field("city", primitiveType("string")),
-      field("primary", primitiveType("bool"), { optional: true }),
+    const object = irb.objectType([
+      irb.field("city", irb.primitiveType("string")),
+      irb.field("primary", irb.primitiveType("bool"), { optional: true }),
     ]);
 
     expect(
@@ -100,9 +91,12 @@ describe("type-ref", () => {
     const imports = new ImportSet();
 
     collectImportsForTypeRef(
-      objectType([
-        field("createdAt", primitiveType("datetime")),
-        field("history", arrayType(mapType(primitiveType("datetime")), 2)),
+      irb.objectType([
+        irb.field("createdAt", irb.primitiveType("datetime")),
+        irb.field(
+          "history",
+          irb.arrayType(irb.mapType(irb.primitiveType("datetime")), 2),
+        ),
       ]),
       imports,
     );
@@ -112,10 +106,10 @@ describe("type-ref", () => {
 
   it("knows which types can be emitted as Go const declarations", () => {
     const result = createGeneratorContext({
-      schema: schema({
+      schema: irb.schema({
         enums: [
-          enumDef("Priority", "int", [
-            enumMember("High", {
+          irb.enumDef("Priority", "int", [
+            irb.enumMember("High", {
               kind: "int",
               position: { file: "schema.vdl", line: 1, column: 1 },
               intValue: 1,
@@ -131,13 +125,17 @@ describe("type-ref", () => {
 
     const context = expectContext(result.context);
 
-    expect(isConstEligibleType(primitiveType("string"), context)).toBe(true);
-    expect(isConstEligibleType(primitiveType("datetime"), context)).toBe(false);
-    expect(isConstEligibleType(enumType("Priority", "int"), context)).toBe(
+    expect(isConstEligibleType(irb.primitiveType("string"), context)).toBe(
+      true,
+    );
+    expect(isConstEligibleType(irb.primitiveType("datetime"), context)).toBe(
+      false,
+    );
+    expect(isConstEligibleType(irb.enumType("Priority", "int"), context)).toBe(
       true,
     );
     expect(
-      isConstEligibleType(arrayType(primitiveType("string")), context),
+      isConstEligibleType(irb.arrayType(irb.primitiveType("string")), context),
     ).toBe(false);
   });
 });

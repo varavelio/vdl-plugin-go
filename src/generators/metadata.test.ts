@@ -1,60 +1,51 @@
+import { irb } from "@varavel/vdl-plugin-sdk/testing";
 import { describe, expect, it } from "vitest";
-import {
-  annotation,
-  constantDef,
-  enumDef,
-  enumMember,
-  field,
-  objectType,
-  primitiveType,
-  schema,
-  stringLiteral,
-  typeDef,
-} from "../../tests/helpers/builders";
 import { createGeneratorContext } from "../context";
 import { generateMetadataFile } from "./metadata";
 
 describe("generateMetadataFile", () => {
   it("renders discoverable metadata helpers and repeated annotation indexes", () => {
     const result = createGeneratorContext({
-      schema: schema({
+      schema: irb.schema({
         enums: [
-          enumDef(
+          irb.enumDef(
             "Status",
             "string",
             [
-              enumMember("Ready", stringLiteral("ready"), {
+              irb.enumMember("Ready", irb.stringLiteral("ready"), {
                 annotations: [
-                  annotation("label", stringLiteral("Ready")),
-                  annotation("label", stringLiteral("Operational")),
+                  irb.annotation("label", irb.stringLiteral("Ready")),
+                  irb.annotation("label", irb.stringLiteral("Operational")),
                 ],
               }),
             ],
             {
-              annotations: [annotation("topic", stringLiteral("ops"))],
+              annotations: [irb.annotation("topic", irb.stringLiteral("ops"))],
             },
           ),
         ],
         types: [
-          typeDef(
+          irb.typeDef(
             "Product",
-            objectType([
-              field("name", primitiveType("string"), {
-                annotations: [annotation("searchable")],
+            irb.objectType([
+              irb.field("name", irb.primitiveType("string"), {
+                annotations: [irb.annotation("searchable")],
               }),
             ]),
             {
-              annotations: [annotation("resource", stringLiteral("catalog"))],
+              annotations: [
+                irb.annotation("resource", irb.stringLiteral("catalog")),
+              ],
             },
           ),
         ],
         constants: [
-          constantDef(
+          irb.constantDef(
             "apiVersion",
-            primitiveType("string"),
-            stringLiteral("1.0.0"),
+            irb.primitiveType("string"),
+            irb.stringLiteral("1.0.0"),
             {
-              annotations: [annotation("exposed")],
+              annotations: [irb.annotation("exposed")],
             },
           ),
         ],

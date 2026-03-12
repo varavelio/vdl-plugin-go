@@ -1,23 +1,5 @@
+import { irb } from "@varavel/vdl-plugin-sdk/testing";
 import { describe, expect, it } from "vitest";
-import {
-  annotation,
-  arrayLiteral,
-  arrayType,
-  constantDef,
-  enumDef,
-  enumMember,
-  enumType,
-  field,
-  mapType,
-  namedType,
-  objectLiteral,
-  objectType,
-  pluginInput,
-  primitiveType,
-  schema,
-  stringLiteral,
-  typeDef,
-} from "../tests/helpers/builders";
 import { generatePluginOutput } from "./generate";
 
 function fileContent(
@@ -32,62 +14,68 @@ function fileContent(
 describe("generatePluginOutput", () => {
   it("generates enums, named types, complex constants, metadata, and pointer helpers", () => {
     const result = generatePluginOutput(
-      pluginInput({
+      irb.pluginInput({
         options: {
           package: "catalog",
         },
-        ir: schema({
+        ir: irb.schema({
           enums: [
-            enumDef(
+            irb.enumDef(
               "OrderStatus",
               "string",
               [
-                enumMember("Pending", stringLiteral("pending"), {
-                  annotations: [annotation("label", stringLiteral("Pending"))],
-                }),
-                enumMember("Shipped", stringLiteral("shipped"), {
+                irb.enumMember("Pending", irb.stringLiteral("pending"), {
                   annotations: [
-                    annotation(
+                    irb.annotation("label", irb.stringLiteral("Pending")),
+                  ],
+                }),
+                irb.enumMember("Shipped", irb.stringLiteral("shipped"), {
+                  annotations: [
+                    irb.annotation(
                       "deprecated",
-                      stringLiteral("Use Delivered instead."),
+                      irb.stringLiteral("Use Delivered instead."),
                     ),
                   ],
                 }),
               ],
               {
                 annotations: [
-                  annotation(
+                  irb.annotation(
                     "deprecated",
-                    stringLiteral("Use FulfillmentStatus instead."),
+                    irb.stringLiteral("Use FulfillmentStatus instead."),
                   ),
                 ],
               },
             ),
           ],
           types: [
-            typeDef("UserID", primitiveType("string"), {
-              annotations: [annotation("format", stringLiteral("uuid"))],
+            irb.typeDef("UserID", irb.primitiveType("string"), {
+              annotations: [
+                irb.annotation("format", irb.stringLiteral("uuid")),
+              ],
             }),
-            typeDef("Labels", mapType(primitiveType("string"))),
-            typeDef(
+            irb.typeDef("Labels", irb.mapType(irb.primitiveType("string"))),
+            irb.typeDef(
               "Product",
-              objectType([
-                field("id", namedType("UserID"), {
-                  annotations: [annotation("format", stringLiteral("uuid"))],
+              irb.objectType([
+                irb.field("id", irb.namedType("UserID"), {
+                  annotations: [
+                    irb.annotation("format", irb.stringLiteral("uuid")),
+                  ],
                 }),
-                field("description", primitiveType("string"), {
+                irb.field("description", irb.primitiveType("string"), {
                   optional: true,
-                  annotations: [annotation("deprecated")],
+                  annotations: [irb.annotation("deprecated")],
                 }),
-                field("status", enumType("OrderStatus", "string")),
-                field(
+                irb.field("status", irb.enumType("OrderStatus", "string")),
+                irb.field(
                   "address",
-                  objectType([
-                    field("city", primitiveType("string"), {
+                  irb.objectType([
+                    irb.field("city", irb.primitiveType("string"), {
                       annotations: [
-                        annotation(
+                        irb.annotation(
                           "deprecated",
-                          stringLiteral("Use locality instead."),
+                          irb.stringLiteral("Use locality instead."),
                         ),
                       ],
                     }),
@@ -95,69 +83,74 @@ describe("generatePluginOutput", () => {
                 ),
               ]),
               {
-                annotations: [annotation("resource", stringLiteral("catalog"))],
+                annotations: [
+                  irb.annotation("resource", irb.stringLiteral("catalog")),
+                ],
               },
             ),
-            typeDef("UserIDs", arrayType(namedType("UserID"))),
+            irb.typeDef("UserIDs", irb.arrayType(irb.namedType("UserID"))),
           ],
           constants: [
-            constantDef(
+            irb.constantDef(
               "API_VERSION",
-              primitiveType("string"),
-              stringLiteral("1.0.0"),
+              irb.primitiveType("string"),
+              irb.stringLiteral("1.0.0"),
             ),
-            constantDef(
+            irb.constantDef(
               "DefaultUserID",
-              namedType("UserID"),
-              stringLiteral("user-1"),
+              irb.namedType("UserID"),
+              irb.stringLiteral("user-1"),
             ),
-            constantDef(
+            irb.constantDef(
               "DefaultStatus",
-              enumType("OrderStatus", "string"),
-              stringLiteral("pending"),
+              irb.enumType("OrderStatus", "string"),
+              irb.stringLiteral("pending"),
               {
                 annotations: [
-                  annotation(
+                  irb.annotation(
                     "deprecated",
-                    stringLiteral("Do not use this default."),
+                    irb.stringLiteral("Do not use this default."),
                   ),
                 ],
               },
             ),
-            constantDef(
+            irb.constantDef(
               "DefaultLabels",
-              namedType("Labels"),
-              objectLiteral({
-                env: stringLiteral("prod"),
-                region: stringLiteral("eu"),
+              irb.namedType("Labels"),
+              irb.objectLiteral({
+                env: irb.stringLiteral("prod"),
+                region: irb.stringLiteral("eu"),
               }),
             ),
-            constantDef(
+            irb.constantDef(
               "DefaultProduct",
-              namedType("Product"),
-              objectLiteral({
-                id: stringLiteral("user-1"),
-                description: stringLiteral("Primary product"),
-                status: stringLiteral("pending"),
-                address: objectLiteral({
-                  city: stringLiteral("Madrid"),
+              irb.namedType("Product"),
+              irb.objectLiteral({
+                id: irb.stringLiteral("user-1"),
+                description: irb.stringLiteral("Primary product"),
+                status: irb.stringLiteral("pending"),
+                address: irb.objectLiteral({
+                  city: irb.stringLiteral("Madrid"),
                 }),
               }),
               {
                 annotations: [
-                  annotation(
+                  irb.annotation(
                     "meta",
-                    objectLiteral({
-                      scope: stringLiteral("public"),
+                    irb.objectLiteral({
+                      scope: irb.stringLiteral("public"),
                     }),
                   ),
                 ],
               },
             ),
-            constantDef(
+            irb.constantDef(
               "DefaultIDs",
-              namedType("UserIDs"),
-              arrayLiteral([stringLiteral("user-1"), stringLiteral("user-2")]),
+              irb.namedType("UserIDs"),
+              irb.arrayLiteral([
+                irb.stringLiteral("user-1"),
+                irb.stringLiteral("user-2"),
+              ]),
             ),
           ],
         }),
@@ -224,16 +217,16 @@ describe("generatePluginOutput", () => {
 
   it("supports inline object arrays, datetime fields, and int enums", () => {
     const result = generatePluginOutput(
-      pluginInput({
-        ir: schema({
+      irb.pluginInput({
+        ir: irb.schema({
           enums: [
-            enumDef("Priority", "int", [
-              enumMember("Low", {
+            irb.enumDef("Priority", "int", [
+              irb.enumMember("Low", {
                 kind: "int",
                 position: { file: "schema.vdl", line: 1, column: 1 },
                 intValue: 1,
               }),
-              enumMember("High", {
+              irb.enumMember("High", {
                 kind: "int",
                 position: { file: "schema.vdl", line: 1, column: 1 },
                 intValue: 2,
@@ -241,16 +234,16 @@ describe("generatePluginOutput", () => {
             ]),
           ],
           types: [
-            typeDef(
+            irb.typeDef(
               "Timeline",
-              objectType([
-                field("createdAt", primitiveType("datetime")),
-                field(
+              irb.objectType([
+                irb.field("createdAt", irb.primitiveType("datetime")),
+                irb.field(
                   "events",
-                  arrayType(
-                    objectType([
-                      field("name", primitiveType("string")),
-                      field("priority", enumType("Priority", "int")),
+                  irb.arrayType(
+                    irb.objectType([
+                      irb.field("name", irb.primitiveType("string")),
+                      irb.field("priority", irb.enumType("Priority", "int")),
                     ]),
                   ),
                 ),
@@ -274,13 +267,13 @@ describe("generatePluginOutput", () => {
 
   it("omits constants.go when genConsts is disabled", () => {
     const result = generatePluginOutput(
-      pluginInput({
+      irb.pluginInput({
         options: {
           genConsts: "false",
         },
-        ir: schema({
+        ir: irb.schema({
           constants: [
-            constantDef("ANSWER", primitiveType("int"), {
+            irb.constantDef("ANSWER", irb.primitiveType("int"), {
               kind: "int",
               position: { file: "schema.vdl", line: 1, column: 1 },
               intValue: 42,
@@ -301,10 +294,14 @@ describe("generatePluginOutput", () => {
 
   it("returns an error when generated names collide with runtime helpers", () => {
     const result = generatePluginOutput(
-      pluginInput({
-        ir: schema({
+      irb.pluginInput({
+        ir: irb.schema({
           constants: [
-            constantDef("Ptr", primitiveType("string"), stringLiteral("oops")),
+            irb.constantDef(
+              "Ptr",
+              irb.primitiveType("string"),
+              irb.stringLiteral("oops"),
+            ),
           ],
         }),
       }),

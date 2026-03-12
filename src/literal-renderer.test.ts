@@ -1,22 +1,5 @@
+import { irb } from "@varavel/vdl-plugin-sdk/testing";
 import { describe, expect, it } from "vitest";
-import {
-  annotation,
-  arrayLiteral,
-  arrayType,
-  constantDef,
-  enumDef,
-  enumMember,
-  enumType,
-  field,
-  mapType,
-  namedType,
-  objectLiteral,
-  objectType,
-  primitiveType,
-  schema,
-  stringLiteral,
-  typeDef,
-} from "../tests/helpers/builders";
 import { createGeneratorContext } from "./context";
 import { GenerationError } from "./errors";
 import {
@@ -32,43 +15,46 @@ describe("literal-renderer", () => {
 
     expect(
       renderConstInitializer(
-        primitiveType("string"),
-        stringLiteral("hello"),
+        irb.primitiveType("string"),
+        irb.stringLiteral("hello"),
         context,
       ),
     ).toBe('"hello"');
     expect(
       renderConstInitializer(
-        enumType("OrderStatus", "string"),
-        stringLiteral("pending"),
+        irb.enumType("OrderStatus", "string"),
+        irb.stringLiteral("pending"),
         context,
       ),
     ).toBe("OrderStatusPending");
-    expect(canEmitConst(namedType("UserID"), context)).toBe(true);
-    expect(canEmitConst(namedType("Product"), context)).toBe(false);
+    expect(canEmitConst(irb.namedType("UserID"), context)).toBe(true);
+    expect(canEmitConst(irb.namedType("Product"), context)).toBe(false);
 
     expect(
       renderTypedValueExpression(
-        namedType("Labels"),
-        objectLiteral({ env: stringLiteral("prod") }),
+        irb.namedType("Labels"),
+        irb.objectLiteral({ env: irb.stringLiteral("prod") }),
         context,
       ),
     ).toBe('Labels{"env": "prod"}');
     expect(
       renderTypedValueExpression(
-        namedType("UserIDs"),
-        arrayLiteral([stringLiteral("user-1"), stringLiteral("user-2")]),
+        irb.namedType("UserIDs"),
+        irb.arrayLiteral([
+          irb.stringLiteral("user-1"),
+          irb.stringLiteral("user-2"),
+        ]),
         context,
       ),
     ).toBe('UserIDs{UserID("user-1"), UserID("user-2")}');
     expect(
       renderTypedValueExpression(
-        namedType("Product"),
-        objectLiteral({
-          id: stringLiteral("user-1"),
-          status: stringLiteral("pending"),
-          address: objectLiteral({ city: stringLiteral("Madrid") }),
-          labels: objectLiteral({ env: stringLiteral("prod") }),
+        irb.namedType("Product"),
+        irb.objectLiteral({
+          id: irb.stringLiteral("user-1"),
+          status: irb.stringLiteral("pending"),
+          address: irb.objectLiteral({ city: irb.stringLiteral("Madrid") }),
+          labels: irb.objectLiteral({ env: irb.stringLiteral("prod") }),
         }),
         context,
       ),
@@ -79,9 +65,9 @@ describe("literal-renderer", () => {
 
   it("uses the last object field occurrence for spread-resolved shapes", () => {
     const context = buildContext();
-    const duplicateObjectType = objectType([
-      field("value", primitiveType("string")),
-      field("value", primitiveType("string"), { optional: true }),
+    const duplicateObjectType = irb.objectType([
+      irb.field("value", irb.primitiveType("string")),
+      irb.field("value", irb.primitiveType("string"), { optional: true }),
     ]);
     const duplicateLiteral = {
       position: { file: "schema.vdl", line: 1, column: 1 },
@@ -90,12 +76,12 @@ describe("literal-renderer", () => {
         {
           position: { file: "schema.vdl", line: 1, column: 2 },
           key: "value",
-          value: stringLiteral("first"),
+          value: irb.stringLiteral("first"),
         },
         {
           position: { file: "schema.vdl", line: 1, column: 3 },
           key: "value",
-          value: stringLiteral("second"),
+          value: irb.stringLiteral("second"),
         },
       ],
     };
@@ -114,9 +100,12 @@ describe("literal-renderer", () => {
   it("renders metadata values for nested arrays and objects", () => {
     expect(
       renderMetadataValueExpression(
-        objectLiteral({
-          owner: stringLiteral("core"),
-          tags: arrayLiteral([stringLiteral("a"), stringLiteral("b")]),
+        irb.objectLiteral({
+          owner: irb.stringLiteral("core"),
+          tags: irb.arrayLiteral([
+            irb.stringLiteral("a"),
+            irb.stringLiteral("b"),
+          ]),
         }),
       ),
     ).toBe('map[string]any{"owner": "core", "tags": []any{"a", "b"}}');
@@ -127,8 +116,8 @@ describe("literal-renderer", () => {
 
     expect(() =>
       renderTypedValueExpression(
-        enumType("OrderStatus", "string"),
-        stringLiteral("unknown"),
+        irb.enumType("OrderStatus", "string"),
+        irb.stringLiteral("unknown"),
         context,
       ),
     ).toThrow(GenerationError);
@@ -137,37 +126,39 @@ describe("literal-renderer", () => {
 
 function buildContext() {
   const result = createGeneratorContext({
-    schema: schema({
+    schema: irb.schema({
       enums: [
-        enumDef("OrderStatus", "string", [
-          enumMember("Pending", stringLiteral("pending"), {
-            annotations: [annotation("label", stringLiteral("Pending"))],
+        irb.enumDef("OrderStatus", "string", [
+          irb.enumMember("Pending", irb.stringLiteral("pending"), {
+            annotations: [
+              irb.annotation("label", irb.stringLiteral("Pending")),
+            ],
           }),
-          enumMember("Shipped", stringLiteral("shipped")),
+          irb.enumMember("Shipped", irb.stringLiteral("shipped")),
         ]),
       ],
       types: [
-        typeDef("UserID", primitiveType("string")),
-        typeDef("UserIDs", arrayType(namedType("UserID"))),
-        typeDef("Labels", mapType(primitiveType("string"))),
-        typeDef(
+        irb.typeDef("UserID", irb.primitiveType("string")),
+        irb.typeDef("UserIDs", irb.arrayType(irb.namedType("UserID"))),
+        irb.typeDef("Labels", irb.mapType(irb.primitiveType("string"))),
+        irb.typeDef(
           "Product",
-          objectType([
-            field("id", namedType("UserID")),
-            field("status", enumType("OrderStatus", "string")),
-            field(
+          irb.objectType([
+            irb.field("id", irb.namedType("UserID")),
+            irb.field("status", irb.enumType("OrderStatus", "string")),
+            irb.field(
               "address",
-              objectType([field("city", primitiveType("string"))]),
+              irb.objectType([irb.field("city", irb.primitiveType("string"))]),
             ),
-            field("labels", namedType("Labels")),
+            irb.field("labels", irb.namedType("Labels")),
           ]),
         ),
       ],
       constants: [
-        constantDef(
+        irb.constantDef(
           "apiVersion",
-          primitiveType("string"),
-          stringLiteral("1.0.0"),
+          irb.primitiveType("string"),
+          irb.stringLiteral("1.0.0"),
         ),
       ],
     }),
