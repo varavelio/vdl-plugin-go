@@ -1,7 +1,15 @@
 import { execSync } from "node:child_process";
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import {
+  existsSync,
+  readdirSync,
+  readFileSync,
+  unlinkSync,
+  writeFileSync,
+} from "node:fs";
 import { join, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
+
+const goModTemplate = "module fixture\ngo 1.26\n";
 
 // Find all test cases dinamically by reading the "fixtures" directory
 const fixturesDir = resolve(__dirname, "fixtures");
@@ -13,7 +21,12 @@ describe("E2E: VDL to Go", () => {
   it.each(fixtures)("compiles fixture: %s", (fixtureName) => {
     const fixturePath = join(fixturesDir, fixtureName);
     const outDir = join(fixturePath, "gen");
+    const goModPath = join(fixturePath, "go.mod");
     const mainPath = join(fixturePath, "main.go");
+
+    // Write a generic go.mod file
+    if (existsSync(goModPath)) unlinkSync(goModPath);
+    writeFileSync(goModPath, goModTemplate);
 
     // Execute the VDL generator
     execSync("npx vdl generate", { cwd: fixturePath, stdio: "pipe" });
