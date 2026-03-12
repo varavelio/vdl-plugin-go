@@ -1,0 +1,80 @@
+type SimpleType {
+  foo string
+}
+
+type Primitives {
+  stringField string
+  intField int
+  floatField float
+  boolField bool
+  datetimeField datetime
+  optStringField? string
+  optIntField? int
+  optFloatField? float
+  optBoolField? bool
+  optDatetimeField? datetime
+}
+
+type Arrays {
+  stringField string[]
+  intField int[]
+  floatField float[]
+  boolField bool[]
+  datetimeField datetime[]
+  optStringField? string[]
+  optIntField? int[]
+  optFloatField? float[]
+  optBoolField? bool[]
+  optDatetimeField? datetime[]
+}
+
+type Maps {
+  stringField map[string]
+  intField map[int]
+  floatField map[float]
+  boolField map[bool]
+  datetimeField map[datetime]
+  optStringField? map[string]
+  optIntField? map[int]
+  optFloatField? map[float]
+  optBoolField? map[bool]
+  optDatetimeField? map[datetime]
+}
+
+type Nested {
+  simple SimpleType
+  primitives Primitives
+  arrays Arrays
+  maps Maps
+}
+
+type NestedArrays {
+  simple SimpleType[]
+  primitives Primitives[]
+  arrays Arrays[]
+  maps Maps[]
+}
+
+type Inline {
+  simple {
+    foo string
+  }
+
+  array {
+    foo string
+  }[]
+
+  map map[{
+  foo string
+}]
+
+  nested {
+    foo {
+      bar {
+        baz {
+          qux? string
+        }
+      }
+    }
+  }
+}
