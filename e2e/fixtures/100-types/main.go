@@ -322,7 +322,7 @@ func testNested(primitives gen.Primitives, arrays gen.Arrays, maps gen.Maps) gen
 					"optIntField":[0,7],
 					"optFloatField":[],
 					"optBoolField":[false],
-					"optDatetimeField":[],
+					"optDatetimeField":[]
 				},
 				"maps":{
 					"stringField":{
