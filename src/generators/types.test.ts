@@ -84,6 +84,35 @@ describe("generateTypesFile", () => {
       "func (x *Timeline) GetNoteOr(defaultValue string) string {",
     );
   });
+
+  it("renders enum IsValid with all cases in one branch", () => {
+    const result = createGeneratorContext({
+      schema: irb.schema({
+        enums: [
+          irb.enumDef("Priority", "int", [
+            irb.enumMember("Low", {
+              kind: "int",
+              position: { file: "schema.vdl", line: 1, column: 1 },
+              intValue: 0,
+            }),
+            irb.enumMember("High", {
+              kind: "int",
+              position: { file: "schema.vdl", line: 1, column: 1 },
+              intValue: 9,
+            }),
+          ]),
+        ],
+      }),
+      generatorOptions: {
+        packageName: "vdl",
+        genConsts: true,
+      },
+    });
+
+    const file = generateTypesFile(expectContext(result.context));
+
+    expect(file?.content).toContain("case PriorityLow, PriorityHigh:");
+  });
 });
 
 function expectContext<T>(value: T | undefined): T {

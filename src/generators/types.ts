@@ -166,9 +166,9 @@ function renderEnumIsValidMethod(
   g.block(() => {
     g.line("switch e {");
     g.block(() => {
-      for (const member of enumDescriptor.members) {
-        g.line(`case ${member.constName}:`);
-      }
+      g.line(
+        `case ${enumDescriptor.members.map((member) => member.constName).join(", ")}:`,
+      );
       g.block(() => {
         g.line("return true");
       });
