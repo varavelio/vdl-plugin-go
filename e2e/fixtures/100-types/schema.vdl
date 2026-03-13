@@ -55,6 +55,57 @@ type NestedArrays {
   maps Maps[]
 }
 
+type OptionalObjects {
+  simple? SimpleType
+  primitives? Primitives
+
+  inline? {
+    foo string
+    count? int
+  }
+}
+
+type Matrices {
+  ints int[][]
+  strings string[][]
+  datetimes datetime[][]
+  simple SimpleType[][]
+
+  inline {
+    value string
+    enabled? bool
+  }[][]
+}
+
+type MapCollections {
+  simpleField map[SimpleType]
+  primitivesField map[Primitives]
+  arraysField map[Arrays]
+  nestedField map[Nested]
+  inlineField map[{
+  label string
+  active? bool
+}]
+  stringListsField map[string[]]
+  intMatrixField map[int[][]]
+}
+
+type OptionalCollections {
+  simpleList? SimpleType[]
+  simpleMap? map[SimpleType]
+  simpleMatrix? SimpleType[][]
+
+  inlineList? {
+    foo string
+    empty? bool
+  }[]
+
+  inlineMap? map[{
+  foo string
+  empty? bool
+}]
+}
+
 type Inline {
   simple {
     foo string
