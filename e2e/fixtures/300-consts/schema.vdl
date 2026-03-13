@@ -1,0 +1,86 @@
+enum Status {
+  Unknown = ""
+  Active = "active"
+  Disabled = "disabled"
+}
+
+enum Priority {
+  Low = 0
+  High = 9
+}
+
+@meta({ area "release" })
+const apiVersion = "1.2.3"
+
+const maxItems = 2147483647
+
+const ratio = 3.5
+
+const featureEnabled = true
+
+const defaultStatus = Status.Active
+
+const defaultPriority = Priority.High
+
+const statuses = [Status.Unknown Status.Active Status.Disabled]
+
+const priorityMatrix = [[Priority.Low Priority.High] [Priority.High]]
+
+const baseLabels = {
+  env "prod"
+  region "eu"
+}
+
+const extraLabels = {
+  ...baseLabels
+  region "us"
+  owner "core"
+}
+
+const buildInfo = {
+  name "plugin-go"
+  version apiVersion
+  tags ["go" "vdl"]
+}
+
+const baseProfile = {
+  id "user-1"
+  status Status.Active
+  priority Priority.Low
+  tags ["base"]
+  labels baseLabels
+  nested {
+    enabled true
+    retries 1
+  }
+}
+
+@tag
+const defaultProfile = {
+  ...baseProfile
+  tags ["featured" ""]
+  nested {
+    enabled false
+    retries 0
+  }
+}
+
+const inlineSettings = {
+  mode "safe"
+  enabled false
+}
+
+const profileSummary = {
+  status defaultStatus
+  priority defaultPriority
+}
+
+const referencedVersion = apiVersion
+
+const releaseVersions = [apiVersion referencedVersion]
+
+const copiedStatus = defaultStatus
+
+const copiedLabels = extraLabels
+
+const copiedProfile = defaultProfile
