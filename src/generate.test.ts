@@ -1,9 +1,9 @@
 import { irb } from "@varavel/vdl-plugin-sdk/testing";
 import { describe, expect, it } from "vitest";
-import { generatePluginOutput } from "./generate";
+import { generate } from "./generate";
 
 function fileContent(
-  result: ReturnType<typeof generatePluginOutput>,
+  result: ReturnType<typeof generate>,
   path: string,
 ): string {
   const file = result.files?.find((entry) => entry.path === path);
@@ -11,9 +11,9 @@ function fileContent(
   return file?.content ?? "";
 }
 
-describe("generatePluginOutput", () => {
+describe("generate", () => {
   it("generates enums, named types, complex constants, metadata, and pointer helpers", () => {
-    const result = generatePluginOutput(
+    const result = generate(
       irb.pluginInput({
         options: {
           package: "catalog",
@@ -170,7 +170,7 @@ describe("generatePluginOutput", () => {
     expect(types).toContain("type OrderStatus string");
     expect(types).toContain('OrderStatusPending OrderStatus = "pending"');
     expect(types).toContain("Deprecated: Use FulfillmentStatus instead.");
-    expect(types).toContain("type UserID string");
+    expect(types).toContain("type UserId string");
     expect(types).toContain("type Labels map[string]string");
     expect(types).toContain("type Product struct");
     expect(types).toContain(
@@ -178,20 +178,20 @@ describe("generatePluginOutput", () => {
     );
     expect(types).toContain("type ProductAddress struct");
     expect(types).toContain("func (x *Product) GetDescription() string");
-    expect(types).toContain("type UserIDs []UserID");
+    expect(types).toContain("type UserIDs []UserId");
 
     const constants = fileContent(result, "constants.go");
-    expect(constants).toContain('const API_VERSION = "1.0.0"');
-    expect(constants).toContain('const DefaultUserID UserID = "user-1"');
+    expect(constants).toContain('const ApiVersion = "1.0.0"');
+    expect(constants).toContain('const DefaultUserId UserId = "user-1"');
     expect(constants).toContain("const DefaultStatus = OrderStatusPending");
     expect(constants).toContain(
       'var DefaultLabels = Labels{"env": "prod", "region": "eu"}',
     );
     expect(constants).toContain(
-      'var DefaultProduct = Product{Id: UserID("user-1"), Description: Ptr("Primary product"), Status: OrderStatusPending, Address: ProductAddress{City: "Madrid"}}',
+      'var DefaultProduct = Product{Id: UserId("user-1"), Description: Ptr("Primary product"), Status: OrderStatusPending, Address: ProductAddress{City: "Madrid"}}',
     );
     expect(constants).toContain(
-      'var DefaultIDs = UserIDs{UserID("user-1"), UserID("user-2")}',
+      'var DefaultIDs = UserIDs{UserId("user-1"), UserId("user-2")}',
     );
 
     const metadata = fileContent(result, "metadata.go");
@@ -219,7 +219,7 @@ describe("generatePluginOutput", () => {
   });
 
   it("supports inline object arrays, datetime fields, and int enums", () => {
-    const result = generatePluginOutput(
+    const result = generate(
       irb.pluginInput({
         ir: irb.schema({
           enums: [
@@ -269,7 +269,7 @@ describe("generatePluginOutput", () => {
   });
 
   it("omits constants.go when genConsts is disabled", () => {
-    const result = generatePluginOutput(
+    const result = generate(
       irb.pluginInput({
         options: {
           genConsts: "false",
@@ -296,7 +296,7 @@ describe("generatePluginOutput", () => {
   });
 
   it("returns an error when generated names collide with runtime helpers", () => {
-    const result = generatePluginOutput(
+    const result = generate(
       irb.pluginInput({
         ir: irb.schema({
           constants: [
