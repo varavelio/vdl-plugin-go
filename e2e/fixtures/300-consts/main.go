@@ -116,6 +116,28 @@ func assertErrContains(name string, err error, substring string) {
 	}
 }
 
+func assertAnnotationMissing(name string, annotations gen.AnnotationSet) {
+	value, ok := annotations.Get("missing")
+	assertEqual(name+" annotations missing found", ok, false)
+	assertEqual(name+" annotations missing value", value, nil)
+
+	values, ok := annotations.GetAll("missing")
+	assertEqual(name+" annotations missing all found", ok, false)
+	assertEqual(name+" annotations missing all values", values, []any(nil))
+}
+
+func assertAnnotationValue(name string, annotations gen.AnnotationSet, key string, want any) {
+	value, ok := annotations.Get(key)
+	assertEqual(name+" annotation found", ok, true)
+	assertEqual(name+" annotation value", value, want)
+}
+
+func assertAnnotationValues(name string, annotations gen.AnnotationSet, key string, want []any) {
+	values, ok := annotations.GetAll(key)
+	assertEqual(name+" annotation all found", ok, true)
+	assertEqual(name+" annotation all values", values, want)
+}
+
 func assertEnumMetadata(name, vdlName, valueType string) gen.EnumMetadata {
 	metadata, ok := gen.VDLMetadata.Enum(name)
 	if !ok {
@@ -312,7 +334,8 @@ func testMetadata() {
 	assertEnumMemberMetadata("Priority", "High", "High", "PriorityHigh", 9)
 
 	apiVersion := assertConstantMetadata("ApiVersion", "apiVersion", "string")
-	assertEqual("ApiVersion annotation meta", apiVersion.Annotations.Get("meta"), []any{map[string]any{"area": "release"}})
+	assertAnnotationValue("ApiVersion meta", apiVersion.Annotations, "meta", map[string]any{"area": "release"})
+	assertAnnotationValues("ApiVersion meta", apiVersion.Annotations, "meta", []any{map[string]any{"area": "release"}})
 	assertConstantMetadata("MaxItems", "maxItems", "int64")
 	assertConstantMetadata("Ratio", "ratio", "float64")
 	assertConstantMetadata("FeatureEnabled", "featureEnabled", "bool")
@@ -326,7 +349,8 @@ func testMetadata() {
 	assertConstantMetadata("BuildInfo", "buildInfo", "struct { Name string; Version string; Tags []string }")
 	assertConstantMetadata("BaseProfile", "baseProfile", "struct { Id string; Status string; Priority int64; Tags []string; Labels struct { Env string; Region string }; Nested struct { Enabled bool; Retries int64 } }")
 	defaultProfile := assertConstantMetadata("DefaultProfile", "defaultProfile", "struct { Id string; Status string; Priority int64; Labels struct { Env string; Region string }; Tags []string; Nested struct { Enabled bool; Retries int64 } }")
-	assertEqual("DefaultProfile annotation tag", defaultProfile.Annotations.Get("tag"), []any{nil})
+	assertAnnotationValue("DefaultProfile tag", defaultProfile.Annotations, "tag", nil)
+	assertAnnotationValues("DefaultProfile tag", defaultProfile.Annotations, "tag", []any{nil})
 	assertConstantMetadata("CopiedProfile", "copiedProfile", "struct { Id string; Status string; Priority int64; Labels struct { Env string; Region string }; Tags []string; Nested struct { Enabled bool; Retries int64 } }")
 	assertConstantMetadata("InlineSettings", "inlineSettings", "struct { Mode string; Enabled bool }")
 	assertConstantMetadata("ProfileSummary", "profileSummary", "struct { Status string; Priority int64 }")
@@ -349,6 +373,8 @@ func testMetadata() {
 	missingConstant, ok := gen.VDLMetadata.Constant("Missing")
 	assertEqual("missing constant metadata found", ok, false)
 	assertEqual("missing constant metadata zero", missingConstant, gen.ConstantMetadata{})
+
+	assertAnnotationMissing("empty constant metadata", gen.ConstantMetadata{}.Annotations)
 }
 
 func main() {

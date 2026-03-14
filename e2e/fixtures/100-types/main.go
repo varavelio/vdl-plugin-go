@@ -37,6 +37,16 @@ func assertEqual(name string, got, want any) {
 	}
 }
 
+func assertAnnotationMissing(name string, annotations gen.AnnotationSet) {
+	value, ok := annotations.Get("missing")
+	assertEqual(name+" annotations missing found", ok, false)
+	assertEqual(name+" annotations missing value", value, nil)
+
+	values, ok := annotations.GetAll("missing")
+	assertEqual(name+" annotations missing all found", ok, false)
+	assertEqual(name+" annotations missing all values", values, []any(nil))
+}
+
 func assertTypeMetadata(name, vdlName, path, parent, goType string, inline bool) {
 	metadata, ok := gen.VDLMetadata.Type(name)
 	if !ok {
@@ -51,7 +61,7 @@ func assertTypeMetadata(name, vdlName, path, parent, goType string, inline bool)
 	assertEqual(name+" metadata go type", metadata.GoType, goType)
 	assertEqual(name+" metadata inline", metadata.Inline, inline)
 	assertEqual(name+" metadata annotations has", metadata.Annotations.Has("missing"), false)
-	assertEqual(name+" metadata annotations get", metadata.Annotations.Get("missing"), []any(nil))
+	assertAnnotationMissing(name+" metadata", metadata.Annotations)
 }
 
 func assertFieldMetadata(typeName, fieldName, vdlName, jsonName, goType string, optional bool) {
@@ -71,7 +81,7 @@ func assertFieldMetadata(typeName, fieldName, vdlName, jsonName, goType string, 
 	assertEqual(typeName+"."+fieldName+" field go type", fieldMetadata.GoType, goType)
 	assertEqual(typeName+"."+fieldName+" field optional", fieldMetadata.Optional, optional)
 	assertEqual(typeName+"."+fieldName+" field annotations has", fieldMetadata.Annotations.Has("missing"), false)
-	assertEqual(typeName+"."+fieldName+" field annotations get", fieldMetadata.Annotations.Get("missing"), []any(nil))
+	assertAnnotationMissing(typeName+"."+fieldName+" field", fieldMetadata.Annotations)
 }
 
 func testPointerHelpers() {
@@ -652,7 +662,7 @@ func testInline() {
 		`{
 			"simple":{"foo":"bar"},
 			"array":[{"foo":"alpha"},{"foo":""}],
-			"map_":{"entry":{"foo":"value"}},
+			"map":{"entry":{"foo":"value"}},
 			"nested":{"foo":{"bar":{"baz":{"qux":""}}}}
 		}`,
 	)
@@ -712,7 +722,7 @@ func testMetadata() {
 	assertTypeMetadata("OptionalCollectionsInlineMap", "inlineMap", "OptionalCollections.inlineMap", "OptionalCollections", "OptionalCollectionsInlineMap", true)
 
 	assertFieldMetadata("SimpleType", "Foo", "foo", "foo", "string", false)
-	assertFieldMetadata("Inline", "Map", "map", "map_", "map[string]InlineMap", false)
+	assertFieldMetadata("Inline", "Map", "map", "map", "map[string]InlineMap", false)
 	assertFieldMetadata("InlineNestedFooBarBaz", "Qux", "qux", "qux", "*string", true)
 	assertFieldMetadata("Primitives", "OptBoolField", "optBoolField", "optBoolField", "*bool", true)
 	assertFieldMetadata("Arrays", "OptDatetimeField", "optDatetimeField", "optDatetimeField", "*[]time.Time", true)

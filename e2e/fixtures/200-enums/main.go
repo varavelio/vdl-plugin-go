@@ -52,6 +52,28 @@ func assertErrContains(name string, err error, substring string) {
 	}
 }
 
+func assertAnnotationMissing(name string, annotations gen.AnnotationSet) {
+	value, ok := annotations.Get("missing")
+	assertEqual(name+" annotations missing found", ok, false)
+	assertEqual(name+" annotations missing value", value, nil)
+
+	values, ok := annotations.GetAll("missing")
+	assertEqual(name+" annotations missing all found", ok, false)
+	assertEqual(name+" annotations missing all values", values, []any(nil))
+}
+
+func assertAnnotationValue(name string, annotations gen.AnnotationSet, key string, want any) {
+	value, ok := annotations.Get(key)
+	assertEqual(name+" annotation found", ok, true)
+	assertEqual(name+" annotation value", value, want)
+}
+
+func assertAnnotationValues(name string, annotations gen.AnnotationSet, key string, want []any) {
+	values, ok := annotations.GetAll(key)
+	assertEqual(name+" annotation all found", ok, true)
+	assertEqual(name+" annotation all values", values, want)
+}
+
 func assertTypeMetadata(name, vdlName, path, parent, kind, goType string, inline bool) {
 	metadata, ok := gen.VDLMetadata.Type(name)
 	if !ok {
@@ -66,7 +88,7 @@ func assertTypeMetadata(name, vdlName, path, parent, kind, goType string, inline
 	assertEqual(name+" metadata go type", metadata.GoType, goType)
 	assertEqual(name+" metadata inline", metadata.Inline, inline)
 	assertEqual(name+" metadata annotations has", metadata.Annotations.Has("missing"), false)
-	assertEqual(name+" metadata annotations get", metadata.Annotations.Get("missing"), []any(nil))
+	assertAnnotationMissing(name+" metadata", metadata.Annotations)
 }
 
 func assertFieldMetadata(typeName, fieldName, vdlName, jsonName, goType string, optional bool) {
@@ -86,7 +108,7 @@ func assertFieldMetadata(typeName, fieldName, vdlName, jsonName, goType string, 
 	assertEqual(typeName+"."+fieldName+" field go type", fieldMetadata.GoType, goType)
 	assertEqual(typeName+"."+fieldName+" field optional", fieldMetadata.Optional, optional)
 	assertEqual(typeName+"."+fieldName+" field annotations has", fieldMetadata.Annotations.Has("missing"), false)
-	assertEqual(typeName+"."+fieldName+" field annotations get", fieldMetadata.Annotations.Get("missing"), []any(nil))
+	assertAnnotationMissing(typeName+"."+fieldName+" field", fieldMetadata.Annotations)
 }
 
 func assertEnumMetadata(name, vdlName, valueType string) gen.EnumMetadata {
@@ -413,24 +435,33 @@ func testMetadata() {
 
 	deliveryState := assertEnumMetadata("DeliveryState", "DeliveryState", "string")
 	assertEqual("DeliveryState annotation tag", deliveryState.Annotations.Has("tag"), true)
-	assertEqual("DeliveryState annotation tag values", deliveryState.Annotations.Get("tag"), []any{nil})
+	assertAnnotationValue("DeliveryState tag", deliveryState.Annotations, "tag", nil)
+	assertAnnotationValues("DeliveryState tag", deliveryState.Annotations, "tag", []any{nil})
 
 	deliveryStateUnknown := assertEnumMemberMetadata("DeliveryState", "Unknown", "Unknown", "DeliveryStateUnknown", "")
-	assertEqual("DeliveryState Unknown label", deliveryStateUnknown.Annotations.Get("label"), []any{"empty"})
+	assertAnnotationValue("DeliveryState Unknown label", deliveryStateUnknown.Annotations, "label", "empty")
+	assertAnnotationValues("DeliveryState Unknown label", deliveryStateUnknown.Annotations, "label", []any{"empty"})
+	deliveryStateDelivered := assertEnumMemberMetadata("DeliveryState", "Delivered", "Delivered", "DeliveryStateDelivered", "delivered")
+	assertAnnotationValue("DeliveryState Delivered aliases", deliveryStateDelivered.Annotations, "aliases", []any{"done", "completed"})
+	assertAnnotationValues("DeliveryState Delivered aliases", deliveryStateDelivered.Annotations, "aliases", []any{[]any{"done", "completed"}})
 	deliveryStateReturned := assertEnumMemberMetadata("DeliveryState", "Returned", "Returned", "DeliveryStateReturned", "returned")
-	assertEqual("DeliveryState Returned deprecated", deliveryStateReturned.Annotations.Get("deprecated"), []any{"Use Delivered instead."})
+	assertAnnotationValue("DeliveryState Returned deprecated", deliveryStateReturned.Annotations, "deprecated", "Use Delivered instead.")
+	assertAnnotationValues("DeliveryState Returned deprecated", deliveryStateReturned.Annotations, "deprecated", []any{"Use Delivered instead."})
 
 	deliveryStateBase := assertEnumMetadata("DeliveryStateBase", "DeliveryStateBase", "string")
-	assertEqual("DeliveryStateBase annotation meta", deliveryStateBase.Annotations.Get("meta"), []any{map[string]any{"family": "string"}})
+	assertAnnotationValue("DeliveryStateBase meta", deliveryStateBase.Annotations, "meta", map[string]any{"family": "string"})
+	assertAnnotationValues("DeliveryStateBase meta", deliveryStateBase.Annotations, "meta", []any{map[string]any{"family": "string"}})
 	assertEnumMemberMetadata("DeliveryStateBase", "InTransit", "InTransit", "DeliveryStateBaseInTransit", "in-transit")
 
 	priority := assertEnumMetadata("Priority", "Priority", "int")
-	assertEqual("Priority annotation deprecated", priority.Annotations.Get("deprecated"), []any{"Use DeliveryState severity labels instead."})
+	assertAnnotationValue("Priority deprecated", priority.Annotations, "deprecated", "Use DeliveryState severity labels instead.")
+	assertAnnotationValues("Priority deprecated", priority.Annotations, "deprecated", []any{"Use DeliveryState severity labels instead."})
 	assertEnumMemberMetadata("Priority", "Low", "Low", "PriorityLow", 0)
 	assertEnumMemberMetadata("Priority", "Urgent", "Urgent", "PriorityUrgent", 9)
 
 	priorityBase := assertEnumMetadata("PriorityBase", "PriorityBase", "int")
-	assertEqual("PriorityBase annotation meta", priorityBase.Annotations.Get("meta"), []any{map[string]any{"family": "int"}})
+	assertAnnotationValue("PriorityBase meta", priorityBase.Annotations, "meta", map[string]any{"family": "int"})
+	assertAnnotationValues("PriorityBase meta", priorityBase.Annotations, "meta", []any{map[string]any{"family": "int"}})
 	assertEnumMemberMetadata("PriorityBase", "Normal", "Normal", "PriorityBaseNormal", 1)
 
 	missingType, ok := gen.VDLMetadata.Type("Missing")
