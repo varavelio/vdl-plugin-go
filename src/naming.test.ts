@@ -37,8 +37,10 @@ describe("naming", () => {
     expect(toGoTypeName("user_profile")).toBe("UserProfile");
   });
 
-  it("escapes Go keywords in JSON names and validates package names", () => {
-    expect(toGoJsonName("package")).toBe("package_");
+  it("preserves original JSON names and validates package names", () => {
+    expect(toGoJsonName("package")).toBe("package");
+    expect(toGoJsonName("map")).toBe("map");
+    expect(toGoJsonName("snake_case")).toBe("snake_case");
     expect(isValidGoPackageName("vdl")).toBe(true);
     expect(isValidGoPackageName("generated_api")).toBe(true);
     expect(isValidGoPackageName("Generated")).toBe(false);

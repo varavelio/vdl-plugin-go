@@ -77,7 +77,8 @@ function renderMetadataSupportTypes(g: ReturnType<typeof newGenerator>): void {
   g.line("type AnnotationSet struct {");
   g.block(() => {
     g.line("List []Annotation");
-    g.line("ByName map[string][]any");
+    g.line("ByName map[string]any");
+    g.line("AllByName map[string][]any");
   });
   g.line("}");
   g.break();
@@ -96,15 +97,32 @@ function renderMetadataSupportTypes(g: ReturnType<typeof newGenerator>): void {
   g.line("}");
   g.break();
 
-  g.line("// Get returns every value associated with the annotation name.");
-  g.line("func (a AnnotationSet) Get(name string) []any {");
+  g.line(
+    "// Get returns the latest value associated with the annotation name.",
+  );
+  g.line("func (a AnnotationSet) Get(name string) (any, bool) {");
   g.block(() => {
     g.line("if a.ByName == nil {");
     g.block(() => {
-      g.line("return nil");
+      g.line("return nil, false");
     });
     g.line("}");
-    g.line("return a.ByName[name]");
+    g.line("value, ok := a.ByName[name]");
+    g.line("return value, ok");
+  });
+  g.line("}");
+  g.break();
+
+  g.line("// GetAll returns every value associated with the annotation name.");
+  g.line("func (a AnnotationSet) GetAll(name string) ([]any, bool) {");
+  g.block(() => {
+    g.line("if a.AllByName == nil {");
+    g.block(() => {
+      g.line("return nil, false");
+    });
+    g.line("}");
+    g.line("values, ok := a.AllByName[name]");
+    g.line("return values, ok");
   });
   g.line("}");
   g.break();
@@ -326,12 +344,16 @@ function renderAnnotationSetLiteral(
     return "AnnotationSet{}";
   }
 
-  const byName = new Map<string, string[]>();
+  const byName = new Map<string, string>();
+  const allByName = new Map<string, string[]>();
 
   for (const annotation of annotations) {
-    const values = byName.get(annotation.name) ?? [];
-    values.push(renderMetadataValueExpression(annotation.argument));
-    byName.set(annotation.name, values);
+    const valueExpression = renderMetadataValueExpression(annotation.argument);
+    byName.set(annotation.name, valueExpression);
+
+    const values = allByName.get(annotation.name) ?? [];
+    values.push(valueExpression);
+    allByName.set(annotation.name, values);
   }
 
   return `AnnotationSet{List: []Annotation{${annotations
@@ -339,7 +361,9 @@ function renderAnnotationSetLiteral(
       (annotation) =>
         `Annotation{Name: ${JSON.stringify(annotation.name)}, Value: ${renderMetadataValueExpression(annotation.argument)}}`,
     )
-    .join(", ")}}, ByName: map[string][]any{${[...byName.entries()]
+    .join(", ")}}, ByName: map[string]any{${[...byName.entries()]
+    .map(([name, value]) => `${JSON.stringify(name)}: ${value}`)
+    .join(", ")}}, AllByName: map[string][]any{${[...allByName.entries()]
     .map(
       ([name, values]) =>
         `${JSON.stringify(name)}: []any{${values.join(", ")}}`,

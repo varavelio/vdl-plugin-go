@@ -201,7 +201,10 @@ describe("generatePluginOutput", () => {
       'Annotations: AnnotationSet{List: []Annotation{Annotation{Name: "resource", Value: "catalog"}}',
     );
     expect(metadata).toContain('"Description": FieldMetadata');
-    expect(metadata).toContain('"deprecated": []any{nil}');
+    expect(metadata).toContain('"deprecated": nil');
+    expect(metadata).toContain(
+      'AllByName: map[string][]any{"deprecated": []any{nil}}',
+    );
     expect(metadata).toContain('"OrderStatus": EnumMetadata');
     expect(metadata).toContain('ConstName: "OrderStatusPending"');
     expect(metadata).toContain('"DefaultProduct": ConstantMetadata');

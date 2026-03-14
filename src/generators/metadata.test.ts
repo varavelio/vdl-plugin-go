@@ -62,10 +62,21 @@ describe("generateMetadataFile", () => {
       "func (a AnnotationSet) Has(name string) bool {",
     );
     expect(file.content).toContain(
+      "func (a AnnotationSet) Get(name string) (any, bool) {",
+    );
+    expect(file.content).toContain(
+      "func (a AnnotationSet) GetAll(name string) ([]any, bool) {",
+    );
+    expect(file.content).toContain(
       "func (m SchemaMetadata) Type(name string) (TypeMetadata, bool) {",
     );
+    expect(file.content).toContain("ByName map[string]any");
+    expect(file.content).toContain("AllByName map[string][]any");
+    expect(file.content).toContain('"label": "Operational"');
     expect(file.content).toContain('"label": []any{"Ready", "Operational"}');
+    expect(file.content).toContain('"searchable": nil');
     expect(file.content).toContain('"searchable": []any{nil}');
+    expect(file.content).toContain('"resource": "catalog"');
     expect(file.content).toContain('"resource": []any{"catalog"}');
     expect(file.content).toContain('"ApiVersion": ConstantMetadata');
   });

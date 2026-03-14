@@ -128,11 +128,7 @@ export function toGoEnumMemberName(value: string): string {
  * Converts a VDL field name into the JSON tag name used by the generator.
  */
 export function toGoJsonName(value: string): string {
-  const candidate = /^[a-z][A-Za-z0-9_]*$/.test(value)
-    ? value
-    : toCamelCase(value);
-
-  return isGoKeyword(candidate) ? `${candidate}_` : candidate;
+  return value;
 }
 
 /**
