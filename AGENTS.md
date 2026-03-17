@@ -4,7 +4,7 @@
 
 This repository contains a VDL code generation plugin that transforms a flattened, validated VDL IR schema into Go source files. The project is written in TypeScript, uses `@varavel/vdl-plugin-sdk` for the plugin contract, and emits a `PluginOutput` containing either generated files or structured generation errors.
 
-The generator is architected as a deterministic IR-to-files transform with an explicit stage pipeline under `src/stages/`. The most important invariant is that plugin logic behaves like a pure, synchronous, side-effect-free function from VDL input to plugin output. In the current tree, that pure orchestration entrypoint lives in `src/main.ts` as `generate(input): PluginOutput`, and `src/index.ts` stays a thin SDK wrapper around it.
+The generator is architected as a deterministic IR-to-files transform with an explicit stage pipeline under `src/stages/`. The most important invariant is that plugin logic behaves like a pure, synchronous, side-effect-free function from VDL input to plugin output. In the current tree, that pure orchestration entrypoint lives in `src/generate.ts` as `generate(input): PluginOutput`, and `src/index.ts` stays a thin SDK wrapper around it.
 
 To create the plugin, we are using the VDL Plugin SDK. It is IMPERATIVE that you download and read the manual for using the SDK BEFORE starting ANY task, as it defines and explains many important things. It is also important that you use the manual information when writing tests or any utility code, as it contains helpers that should be used whenever possible to avoid duplicating code and keep the code of all VDL plugins in a similar way.
 
@@ -22,7 +22,7 @@ When updating this document, do so with the context of the entire document in mi
 
 - `package.json`: source of truth for build, check, lint, format, unit, e2e, and CI commands.
 - `src/`: core plugin implementation and colocated unit tests.
-- `src/main.ts`: pure orchestration entrypoint that resolves options, builds context, emits files, and maps failures to plugin errors.
+- `src/generate.ts`: pure orchestration entrypoint that resolves options, builds context, emits files, and maps failures to plugin errors.
 - `src/index.ts`: minimal SDK-facing wrapper created with `definePlugin(...)`.
 - `src/stages/`: explicit pipeline stages for options, model/context building, and file emission.
 - `src/shared/`: cross-cutting naming, error, Go type, Go literal, import, and comment helpers.
@@ -41,7 +41,7 @@ When updating this document, do so with the context of the entire document in mi
 - **Role**: Implements the full VDL IR -> Go plugin pipeline, plus unit tests that lock down naming, typing, literal rendering, comments, options, and generated file behavior.
 - **Entrypoints**:
   - `src/index.ts`: SDK-facing plugin export. Keep it thin.
-  - `src/main.ts`: pure orchestration that resolves options, builds context, emits files, and converts thrown failures into plugin errors.
+  - `src/generate.ts`: pure orchestration that resolves options, builds context, emits files, and converts thrown failures into plugin errors.
 - **Stage Layout**:
   - `src/stages/options/resolve.ts`: parses plugin options. Current options are `package` and `genConsts`.
   - `src/stages/model/build-context.ts`: builds the shared generation context and aggregates stage errors.
@@ -65,17 +65,23 @@ When updating this document, do so with the context of the entire document in mi
 - **Role**: Verifies the plugin through the real CLI and a real Go toolchain.
 - `e2e/e2e.test.ts`:
   - Discovers fixtures dynamically.
+  - Writes a temporary `go.mod` per fixture using module path `fixture` and a local `replace` so fixtures can import the shared Go test helper package as `varavel.com/testutil`.
   - Runs `npx vdl generate` inside each fixture.
   - Snapshots generated `.go` files.
   - Then either runs `go run main.go` or `go build ./...`.
+- `e2e/go-helpers/`:
+  - Shared Go assertion helpers used by fixture `main.go` files.
 - `e2e/fixtures/*`:
   - Self-contained fixture projects used to validate generator behavior end-to-end.
+  - Fixture directory names should use behavior prefixes such as `types-*`, `enums-*`, and `consts-*`.
+  - Prefer many small fixtures over a few broad ones: keep each schema focused on one generator behavior and keep `main.go` assertions narrow and readable.
+  - Prefer importing `varavel.com/testutil` over re-declaring equality, JSON, error, or annotation helpers in each fixture.
 
 ## General Instructions
 
-- **Understand the pipeline first**: Read `src/index.ts`, `src/main.ts`, `src/stages/model/build-context.ts`, and the relevant emitter under `src/stages/emit/files/` before changing behavior.
+- **Understand the pipeline first**: Read `src/index.ts`, `src/generate.ts`, `src/stages/model/build-context.ts`, and the relevant emitter under `src/stages/emit/files/` before changing behavior.
 - **Preserve the plugin contract**: Treat generation as a pure, synchronous, deterministic transform from `PluginInput` to `PluginOutput`. Do not introduce filesystem access, network calls, environment-driven behavior, randomness, clocks, logging side effects, or async control flow into the core generator path.
-- **Preferred entrypoint shape**: Keep the public plugin surface as an exported `generate` function in the pure orchestration module (`src/main.ts` in the current tree), with `src/index.ts` only adapting it to the SDK.
+- **Preferred entrypoint shape**: Keep the public plugin surface as an exported `generate` function in the pure orchestration module (`src/generate.ts` in the current tree), with `src/index.ts` only adapting it to the SDK.
 - **Do not bypass context building**: All file emitters depend on the normalized `GeneratorContext` from `src/stages/model/build-context.ts`. New generation features should usually be modeled there first, not computed ad hoc inside emitters.
 - **Use errors as data**: Validation failures should become `PluginOutputError` objects with `position` when available. Throw only when it simplifies internal control flow, then map through `toPluginOutputError`.
 - **Preserve determinism**: File order, import sorting, symbol naming, enum member resolution, and object field behavior are intentionally stable and covered by tests.
@@ -93,7 +99,7 @@ When updating this document, do so with the context of the entire document in mi
 ## Generator Flow
 
 1. `src/index.ts` exposes the plugin as `generate` through `definePlugin(...)`.
-2. `src/main.ts` resolves options from `input.options`.
+2. `src/generate.ts` resolves options from `input.options`.
 3. `src/stages/model/build-context.ts` indexes the IR, derives Go names, recursively discovers inline object types, and validates Go-specific collisions.
 4. If validation succeeds, `src/stages/emit/generate-files.ts` emits files in fixed order:
    - `types.go`
@@ -201,7 +207,7 @@ This order is intentional and covered by tests. Preserve it unless the test suit
 
 - Unit tests live beside source as `*.test.ts`.
 - Stage and shared-module tests are colocated under `src/stages/**` and `src/shared/**`.
-- The top-level orchestration contract is covered by `src/main.test.ts`.
+- The top-level orchestration contract is covered by `src/generate.test.ts`.
 - End-to-end tests live under `e2e/` and depend on the Go toolchain and `npx vdl generate`.
 
 ### Commands
