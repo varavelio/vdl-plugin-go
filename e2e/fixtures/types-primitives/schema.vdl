@@ -1,0 +1,12 @@
+type Primitives {
+  text string
+  count int
+  ratio float
+  active bool
+  createdAt datetime
+  optText? string
+  optCount? int
+  optRatio? float
+  optActive? bool
+  optCreatedAt? datetime
+}

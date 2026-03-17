@@ -1,0 +1,16 @@
+enum Status {
+  Unknown = ""
+  Active = "active"
+  Disabled = "disabled"
+}
+
+enum Priority {
+  Low = 0
+  High = 9
+}
+
+const defaultStatus = Status.Active
+
+const copiedStatus = defaultStatus
+
+const defaultPriority = Priority.High

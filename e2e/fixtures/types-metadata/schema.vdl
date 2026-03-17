@@ -1,0 +1,6 @@
+type Profile {
+  name string
+  settings {
+    enabled? bool
+  }
+}

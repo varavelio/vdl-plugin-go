@@ -1,0 +1,9 @@
+type Collections {
+  names string[]
+  matrix int[][]
+  timestamps datetime[]
+  labels map[string]
+  counts map[int]
+  optNames? string[]
+  optLabels? map[string]
+}

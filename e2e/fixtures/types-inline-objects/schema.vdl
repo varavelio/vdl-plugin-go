@@ -1,0 +1,20 @@
+type Envelope {
+  item {
+    label string
+    enabled? bool
+  }
+
+  items {
+    code string
+  }[]
+
+  lookup map[{
+    id string
+  }]
+
+  nested {
+    child {
+      note? string
+    }
+  }
+}

@@ -1,0 +1,10 @@
+enum Status {
+  Unknown = ""
+  Active = "active"
+}
+
+@meta({ area "release" })
+const apiVersion = "1.2.3"
+
+@tag
+const defaultStatus = Status.Active

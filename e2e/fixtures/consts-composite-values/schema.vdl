@@ -1,0 +1,27 @@
+const labels = {
+  env "prod"
+  region "eu"
+}
+
+const versions = ["1.0.0" "1.1.0"]
+
+const matrix = [[1 2] [3]]
+
+const buildInfo = {
+  name "plugin-go"
+  tags ["go" "vdl"]
+}
+
+const baseProfile = {
+  id "user-1"
+  labels labels
+  versions versions
+}
+
+const extendedProfile = {
+  ...baseProfile
+  labels {
+    ...labels
+    region "us"
+  }
+}

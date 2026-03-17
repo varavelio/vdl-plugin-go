@@ -1,0 +1,20 @@
+enum Status {
+  Unknown = ""
+  Active = "active"
+  Disabled = "disabled"
+}
+
+enum Priority {
+  Low = 0
+  High = 9
+}
+
+type Envelope {
+  status Status
+  optStatus? Status
+  priority Priority
+  statuses Status[]
+  nested {
+    status Status
+  }
+}

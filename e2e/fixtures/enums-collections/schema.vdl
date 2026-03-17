@@ -1,0 +1,9 @@
+enum Status {
+  Unknown = ""
+  Active = "active"
+  Disabled = "disabled"
+}
+
+type StatusGroup Status[]
+
+type StatusLookup map[Status]

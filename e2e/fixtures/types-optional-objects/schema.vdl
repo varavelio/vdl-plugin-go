@@ -1,0 +1,11 @@
+type Child {
+  name string
+}
+
+type Holder {
+  child? Child
+  inline? {
+    title string
+    count? int
+  }
+}

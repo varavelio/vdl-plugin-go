@@ -1,4 +1,5 @@
 vdl.lock
 go.mod
+!go-helpers/go.mod
 **/gen
 **/generated

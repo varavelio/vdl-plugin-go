@@ -9,7 +9,16 @@ import {
 import { join, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
-const goModTemplate = "module fixture\ngo 1.26\n";
+const goModTemplate = [
+  "module fixture",
+  "",
+  "go 1.26",
+  "",
+  "require varavel.com/testutil v0.0.0",
+  "",
+  "replace varavel.com/testutil => ../../go-helpers",
+  "",
+].join("\n");
 
 // Find all test cases dinamically by reading the "fixtures" directory
 const fixturesDir = resolve(__dirname, "fixtures");
@@ -24,7 +33,7 @@ describe("E2E: VDL to Go", () => {
     const goModPath = join(fixturePath, "go.mod");
     const mainPath = join(fixturePath, "main.go");
 
-    // Write a generic go.mod file
+    // Write a generic go.mod file with shared fixture helpers.
     if (existsSync(goModPath)) unlinkSync(goModPath);
     writeFileSync(goModPath, goModTemplate);
 

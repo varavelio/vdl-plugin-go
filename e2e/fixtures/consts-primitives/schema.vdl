@@ -1,0 +1,7 @@
+const apiVersion = "1.2.3"
+
+const maxItems = 2147483647
+
+const ratio = 3.5
+
+const featureEnabled = true
