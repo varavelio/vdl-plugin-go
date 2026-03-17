@@ -2,38 +2,19 @@ import { describe, expect, it } from "vitest";
 
 import {
   isValidGoPackageName,
-  splitIdentifierWords,
-  toCamelCase,
   toGoConstName,
+  toGoEnumMemberName,
+  toGoFieldName,
   toGoJsonName,
   toGoTypeName,
-  toPascalCase,
 } from "./naming";
 
 describe("naming", () => {
-  it("splits mixed identifiers into stable words", () => {
-    expect(splitIdentifierWords("defaultUserID")).toEqual([
-      "default",
-      "User",
-      "ID",
-    ]);
-    expect(splitIdentifierWords("api_version")).toEqual(["api", "version"]);
-    expect(splitIdentifierWords("HTTPServerURL")).toEqual([
-      "HTTP",
-      "Server",
-      "URL",
-    ]);
-  });
-
-  it("renders PascalCase and camelCase identifiers", () => {
-    expect(toPascalCase("defaultUserID")).toBe("DefaultUserId");
-    expect(toPascalCase("api_version")).toBe("ApiVersion");
-    expect(toCamelCase("default_user_id")).toBe("defaultUserId");
-  });
-
-  it("preserves discoverable Go names for constants and types", () => {
+  it("normalizes Go-facing identifiers with SDK casing helpers", () => {
     expect(toGoConstName("defaultUserID")).toBe("DefaultUserId");
     expect(toGoConstName("API_VERSION")).toBe("ApiVersion");
+    expect(toGoFieldName("default_user_id")).toBe("DefaultUserId");
+    expect(toGoEnumMemberName("HTTPReady")).toBe("HttpReady");
     expect(toGoTypeName("user_profile")).toBe("UserProfile");
   });
 

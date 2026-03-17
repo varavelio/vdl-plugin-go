@@ -1,10 +1,6 @@
 import type { Generator } from "@varavel/gen";
-import {
-  type Annotation,
-  getAnnotation,
-  getAnnotationArg,
-  unwrapLiteral,
-} from "@varavel/vdl-plugin-sdk";
+import type { Annotation } from "@varavel/vdl-plugin-sdk";
+import { ir } from "@varavel/vdl-plugin-sdk/utils";
 
 const DEFAULT_DEPRECATED_MESSAGE =
   "This symbol is deprecated and should not be used in new code.";
@@ -12,16 +8,16 @@ const DEFAULT_DEPRECATED_MESSAGE =
 export function getDeprecatedMessage(
   annotations: Annotation[] | undefined,
 ): string | undefined {
-  const deprecated = getAnnotation(annotations, "deprecated");
+  const deprecated = ir.getAnnotation(annotations, "deprecated");
 
   if (!deprecated) {
     return undefined;
   }
 
-  const argument = getAnnotationArg(annotations, "deprecated");
+  const argument = ir.getAnnotationArg(annotations, "deprecated");
 
   if (argument) {
-    const unwrapped = unwrapLiteral<unknown>(argument);
+    const unwrapped = ir.unwrapLiteral<unknown>(argument);
 
     if (typeof unwrapped === "string" && unwrapped.trim().length > 0) {
       return unwrapped;

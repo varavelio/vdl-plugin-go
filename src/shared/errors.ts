@@ -1,5 +1,5 @@
 import type { PluginOutputError, Position } from "@varavel/vdl-plugin-sdk";
-import { invariant } from "es-toolkit/util";
+import { misc } from "@varavel/vdl-plugin-sdk/utils";
 
 export class GenerationError extends Error {
   readonly position?: Position;
@@ -20,7 +20,7 @@ export function expectCondition(
   message: string,
   position?: Position,
 ): void {
-  invariant(condition, new GenerationError(message, position));
+  misc.invariant(condition, new GenerationError(message, position));
 }
 
 export function expectValue<T>(

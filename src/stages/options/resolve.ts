@@ -1,9 +1,5 @@
-import {
-  getOptionBool,
-  getOptionString,
-  type PluginInput,
-  type PluginOutputError,
-} from "@varavel/vdl-plugin-sdk";
+import type { PluginInput, PluginOutputError } from "@varavel/vdl-plugin-sdk";
+import { options } from "@varavel/vdl-plugin-sdk/utils";
 import { isValidGoPackageName } from "../../shared/naming";
 import type { GeneratorOptions } from "../model/types";
 
@@ -11,8 +7,8 @@ export function resolveGeneratorOptions(input: PluginInput): {
   options?: GeneratorOptions;
   errors: PluginOutputError[];
 } {
-  const packageName = getOptionString(input.options, "package", "vdl");
-  const genConsts = getOptionBool(input.options, "genConsts", true);
+  const packageName = options.getOptionString(input.options, "package", "vdl");
+  const genConsts = options.getOptionBool(input.options, "genConsts", true);
 
   if (!isValidGoPackageName(packageName)) {
     return {

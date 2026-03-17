@@ -1,4 +1,4 @@
-import { groupBy, mapValues } from "es-toolkit";
+import { arrays, objects } from "@varavel/vdl-plugin-sdk/utils";
 import { renderMetadataValueExpression } from "../../../shared/go-literals";
 import {
   renderAnonymousGoTypeExpression,
@@ -80,16 +80,16 @@ function renderAnnotationSetLiteral(
     return "AnnotationSet{}";
   }
 
-  const annotationsByName = groupBy(
+  const annotationsByName = arrays.groupBy(
     annotations,
     (annotation) => annotation.name,
   );
-  const allByName = mapValues(annotationsByName, (group) =>
+  const allByName = objects.mapValues(annotationsByName, (group) =>
     group.map((annotation) =>
       renderMetadataValueExpression(annotation.argument),
     ),
   );
-  const byName = mapValues(
+  const byName = objects.mapValues(
     allByName,
     (values) => values[values.length - 1] ?? "nil",
   );

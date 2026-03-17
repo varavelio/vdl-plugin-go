@@ -1,4 +1,4 @@
-import { compact } from "es-toolkit";
+import { arrays } from "@varavel/vdl-plugin-sdk/utils";
 import type { GeneratedFile, GeneratorContext } from "../model/types";
 import { generateConstantsFile } from "./files/constants";
 import { generateMetadataFile } from "./files/metadata";
@@ -6,7 +6,7 @@ import { generatePointersFile } from "./files/pointers";
 import { generateTypesFile } from "./files/types";
 
 export function generateFiles(context: GeneratorContext): GeneratedFile[] {
-  return compact([
+  return arrays.compact([
     generateTypesFile(context),
     generateConstantsFile(context),
     generateMetadataFile(context),
