@@ -48,6 +48,7 @@ When updating this document, do so with the context of the entire document in mi
   - `src/stages/model/*.ts`: indexes schema definitions, derives Go names, discovers inline object types recursively, builds descriptors, and validates Go-specific symbol collisions.
   - `src/stages/emit/generate-files.ts`: emits files in fixed order.
 - `src/stages/emit/files/*.ts`: file-level Go emitters for `enums.go`, `types.go`, `constants.go`, `metadata.go`, and `pointers.go`.
+- Metadata emission is split into focused helpers: runtime type/method definitions (`metadata-runtime.ts`), type-shape literals (`metadata-literals.ts`), and annotation literal formatting (`metadata-annotations.ts`).
 - **Shared Modules**:
   - `src/shared/errors.ts`: typed generation errors, assertions, and conversion to `PluginOutputError`.
   - `src/shared/naming.ts`: VDL-to-Go naming rules for types, fields, enum members, constants, inline types, and package validation, built on SDK string utilities.
