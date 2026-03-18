@@ -7,7 +7,7 @@ import (
 )
 
 func mustType(name, typ string) {
-	metadata, ok := gen.VDLMetadata.Type(name)
+	metadata, ok := gen.VDLMetadata.GetType(name)
 	metadata = testutil.MustPresent("type metadata: "+name, metadata, ok)
 
 	testutil.MustEqual(name+" name", metadata.Name, name)
@@ -16,7 +16,7 @@ func mustType(name, typ string) {
 }
 
 func mustField(typeName, fieldName, jsonName, typ string, optional bool) {
-	typeMetadata, ok := gen.VDLMetadata.Type(typeName)
+	typeMetadata, ok := gen.VDLMetadata.GetType(typeName)
 	typeMetadata = testutil.MustPresent("type metadata: "+typeName, typeMetadata, ok)
 
 	fieldMetadata, ok := typeMetadata.Field(fieldName)
@@ -41,15 +41,15 @@ func main() {
 	mustField("Profile", "Settings", "settings", "ProfileSettings", false)
 	mustField("ProfileSettings", "Enabled", "enabled", "*bool", true)
 
-	missingType, ok := gen.VDLMetadata.Type("Missing")
+	missingType, ok := gen.VDLMetadata.GetType("Missing")
 	testutil.MustAbsent("missing type metadata", missingType, ok, gen.TypeMetadata{})
 
 	missingField, ok := gen.VDLMetadata.Types["Profile"].Field("Missing")
 	testutil.MustAbsent("missing field metadata", missingField, ok, gen.FieldMetadata{})
 
-	missingEnum, ok := gen.VDLMetadata.Enum("Missing")
+	missingEnum, ok := gen.VDLMetadata.GetEnum("Missing")
 	testutil.MustAbsent("missing enum metadata", missingEnum, ok, gen.EnumMetadata{})
 
-	missingConstant, ok := gen.VDLMetadata.Constant("Missing")
+	missingConstant, ok := gen.VDLMetadata.GetConstant("Missing")
 	testutil.MustAbsent("missing constant metadata", missingConstant, ok, gen.ConstantMetadata{})
 }

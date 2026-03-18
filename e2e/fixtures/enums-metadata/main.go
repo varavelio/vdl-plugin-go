@@ -7,7 +7,7 @@ import (
 )
 
 func mustEnum(name, valueType string) gen.EnumMetadata {
-	metadata, ok := gen.VDLMetadata.Enum(name)
+	metadata, ok := gen.VDLMetadata.GetEnum(name)
 	metadata = testutil.MustPresent("enum metadata: "+name, metadata, ok)
 	testutil.MustEqual(name+" name", metadata.Name, name)
 	testutil.MustEqual(name+" type", metadata.Type, valueType)
@@ -15,7 +15,7 @@ func mustEnum(name, valueType string) gen.EnumMetadata {
 }
 
 func mustMember(enumName, memberName string, value any) gen.EnumMemberMetadata {
-	enumMetadata, ok := gen.VDLMetadata.Enum(enumName)
+	enumMetadata, ok := gen.VDLMetadata.GetEnum(enumName)
 	enumMetadata = testutil.MustPresent("enum metadata: "+enumName, enumMetadata, ok)
 
 	memberMetadata, ok := enumMetadata.Member(memberName)
@@ -32,20 +32,17 @@ func main() {
 
 	base := mustEnum("DeliveryStateBase", "string")
 	testutil.MustAnnotationValue("DeliveryStateBase meta", base.Annotations, "meta", map[string]any{"family": "string"})
-	testutil.MustAnnotationValues("DeliveryStateBase meta", base.Annotations, "meta", []any{map[string]any{"family": "string"}})
 	unknown := mustMember("DeliveryStateBase", "Unknown", "")
 	testutil.MustAnnotationValue("DeliveryStateBase Unknown label", unknown.Annotations, "label", "empty")
 
 	state := mustEnum("DeliveryState", "string")
 	testutil.MustAnnotationValue("DeliveryState tag", state.Annotations, "tag", nil)
-	testutil.MustAnnotationValues("DeliveryState tag", state.Annotations, "tag", []any{nil})
 	delivered := mustMember("DeliveryState", "Delivered", "delivered")
 	testutil.MustAnnotationValue("DeliveryState Delivered aliases", delivered.Annotations, "aliases", []any{"done", "completed"})
-	testutil.MustAnnotationValues("DeliveryState Delivered aliases", delivered.Annotations, "aliases", []any{[]any{"done", "completed"}})
 	returned := mustMember("DeliveryState", "Returned", "returned")
 	testutil.MustAnnotationValue("DeliveryState Returned deprecated", returned.Annotations, "deprecated", "Use Delivered instead.")
 
-	missingEnum, ok := gen.VDLMetadata.Enum("Missing")
+	missingEnum, ok := gen.VDLMetadata.GetEnum("Missing")
 	testutil.MustAbsent("missing enum metadata", missingEnum, ok, gen.EnumMetadata{})
 
 	missingMember, ok := gen.VDLMetadata.Enums["DeliveryState"].Member("Missing")

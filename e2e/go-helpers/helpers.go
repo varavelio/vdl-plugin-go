@@ -10,7 +10,6 @@ import (
 // AnnotationReader exposes annotation lookups used by metadata assertions.
 type AnnotationReader interface {
 	Get(name string) (any, bool)
-	GetAll(name string) ([]any, bool)
 }
 
 // MustEqual panics when the values are not deeply equal.
@@ -71,10 +70,6 @@ func MustAnnotationMissing(name string, annotations AnnotationReader) {
 	value, ok := annotations.Get("missing")
 	MustEqual(name+" missing annotation exists", ok, false)
 	MustEqual(name+" missing annotation value", value, nil)
-
-	values, ok := annotations.GetAll("missing")
-	MustEqual(name+" missing annotation list exists", ok, false)
-	MustEqual(name+" missing annotation list", values, []any(nil))
 }
 
 // MustAnnotationValue panics when the latest annotation value does not match.
@@ -82,13 +77,6 @@ func MustAnnotationValue(name string, annotations AnnotationReader, key string, 
 	value, ok := annotations.Get(key)
 	MustEqual(name+" annotation exists", ok, true)
 	MustEqual(name+" annotation value", value, want)
-}
-
-// MustAnnotationValues panics when the repeated annotation values do not match.
-func MustAnnotationValues(name string, annotations AnnotationReader, key string, want []any) {
-	values, ok := annotations.GetAll(key)
-	MustEqual(name+" annotation list exists", ok, true)
-	MustEqual(name+" annotation list", values, want)
 }
 
 func mustDecodeJSON(name string, data []byte) any {
