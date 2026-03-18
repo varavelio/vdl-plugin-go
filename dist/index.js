@@ -2273,7 +2273,7 @@ function renderMetadataValueExpression(value) {
     case "array":
       return `[]any{${((_a2 = value.arrayItems) != null ? _a2 : []).map((item) => renderMetadataValueExpression(item)).join(", ")}}`;
     case "object":
-      return `map[string]any{${((_b = value.objectEntries) != null ? _b : []).map(
+      return `map[string]any{${getLastObjectEntries((_b = value.objectEntries) != null ? _b : []).map(
         (entry) => `${JSON.stringify(entry.key)}: ${renderMetadataValueExpression(entry.value)}`
       ).join(", ")}}`;
     default:
@@ -2281,6 +2281,14 @@ function renderMetadataValueExpression(value) {
   }
 }
 __name(renderMetadataValueExpression, "renderMetadataValueExpression");
+function getLastObjectEntries(entries) {
+  const lastByKey = /* @__PURE__ */ new Map();
+  for (const entry of entries) {
+    lastByKey.set(entry.key, entry);
+  }
+  return [...lastByKey.values()];
+}
+__name(getLastObjectEntries, "getLastObjectEntries");
 
 // src/shared/go-literals/render.ts
 function renderTypedValueExpression(typeRef, literal, context, position, namedTypeGoName) {
@@ -2530,7 +2538,7 @@ function generateConstantsFile(context) {
       buildDocCommentLines({
         doc: constant.def.doc,
         annotations: constant.def.annotations,
-        fallback: `${constant.goName} is a VDL constant.`
+        fallback: `${constant.goName} holds a generated VDL constant.`
       })
     );
     if (canEmitConst(constant.def.typeRef, context, constant.def.position)) {
@@ -2567,32 +2575,274 @@ function renderConstDeclaration(g, goName, constant, context) {
 }
 __name(renderConstDeclaration, "renderConstDeclaration");
 
-// src/stages/emit/files/metadata-literals.ts
-function renderTypeMetadataLiteral(descriptor, context) {
-  var _a2;
-  const goType = descriptor.kind === "object" ? descriptor.goName : renderGoType(
-    descriptor.typeRef,
-    context,
-    void 0,
-    descriptor.position
+// src/stages/emit/files/types-enums.ts
+function renderEnum(g, enumDescriptor, strict) {
+  writeDocComment(
+    g,
+    buildDocCommentLines({
+      doc: enumDescriptor.def.doc,
+      annotations: enumDescriptor.def.annotations,
+      fallback: `${enumDescriptor.goName} defines a generated enum.`
+    })
   );
-  const fieldsLiteral = descriptor.fields.length === 0 ? "nil" : `map[string]FieldMetadata{${descriptor.fields.map(
-    (field) => `${JSON.stringify(field.goName)}: FieldMetadata{Name: ${JSON.stringify(field.goName)}, VDLName: ${JSON.stringify(field.def.name)}, JSONName: ${JSON.stringify(field.jsonName)}, GoType: ${JSON.stringify(field.goType)}, Optional: ${String(field.def.optional)}, Annotations: ${renderAnnotationSetLiteral(field.def.annotations)}}`
-  ).join(", ")}}`;
-  return `TypeMetadata{Name: ${JSON.stringify(descriptor.goName)}, VDLName: ${JSON.stringify(descriptor.vdlName)}, Path: ${JSON.stringify(descriptor.path)}, Parent: ${JSON.stringify((_a2 = descriptor.parentGoName) != null ? _a2 : "")}, Kind: ${JSON.stringify(descriptor.kind)}, GoType: ${JSON.stringify(goType)}, Inline: ${String(descriptor.inline)}, Annotations: ${renderAnnotationSetLiteral(descriptor.annotations)}, Fields: ${fieldsLiteral}}`;
+  g.line(
+    `type ${enumDescriptor.goName} ${enumDescriptor.def.enumType === "string" ? "string" : "int"}`
+  );
+  g.break();
+  g.line(
+    `// ${enumDescriptor.goName} constants define the declared values of ${enumDescriptor.goName}.`
+  );
+  g.line("const (");
+  g.block(() => {
+    for (const member of enumDescriptor.members) {
+      const commentLines = buildDocCommentLines({
+        doc: member.def.doc,
+        annotations: member.def.annotations
+      });
+      if (commentLines.length > 0) {
+        writeDocComment(g, commentLines);
+      }
+      g.line(
+        `${member.constName} ${enumDescriptor.goName} = ${renderEnumMemberLiteral(enumDescriptor, member)}`
+      );
+    }
+  });
+  g.line(")");
+  g.break();
+  g.line(
+    `// ${enumDescriptor.listGoName} contains every valid ${enumDescriptor.goName} value.`
+  );
+  g.line(`var ${enumDescriptor.listGoName} = []${enumDescriptor.goName}{`);
+  g.block(() => {
+    for (const member of enumDescriptor.members) {
+      g.line(`${member.constName},`);
+    }
+  });
+  g.line("}");
+  g.break();
+  renderEnumStringMethod(g, enumDescriptor);
+  g.break();
+  renderEnumIsValidMethod(g, enumDescriptor);
+  if (strict) {
+    g.break();
+    renderEnumMarshalJSONMethod(g, enumDescriptor);
+    g.break();
+    renderEnumUnmarshalJSONMethod(g, enumDescriptor);
+  }
 }
-__name(renderTypeMetadataLiteral, "renderTypeMetadataLiteral");
-function renderEnumMetadataLiteral(enumDescriptor) {
-  return `EnumMetadata{Name: ${JSON.stringify(enumDescriptor.goName)}, VDLName: ${JSON.stringify(enumDescriptor.def.name)}, ValueType: ${JSON.stringify(enumDescriptor.def.enumType)}, Annotations: ${renderAnnotationSetLiteral(enumDescriptor.def.annotations)}, Members: map[string]EnumMemberMetadata{${enumDescriptor.members.map(
-    (member) => `${JSON.stringify(member.goName)}: EnumMemberMetadata{Name: ${JSON.stringify(member.goName)}, VDLName: ${JSON.stringify(member.def.name)}, ConstName: ${JSON.stringify(member.constName)}, Value: ${renderMetadataValueExpression(member.def.value)}, Annotations: ${renderAnnotationSetLiteral(member.def.annotations)}}`
-  ).join(", ")}}}`;
+__name(renderEnum, "renderEnum");
+function renderEnumMemberLiteral(enumDescriptor, member) {
+  if (enumDescriptor.def.enumType === "string") {
+    return JSON.stringify(member.def.value.stringValue);
+  }
+  return String(member.def.value.intValue);
 }
-__name(renderEnumMetadataLiteral, "renderEnumMetadataLiteral");
-function renderConstantMetadataLiteral(constant, context) {
-  return `ConstantMetadata{Name: ${JSON.stringify(constant.goName)}, VDLName: ${JSON.stringify(constant.def.name)}, GoType: ${JSON.stringify(renderMetadataGoType(constant, context))}, Annotations: ${renderAnnotationSetLiteral(constant.def.annotations)}}`;
+__name(renderEnumMemberLiteral, "renderEnumMemberLiteral");
+function renderEnumStringMethod(g, enumDescriptor) {
+  g.line(
+    `// String returns a readable representation of ${enumDescriptor.goName}.`
+  );
+  g.line(`func (e ${enumDescriptor.goName}) String() string {`);
+  g.block(() => {
+    if (enumDescriptor.def.enumType === "string") {
+      g.line("return string(e)");
+      return;
+    }
+    g.line("switch e {");
+    g.block(() => {
+      for (const member of enumDescriptor.members) {
+        g.line(`case ${member.constName}:`);
+        g.block(() => {
+          g.line(`return ${JSON.stringify(member.def.name)}`);
+        });
+      }
+    });
+    g.line("}");
+    g.line(
+      `return fmt.Sprintf(${JSON.stringify(`${enumDescriptor.goName}(%d)`)}, e)`
+    );
+  });
+  g.line("}");
 }
-__name(renderConstantMetadataLiteral, "renderConstantMetadataLiteral");
-function renderMetadataGoType(constant, context) {
+__name(renderEnumStringMethod, "renderEnumStringMethod");
+function renderEnumIsValidMethod(g, enumDescriptor) {
+  g.line(
+    `// IsValid reports whether the value belongs to ${enumDescriptor.goName}.`
+  );
+  g.line(`func (e ${enumDescriptor.goName}) IsValid() bool {`);
+  g.block(() => {
+    g.line("switch e {");
+    g.block(() => {
+      g.line(
+        `case ${enumDescriptor.members.map((member) => member.constName).join(", ")}:`
+      );
+      g.block(() => {
+        g.line("return true");
+      });
+    });
+    g.line("}");
+    g.line("return false");
+  });
+  g.line("}");
+}
+__name(renderEnumIsValidMethod, "renderEnumIsValidMethod");
+function renderEnumMarshalJSONMethod(g, enumDescriptor) {
+  g.line(
+    `// MarshalJSON encodes ${enumDescriptor.goName} and rejects values outside the declared enum set.`
+  );
+  g.line(`func (e ${enumDescriptor.goName}) MarshalJSON() ([]byte, error) {`);
+  g.block(() => {
+    g.line("if !e.IsValid() {");
+    g.block(() => {
+      g.line(
+        `return nil, fmt.Errorf(${JSON.stringify(`cannot marshal invalid value for enum ${enumDescriptor.goName}`)})`
+      );
+    });
+    g.line("}");
+    if (enumDescriptor.def.enumType === "string") {
+      g.line("return json.Marshal(string(e))");
+      return;
+    }
+    g.line("return json.Marshal(int(e))");
+  });
+  g.line("}");
+}
+__name(renderEnumMarshalJSONMethod, "renderEnumMarshalJSONMethod");
+function renderEnumUnmarshalJSONMethod(g, enumDescriptor) {
+  g.line(
+    `// UnmarshalJSON decodes ${enumDescriptor.goName} and rejects values outside the declared enum set.`
+  );
+  g.line(
+    `func (e *${enumDescriptor.goName}) UnmarshalJSON(data []byte) error {`
+  );
+  g.block(() => {
+    if (enumDescriptor.def.enumType === "string") {
+      g.line("var value string");
+      g.line("if err := json.Unmarshal(data, &value); err != nil {");
+      g.block(() => {
+        g.line("return err");
+      });
+      g.line("}");
+      g.line(`candidate := ${enumDescriptor.goName}(value)`);
+      g.line("if !candidate.IsValid() {");
+      g.block(() => {
+        g.line(
+          `return fmt.Errorf(${JSON.stringify(`invalid value for enum ${enumDescriptor.goName}`)})`
+        );
+      });
+      g.line("}");
+      g.line("*e = candidate");
+      g.line("return nil");
+      return;
+    }
+    g.line("var value int");
+    g.line("if err := json.Unmarshal(data, &value); err != nil {");
+    g.block(() => {
+      g.line("return err");
+    });
+    g.line("}");
+    g.line(`candidate := ${enumDescriptor.goName}(value)`);
+    g.line("if !candidate.IsValid() {");
+    g.block(() => {
+      g.line(
+        `return fmt.Errorf(${JSON.stringify(`invalid value for enum ${enumDescriptor.goName}`)})`
+      );
+    });
+    g.line("}");
+    g.line("*e = candidate");
+    g.line("return nil");
+  });
+  g.line("}");
+}
+__name(renderEnumUnmarshalJSONMethod, "renderEnumUnmarshalJSONMethod");
+
+// src/stages/emit/files/enums.ts
+function generateEnumsFile(context) {
+  if (context.enumDescriptors.length === 0) {
+    return void 0;
+  }
+  const imports = new ImportSet();
+  const g = newGenerator().withTabs();
+  for (const enumDescriptor of context.enumDescriptors) {
+    renderEnum(g, enumDescriptor, context.options.strict);
+    if (enumDescriptor !== context.enumDescriptors[context.enumDescriptors.length - 1]) {
+      g.break();
+    }
+  }
+  const body = g.toString();
+  if (body.includes("json.")) {
+    imports.add("encoding/json");
+  }
+  if (body.includes("fmt.")) {
+    imports.add("fmt");
+  }
+  return {
+    path: "enums.go",
+    content: renderGoFile({
+      packageName: context.options.packageName,
+      imports,
+      body
+    })
+  };
+}
+__name(generateEnumsFile, "generateEnumsFile");
+
+// src/stages/emit/files/metadata-annotations.ts
+function writeAnnotationSetField(g, annotations) {
+  if (annotations.length === 0) {
+    g.line("Annotations: AnnotationSet{},");
+    return;
+  }
+  const byName = buildByNameEntries(annotations);
+  g.line("Annotations: AnnotationSet{");
+  g.block(() => {
+    g.line("List: []Annotation{");
+    g.block(() => {
+      for (const annotation of annotations) {
+        g.line("Annotation{");
+        g.block(() => {
+          g.line(`Name: ${JSON.stringify(annotation.name)},`);
+          g.line(
+            `Value: ${renderMetadataValueExpression(annotation.argument)},`
+          );
+        });
+        g.line("},");
+      }
+    });
+    g.line("},");
+    g.line("ByName: map[string]any{");
+    g.block(() => {
+      for (const [name, value] of byName) {
+        g.line(`${JSON.stringify(name)}: ${value},`);
+      }
+    });
+    g.line("},");
+  });
+  g.line("},");
+}
+__name(writeAnnotationSetField, "writeAnnotationSetField");
+function buildByNameEntries(annotations) {
+  const grouped = arrays_exports.groupBy(annotations, (annotation) => annotation.name);
+  const byName = objects_exports.mapValues(
+    grouped,
+    (group) => {
+      var _a2;
+      return renderMetadataValueExpression((_a2 = group[group.length - 1]) == null ? void 0 : _a2.argument);
+    }
+  );
+  return Object.keys(byName).map((name) => {
+    var _a2;
+    return [name, (_a2 = byName[name]) != null ? _a2 : "nil"];
+  });
+}
+__name(buildByNameEntries, "buildByNameEntries");
+
+// src/stages/emit/files/metadata-literals.ts
+function renderTypeMetadataType(descriptor, context) {
+  return descriptor.kind === "object" ? "object" : renderGoType(descriptor.typeRef, context, void 0, descriptor.position);
+}
+__name(renderTypeMetadataType, "renderTypeMetadataType");
+function renderConstantMetadataType(constant, context) {
   return constant.def.typeRef.kind === "object" ? renderAnonymousGoTypeExpression(
     constant.def.typeRef,
     context,
@@ -2604,48 +2854,11 @@ function renderMetadataGoType(constant, context) {
     constant.def.position
   );
 }
-__name(renderMetadataGoType, "renderMetadataGoType");
-function renderAnnotationSetLiteral(annotations) {
-  if (annotations.length === 0) {
-    return "AnnotationSet{}";
-  }
-  const annotationsByName = arrays_exports.groupBy(
-    annotations,
-    (annotation) => annotation.name
-  );
-  const allByName = objects_exports.mapValues(
-    annotationsByName,
-    (group) => group.map(
-      (annotation) => renderMetadataValueExpression(annotation.argument)
-    )
-  );
-  const byName = objects_exports.mapValues(
-    allByName,
-    (values) => {
-      var _a2;
-      return (_a2 = values[values.length - 1]) != null ? _a2 : "nil";
-    }
-  );
-  const byNameEntries = Object.keys(byName).map(
-    (name) => `${JSON.stringify(name)}: ${byName[name]}`
-  );
-  const allByNameEntries = Object.keys(allByName).map(
-    (name) => {
-      var _a2;
-      return `${JSON.stringify(name)}: []any{${(_a2 = allByName[name]) == null ? void 0 : _a2.join(", ")}}`;
-    }
-  );
-  return `AnnotationSet{List: []Annotation{${annotations.map(
-    (annotation) => `Annotation{Name: ${JSON.stringify(annotation.name)}, Value: ${renderMetadataValueExpression(annotation.argument)}}`
-  ).join(
-    ", "
-  )}}, ByName: map[string]any{${byNameEntries.join(", ")}}, AllByName: map[string][]any{${allByNameEntries.join(", ")}}}`;
-}
-__name(renderAnnotationSetLiteral, "renderAnnotationSetLiteral");
+__name(renderConstantMetadataType, "renderConstantMetadataType");
 
 // src/stages/emit/files/metadata-runtime.ts
 function renderMetadataSupportTypes(g) {
-  g.line("// Annotation describes a single VDL annotation.");
+  g.line("// Annotation describes a single VDL annotation entry.");
   g.line("type Annotation struct {");
   g.block(() => {
     g.line("Name string");
@@ -2660,7 +2873,6 @@ function renderMetadataSupportTypes(g) {
   g.block(() => {
     g.line("List []Annotation");
     g.line("ByName map[string]any");
-    g.line("AllByName map[string][]any");
   });
   g.line("}");
   g.break();
@@ -2682,74 +2894,59 @@ function renderMetadataSupportTypes(g) {
   });
   g.line("}");
   g.break();
-  g.line("// GetAll returns every value associated with the annotation name.");
-  g.line("func (a AnnotationSet) GetAll(name string) ([]any, bool) {");
-  g.block(() => {
-    g.line("values, ok := a.AllByName[name]");
-    g.line("return values, ok");
-  });
-  g.line("}");
-  g.break();
-  g.line("// FieldMetadata describes a generated Go struct field.");
+  g.line("// FieldMetadata describes a generated field.");
   g.line("type FieldMetadata struct {");
   g.block(() => {
     g.line("Name string");
-    g.line("VDLName string");
     g.line("JSONName string");
-    g.line("GoType string");
+    g.line("Type string");
     g.line("Optional bool");
     g.line("Annotations AnnotationSet");
   });
   g.line("}");
   g.break();
-  g.line("// TypeMetadata describes a generated Go type.");
+  g.line("// TypeMetadata describes a generated type.");
   g.line("type TypeMetadata struct {");
   g.block(() => {
     g.line("Name string");
-    g.line("VDLName string");
-    g.line("Path string");
-    g.line("Parent string");
-    g.line("Kind string");
-    g.line("GoType string");
-    g.line("Inline bool");
+    g.line("Type string");
     g.line("Annotations AnnotationSet");
     g.line("Fields map[string]FieldMetadata");
   });
   g.line("}");
   g.break();
-  g.line("// Field looks up a field by its generated Go name.");
-  g.line("func (m TypeMetadata) Field(name string) (FieldMetadata, bool) {");
+  g.line("// GetField looks up a field by its generated Go name.");
+  g.line("func (m TypeMetadata) GetField(name string) (FieldMetadata, bool) {");
   g.block(() => {
     g.line("field, ok := m.Fields[name]");
     g.line("return field, ok");
   });
   g.line("}");
   g.break();
-  g.line("// EnumMemberMetadata describes a generated enum member constant.");
+  g.line("// EnumMemberMetadata describes a generated enum value.");
   g.line("type EnumMemberMetadata struct {");
   g.block(() => {
     g.line("Name string");
-    g.line("VDLName string");
-    g.line("ConstName string");
     g.line("Value any");
     g.line("Annotations AnnotationSet");
   });
   g.line("}");
   g.break();
-  g.line("// EnumMetadata describes a generated enum type.");
+  g.line("// EnumMetadata describes a generated enum.");
   g.line("type EnumMetadata struct {");
   g.block(() => {
     g.line("Name string");
-    g.line("VDLName string");
-    g.line("ValueType string");
+    g.line("Type string");
     g.line("Annotations AnnotationSet");
     g.line("Members map[string]EnumMemberMetadata");
   });
   g.line("}");
   g.break();
-  g.line("// Member looks up an enum member by its generated Go suffix name.");
   g.line(
-    "func (m EnumMetadata) Member(name string) (EnumMemberMetadata, bool) {"
+    "// GetMember looks up an enum member by its generated Go suffix name."
+  );
+  g.line(
+    "func (m EnumMetadata) GetMember(name string) (EnumMemberMetadata, bool) {"
   );
   g.block(() => {
     g.line("member, ok := m.Members[name]");
@@ -2757,17 +2954,19 @@ function renderMetadataSupportTypes(g) {
   });
   g.line("}");
   g.break();
-  g.line("// ConstantMetadata describes a generated Go constant or variable.");
+  g.line("// ConstantMetadata describes a generated constant value.");
   g.line("type ConstantMetadata struct {");
   g.block(() => {
     g.line("Name string");
-    g.line("VDLName string");
-    g.line("GoType string");
+    g.line("Type string");
+    g.line("Value any");
     g.line("Annotations AnnotationSet");
   });
   g.line("}");
   g.break();
-  g.line("// SchemaMetadata exposes metadata for every generated declaration.");
+  g.line(
+    "// SchemaMetadata collects metadata for every generated declaration."
+  );
   g.line("type SchemaMetadata struct {");
   g.block(() => {
     g.line("Types map[string]TypeMetadata");
@@ -2776,25 +2975,25 @@ function renderMetadataSupportTypes(g) {
   });
   g.line("}");
   g.break();
-  g.line("// Type looks up a type by its generated Go name.");
-  g.line("func (m SchemaMetadata) Type(name string) (TypeMetadata, bool) {");
+  g.line("// GetType looks up a type by its generated Go name.");
+  g.line("func (m SchemaMetadata) GetType(name string) (TypeMetadata, bool) {");
   g.block(() => {
     g.line("value, ok := m.Types[name]");
     g.line("return value, ok");
   });
   g.line("}");
   g.break();
-  g.line("// Enum looks up an enum by its generated Go name.");
-  g.line("func (m SchemaMetadata) Enum(name string) (EnumMetadata, bool) {");
+  g.line("// GetEnum looks up an enum by its generated Go name.");
+  g.line("func (m SchemaMetadata) GetEnum(name string) (EnumMetadata, bool) {");
   g.block(() => {
     g.line("value, ok := m.Enums[name]");
     g.line("return value, ok");
   });
   g.line("}");
   g.break();
-  g.line("// Constant looks up a constant by its generated Go name.");
+  g.line("// GetConstant looks up a constant by its generated Go name.");
   g.line(
-    "func (m SchemaMetadata) Constant(name string) (ConstantMetadata, bool) {"
+    "func (m SchemaMetadata) GetConstant(name string) (ConstantMetadata, bool) {"
   );
   g.block(() => {
     g.line("value, ok := m.Constants[name]");
@@ -2806,38 +3005,63 @@ __name(renderMetadataSupportTypes, "renderMetadataSupportTypes");
 
 // src/stages/emit/files/metadata.ts
 function generateMetadataFile(context) {
+  if (!context.options.genMeta) {
+    return void 0;
+  }
   const g = newGenerator().withTabs();
   renderMetadataSupportTypes(g);
   g.break();
-  g.line(
-    "// VDLMetadata contains generated annotation metadata for this schema."
-  );
+  g.line("// VDLMetadata exposes generated metadata for the current schema.");
   g.line("var VDLMetadata = SchemaMetadata{");
   g.block(() => {
     g.line("Types: map[string]TypeMetadata{");
     g.block(() => {
       for (const descriptor of context.namedTypes) {
-        g.line(
-          `${JSON.stringify(descriptor.goName)}: ${renderTypeMetadataLiteral(descriptor, context)},`
-        );
+        writeTypeMetadataEntry(g, descriptor, context);
       }
     });
     g.line("},");
     g.line("Enums: map[string]EnumMetadata{");
     g.block(() => {
       for (const enumDescriptor of context.enumDescriptors) {
-        g.line(
-          `${JSON.stringify(enumDescriptor.goName)}: ${renderEnumMetadataLiteral(enumDescriptor)},`
-        );
+        writeEnumMetadataEntry(g, enumDescriptor.goName, () => {
+          g.line(`Name: ${JSON.stringify(enumDescriptor.goName)},`);
+          g.line(`Type: ${JSON.stringify(enumDescriptor.def.enumType)},`);
+          writeAnnotationSetField(g, enumDescriptor.def.annotations);
+          g.line("Members: map[string]EnumMemberMetadata{");
+          g.block(() => {
+            for (const member of enumDescriptor.members) {
+              g.line(`${JSON.stringify(member.goName)}: EnumMemberMetadata{`);
+              g.block(() => {
+                g.line(`Name: ${JSON.stringify(member.goName)},`);
+                g.line(
+                  `Value: ${renderMetadataValueExpression(member.def.value)},`
+                );
+                writeAnnotationSetField(g, member.def.annotations);
+              });
+              g.line("},");
+            }
+          });
+          g.line("},");
+        });
       }
     });
     g.line("},");
     g.line("Constants: map[string]ConstantMetadata{");
     g.block(() => {
       for (const constant of context.constantDescriptors) {
-        g.line(
-          `${JSON.stringify(constant.goName)}: ${renderConstantMetadataLiteral(constant, context)},`
-        );
+        g.line(`${JSON.stringify(constant.goName)}: ConstantMetadata{`);
+        g.block(() => {
+          g.line(`Name: ${JSON.stringify(constant.goName)},`);
+          g.line(
+            `Type: ${JSON.stringify(renderConstantMetadataType(constant, context))},`
+          );
+          g.line(
+            `Value: ${renderMetadataValueExpression(constant.def.value)},`
+          );
+          writeAnnotationSetField(g, constant.def.annotations);
+        });
+        g.line("},");
       }
     });
     g.line("},");
@@ -2852,6 +3076,43 @@ function generateMetadataFile(context) {
   };
 }
 __name(generateMetadataFile, "generateMetadataFile");
+function writeTypeMetadataEntry(g, descriptor, context) {
+  g.line(`${JSON.stringify(descriptor.goName)}: TypeMetadata{`);
+  g.block(() => {
+    g.line(`Name: ${JSON.stringify(descriptor.goName)},`);
+    g.line(
+      `Type: ${JSON.stringify(renderTypeMetadataType(descriptor, context))},`
+    );
+    writeAnnotationSetField(g, descriptor.annotations);
+    if (descriptor.fields.length === 0) {
+      g.line("Fields: nil,");
+      return;
+    }
+    g.line("Fields: map[string]FieldMetadata{");
+    g.block(() => {
+      for (const field of descriptor.fields) {
+        g.line(`${JSON.stringify(field.goName)}: FieldMetadata{`);
+        g.block(() => {
+          g.line(`Name: ${JSON.stringify(field.goName)},`);
+          g.line(`JSONName: ${JSON.stringify(field.jsonName)},`);
+          g.line(`Type: ${JSON.stringify(field.goType)},`);
+          g.line(`Optional: ${String(field.def.optional)},`);
+          writeAnnotationSetField(g, field.def.annotations);
+        });
+        g.line("},");
+      }
+    });
+    g.line("},");
+  });
+  g.line("},");
+}
+__name(writeTypeMetadataEntry, "writeTypeMetadataEntry");
+function writeEnumMetadataEntry(g, enumGoName, writeBody) {
+  g.line(`${JSON.stringify(enumGoName)}: EnumMetadata{`);
+  g.block(writeBody);
+  g.line("},");
+}
+__name(writeEnumMetadataEntry, "writeEnumMetadataEntry");
 
 // src/stages/emit/files/pointers.ts
 function generatePointersFile(context) {
@@ -2901,181 +3162,6 @@ function generatePointersFile(context) {
 }
 __name(generatePointersFile, "generatePointersFile");
 
-// src/stages/emit/files/types-enums.ts
-function renderEnum(g, enumDescriptor, strict) {
-  writeDocComment(
-    g,
-    buildDocCommentLines({
-      doc: enumDescriptor.def.doc,
-      annotations: enumDescriptor.def.annotations,
-      fallback: `${enumDescriptor.goName} is a VDL enum.`
-    })
-  );
-  g.line(
-    `type ${enumDescriptor.goName} ${enumDescriptor.def.enumType === "string" ? "string" : "int"}`
-  );
-  g.break();
-  g.line(`// ${enumDescriptor.goName} enum values.`);
-  g.line("const (");
-  g.block(() => {
-    for (const member of enumDescriptor.members) {
-      const commentLines = buildDocCommentLines({
-        doc: member.def.doc,
-        annotations: member.def.annotations
-      });
-      if (commentLines.length > 0) {
-        writeDocComment(g, commentLines);
-      }
-      g.line(
-        `${member.constName} ${enumDescriptor.goName} = ${renderEnumMemberLiteral(enumDescriptor, member)}`
-      );
-    }
-  });
-  g.line(")");
-  g.break();
-  g.line(
-    `// ${enumDescriptor.listGoName} contains every valid ${enumDescriptor.goName} value.`
-  );
-  g.line(`var ${enumDescriptor.listGoName} = []${enumDescriptor.goName}{`);
-  g.block(() => {
-    for (const member of enumDescriptor.members) {
-      g.line(`${member.constName},`);
-    }
-  });
-  g.line("}");
-  g.break();
-  renderEnumStringMethod(g, enumDescriptor);
-  g.break();
-  renderEnumIsValidMethod(g, enumDescriptor);
-  if (strict) {
-    g.break();
-    renderEnumMarshalJSONMethod(g, enumDescriptor);
-    g.break();
-    renderEnumUnmarshalJSONMethod(g, enumDescriptor);
-  }
-}
-__name(renderEnum, "renderEnum");
-function renderEnumMemberLiteral(enumDescriptor, member) {
-  if (enumDescriptor.def.enumType === "string") {
-    return JSON.stringify(member.def.value.stringValue);
-  }
-  return String(member.def.value.intValue);
-}
-__name(renderEnumMemberLiteral, "renderEnumMemberLiteral");
-function renderEnumStringMethod(g, enumDescriptor) {
-  g.line(
-    `// String returns the string representation of ${enumDescriptor.goName}.`
-  );
-  g.line(`func (e ${enumDescriptor.goName}) String() string {`);
-  g.block(() => {
-    if (enumDescriptor.def.enumType === "string") {
-      g.line("return string(e)");
-      return;
-    }
-    g.line("switch e {");
-    g.block(() => {
-      for (const member of enumDescriptor.members) {
-        g.line(`case ${member.constName}:`);
-        g.block(() => {
-          g.line(`return ${JSON.stringify(member.def.name)}`);
-        });
-      }
-    });
-    g.line("}");
-    g.line(
-      `return fmt.Sprintf(${JSON.stringify(`${enumDescriptor.goName}(%d)`)}, e)`
-    );
-  });
-  g.line("}");
-}
-__name(renderEnumStringMethod, "renderEnumStringMethod");
-function renderEnumIsValidMethod(g, enumDescriptor) {
-  g.line(
-    `// IsValid reports whether the value belongs to ${enumDescriptor.goName}.`
-  );
-  g.line(`func (e ${enumDescriptor.goName}) IsValid() bool {`);
-  g.block(() => {
-    g.line("switch e {");
-    g.block(() => {
-      g.line(
-        `case ${enumDescriptor.members.map((member) => member.constName).join(", ")}:`
-      );
-      g.block(() => {
-        g.line("return true");
-      });
-    });
-    g.line("}");
-    g.line("return false");
-  });
-  g.line("}");
-}
-__name(renderEnumIsValidMethod, "renderEnumIsValidMethod");
-function renderEnumMarshalJSONMethod(g, enumDescriptor) {
-  g.line("// MarshalJSON implements json.Marshaler.");
-  g.line(`func (e ${enumDescriptor.goName}) MarshalJSON() ([]byte, error) {`);
-  g.block(() => {
-    g.line("if !e.IsValid() {");
-    g.block(() => {
-      g.line(
-        `return nil, fmt.Errorf(${JSON.stringify(`cannot marshal invalid value for enum ${enumDescriptor.goName}`)})`
-      );
-    });
-    g.line("}");
-    if (enumDescriptor.def.enumType === "string") {
-      g.line("return json.Marshal(string(e))");
-      return;
-    }
-    g.line("return json.Marshal(int(e))");
-  });
-  g.line("}");
-}
-__name(renderEnumMarshalJSONMethod, "renderEnumMarshalJSONMethod");
-function renderEnumUnmarshalJSONMethod(g, enumDescriptor) {
-  g.line("// UnmarshalJSON implements json.Unmarshaler.");
-  g.line(
-    `func (e *${enumDescriptor.goName}) UnmarshalJSON(data []byte) error {`
-  );
-  g.block(() => {
-    if (enumDescriptor.def.enumType === "string") {
-      g.line("var value string");
-      g.line("if err := json.Unmarshal(data, &value); err != nil {");
-      g.block(() => {
-        g.line("return err");
-      });
-      g.line("}");
-      g.line(`candidate := ${enumDescriptor.goName}(value)`);
-      g.line("if !candidate.IsValid() {");
-      g.block(() => {
-        g.line(
-          `return fmt.Errorf(${JSON.stringify(`invalid value for enum ${enumDescriptor.goName}`)})`
-        );
-      });
-      g.line("}");
-      g.line("*e = candidate");
-      g.line("return nil");
-      return;
-    }
-    g.line("var value int");
-    g.line("if err := json.Unmarshal(data, &value); err != nil {");
-    g.block(() => {
-      g.line("return err");
-    });
-    g.line("}");
-    g.line(`candidate := ${enumDescriptor.goName}(value)`);
-    g.line("if !candidate.IsValid() {");
-    g.block(() => {
-      g.line(
-        `return fmt.Errorf(${JSON.stringify(`invalid value for enum ${enumDescriptor.goName}`)})`
-      );
-    });
-    g.line("}");
-    g.line("*e = candidate");
-    g.line("return nil");
-  });
-  g.line("}");
-}
-__name(renderEnumUnmarshalJSONMethod, "renderEnumUnmarshalJSONMethod");
-
 // src/stages/emit/files/types-schema.ts
 function renderNamedTypeSchemaSupport(g, descriptor, context) {
   if (!context.options.strict) {
@@ -3115,7 +3201,7 @@ __name(renderNamedTypeSchemaSupport, "renderNamedTypeSchemaSupport");
 function renderPreObjectType(g, descriptor) {
   const preTypeName = toPreTypeName(descriptor.goName);
   g.line(
-    `// ${preTypeName} is the presence-aware JSON form of ${descriptor.goName}.`
+    `// ${preTypeName} mirrors ${descriptor.goName} during strict JSON decoding.`
   );
   g.line(`type ${preTypeName} struct {`);
   g.block(() => {
@@ -3129,7 +3215,9 @@ function renderPreObjectType(g, descriptor) {
 __name(renderPreObjectType, "renderPreObjectType");
 function renderPreObjectValidateMethod(g, descriptor) {
   const preTypeName = toPreTypeName(descriptor.goName);
-  g.line(`// validate checks JSON field presence for ${descriptor.goName}.`);
+  g.line(
+    `// validate reports whether all required JSON fields are present in ${preTypeName}.`
+  );
   g.line(`func (p *${preTypeName}) validate() error {`);
   g.block(() => {
     for (const field of descriptor.fields) {
@@ -3151,7 +3239,7 @@ function renderPreObjectValidateMethod(g, descriptor) {
 __name(renderPreObjectValidateMethod, "renderPreObjectValidateMethod");
 function renderPreObjectTransformMethod(g, descriptor) {
   const preTypeName = toPreTypeName(descriptor.goName);
-  g.line(`// transform converts ${preTypeName} into ${descriptor.goName}.`);
+  g.line(`// transform converts ${preTypeName} to ${descriptor.goName}.`);
   g.line(`func (p *${preTypeName}) transform() ${descriptor.goName} {`);
   g.block(() => {
     g.line(`return ${descriptor.goName}{`);
@@ -3168,7 +3256,9 @@ function renderPreObjectTransformMethod(g, descriptor) {
 __name(renderPreObjectTransformMethod, "renderPreObjectTransformMethod");
 function renderObjectUnmarshalJSONMethod(g, descriptor) {
   const preTypeName = toPreTypeName(descriptor.goName);
-  g.line("// UnmarshalJSON implements json.Unmarshaler.");
+  g.line(
+    `// UnmarshalJSON decodes ${descriptor.goName} while requiring every non-optional JSON field.`
+  );
   g.line(`func (x *${descriptor.goName}) UnmarshalJSON(data []byte) error {`);
   g.block(() => {
     g.line(`var pre ${preTypeName}`);
@@ -3195,7 +3285,9 @@ function renderAliasMarshalJSONMethod(g, descriptor, context) {
     void 0,
     descriptor.position
   );
-  g.line("// MarshalJSON implements json.Marshaler.");
+  g.line(
+    `// MarshalJSON encodes ${descriptor.goName} using its underlying strict JSON representation.`
+  );
   g.line(`func (x ${descriptor.goName}) MarshalJSON() ([]byte, error) {`);
   g.block(() => {
     g.line(`return json.Marshal(${underlyingType}(x))`);
@@ -3210,7 +3302,9 @@ function renderAliasUnmarshalJSONMethod(g, descriptor, context) {
     void 0,
     descriptor.position
   );
-  g.line("// UnmarshalJSON implements json.Unmarshaler.");
+  g.line(
+    `// UnmarshalJSON decodes ${descriptor.goName} using its underlying strict JSON representation.`
+  );
   g.line(`func (x *${descriptor.goName}) UnmarshalJSON(data []byte) error {`);
   g.block(() => {
     g.line(`var value ${underlyingType}`);
@@ -3291,7 +3385,7 @@ __name(toPreTypeName, "toPreTypeName");
 
 // src/stages/emit/files/types-named-types.ts
 function renderNamedType(g, descriptor, context) {
-  const fallback = descriptor.inline ? `${descriptor.goName} represents the inline VDL object at ${descriptor.path}.` : descriptor.kind === "object" ? `${descriptor.goName} is a VDL object type.` : `${descriptor.goName} is a VDL type.`;
+  const fallback = descriptor.inline ? `${descriptor.goName} represents the inline object declared at ${descriptor.path}.` : descriptor.kind === "object" ? `${descriptor.goName} represents a VDL object.` : `${descriptor.goName} declares a VDL type alias.`;
   writeDocComment(
     g,
     buildDocCommentLines({
@@ -3338,9 +3432,9 @@ __name(renderStructType, "renderStructType");
 function renderGetters(g, fields, receiverType) {
   for (const field of fields) {
     const valueType = stripPointer(field.goType);
-    g.line(
-      `// Get${field.goName} returns ${field.goName} or its zero value when unavailable.`
-    );
+    const getterFallback = field.def.optional ? `Get${field.goName} returns the ${field.goName} field. It returns the zero value when the receiver or field is nil.` : `Get${field.goName} returns the ${field.goName} field. It returns the zero value when the receiver is nil.`;
+    const getterOrFallback = field.def.optional ? `Get${field.goName}Or returns the ${field.goName} field. It returns defaultValue when the receiver or field is nil.` : `Get${field.goName}Or returns the ${field.goName} field. It returns defaultValue when the receiver is nil.`;
+    g.line(`// ${getterFallback}`);
     g.line(`func (x *${receiverType}) Get${field.goName}() ${valueType} {`);
     g.block(() => {
       if (field.def.optional) {
@@ -3363,9 +3457,7 @@ function renderGetters(g, fields, receiverType) {
     });
     g.line("}");
     g.break();
-    g.line(
-      `// Get${field.goName}Or returns ${field.goName} or the provided default when unavailable.`
-    );
+    g.line(`// ${getterOrFallback}`);
     g.line(
       `func (x *${receiverType}) Get${field.goName}Or(defaultValue ${valueType}) ${valueType} {`
     );
@@ -3400,7 +3492,7 @@ __name(stripPointer, "stripPointer");
 
 // src/stages/emit/files/types.ts
 function generateTypesFile(context) {
-  if (context.enumDescriptors.length === 0 && context.namedTypes.length === 0) {
+  if (context.namedTypes.length === 0) {
     return void 0;
   }
   const imports = new ImportSet();
@@ -3408,13 +3500,11 @@ function generateTypesFile(context) {
     collectImportsForTypeRef(namedType.typeRef, imports);
   }
   const g = newGenerator().withTabs();
-  for (const enumDescriptor of context.enumDescriptors) {
-    renderEnum(g, enumDescriptor, context.options.strict);
-    g.break();
-  }
   for (const namedType of context.namedTypes) {
     renderNamedType(g, namedType, context);
-    g.break();
+    if (namedType !== context.namedTypes[context.namedTypes.length - 1]) {
+      g.break();
+    }
   }
   const body = g.toString();
   if (body.includes("json.")) {
@@ -3437,6 +3527,7 @@ __name(generateTypesFile, "generateTypesFile");
 // src/stages/emit/generate-files.ts
 function generateFiles(context) {
   return arrays_exports.compact([
+    generateEnumsFile(context),
     generateTypesFile(context),
     generateConstantsFile(context),
     generateMetadataFile(context),
@@ -3808,6 +3899,7 @@ __name(createGeneratorContext, "createGeneratorContext");
 function resolveGeneratorOptions(input) {
   const packageName = options_exports.getOptionString(input.options, "package", "vdl");
   const genConsts = options_exports.getOptionBool(input.options, "genConsts", true);
+  const genMeta = options_exports.getOptionBool(input.options, "genMeta", true);
   const strict = options_exports.getOptionBool(input.options, "strict", true);
   if (!isValidGoPackageName(packageName)) {
     return {
@@ -3823,6 +3915,7 @@ function resolveGeneratorOptions(input) {
     options: {
       packageName,
       genConsts,
+      genMeta,
       strict
     }
   };
