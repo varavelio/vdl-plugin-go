@@ -47,7 +47,7 @@ When updating this document, do so with the context of the entire document in mi
   - `src/stages/model/build-context.ts`: builds the shared generation context and aggregates stage errors.
   - `src/stages/model/*.ts`: indexes schema definitions, derives Go names, discovers inline object types recursively, builds descriptors, and validates Go-specific symbol collisions.
   - `src/stages/emit/generate-files.ts`: emits files in fixed order.
-  - `src/stages/emit/files/*.ts`: file-level Go emitters for `types.go`, `constants.go`, `metadata.go`, and `pointers.go`.
+- `src/stages/emit/files/*.ts`: file-level Go emitters for `enums.go`, `types.go`, `constants.go`, `metadata.go`, and `pointers.go`.
 - **Shared Modules**:
   - `src/shared/errors.ts`: typed generation errors, assertions, and conversion to `PluginOutputError`.
   - `src/shared/naming.ts`: VDL-to-Go naming rules for types, fields, enum members, constants, inline types, and package validation, built on SDK string utilities.
@@ -102,7 +102,8 @@ When updating this document, do so with the context of the entire document in mi
 2. `src/generate.ts` resolves options from `input.options`.
 3. `src/stages/model/build-context.ts` indexes the IR, derives Go names, recursively discovers inline object types, and validates Go-specific collisions.
 4. If validation succeeds, `src/stages/emit/generate-files.ts` emits files in fixed order:
-   - `types.go`
+   - `enums.go` (optional)
+   - `types.go` (optional)
    - `constants.go` (optional)
    - `metadata.go`
    - `pointers.go`
@@ -139,7 +140,7 @@ This order is intentional and covered by tests. Preserve it unless the test suit
 - Arrays render as repeated `[]` dimensions.
 - Maps currently render only as `map[string]...`.
 - Optional object fields render as pointers.
-- Inline objects become named Go structs in generated output; anonymous struct expressions are mainly used for composite literals and metadata type strings.
+- Inline objects become named Go structs in generated output; anonymous struct expressions are mainly used for composite literals and constant metadata type strings.
 
 ### Strict JSON Rules
 
@@ -172,8 +173,7 @@ This order is intentional and covered by tests. Preserve it unless the test suit
   - `<Enum>List`
   - `String()`
   - `IsValid()`
-  - `MarshalJSON()`
-  - `UnmarshalJSON()`
+  - `strict` additionally generates enum `MarshalJSON()` and `UnmarshalJSON()` methods.
 - Enum JSON handling rejects invalid values.
 - Top-level constants whose declared type is a direct enum currently emit as untyped underlying scalar constants; tests lock this behavior in.
 
@@ -181,6 +181,7 @@ This order is intentional and covered by tests. Preserve it unless the test suit
 
 - `metadata.go` is always emitted.
 - `VDLMetadata` exposes generated metadata for types, enums, and constants.
+- Metadata is intentionally compact: keep generated names, simple type/value data, fields, enum members, and annotations, but avoid duplicating lower-value generation internals such as VDL names, parent paths, or generated constant identifiers.
 - Annotation metadata preserves declaration order in `List`, latest value in `ByName`, and all repeated values in `AllByName`.
 - Missing metadata lookups must return zero values plus `false`, not panic.
 
