@@ -184,6 +184,7 @@ This order is intentional and covered by tests. Preserve it unless the test suit
 - Metadata is intentionally compact: keep generated names, simple type/value data, fields, enum members, and annotations, but avoid duplicating lower-value generation internals such as VDL names, parent paths, or generated constant identifiers.
 - Annotation metadata preserves declaration order in `List` and latest value in `ByName`.
 - Schema lookup helpers are `GetType`, `GetEnum`, and `GetConstant`.
+- Nested metadata lookup helpers are `GetField` on `TypeMetadata` and `GetMember` on `EnumMetadata`.
 - Missing metadata lookups must return zero values plus `false`, not panic.
 
 ### Pointer Helper Rules

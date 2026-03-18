@@ -1,0 +1,27 @@
+enum Tier {
+  Free = "free"
+  Pro = "pro"
+  Enterprise = "enterprise"
+}
+
+const defaults = {
+  tiers [Tier.Free Tier.Pro]
+  byRegion {
+    us Tier.Pro
+    eu Tier.Enterprise
+  }
+  bundles [
+    {
+      name "starter"
+      features ["sync" "export"]
+      tier Tier.Free
+    }
+    {
+      name "growth"
+      features ["sync" "export" "audit"]
+      tier Tier.Pro
+    }
+  ]
+}
+
+const defaultsClone = defaults

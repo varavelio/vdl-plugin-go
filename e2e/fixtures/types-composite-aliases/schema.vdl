@@ -1,0 +1,18 @@
+enum Status {
+  Unknown = ""
+  Ready = "ready"
+  Failed = "failed"
+}
+
+type StatusValues Status[]
+type StatusByID map[Status]
+
+type Event {
+  id string
+  statuses StatusValues
+  byId StatusByID
+  nested {
+    statuses StatusValues
+    byId StatusByID
+  }
+}

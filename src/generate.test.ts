@@ -211,9 +211,8 @@ describe("generate", () => {
     const metadata = fileContent(result, "metadata.go");
     expect(metadata).toContain("var VDLMetadata = SchemaMetadata{");
     expect(metadata).toContain('"Product": TypeMetadata');
-    expect(metadata).toContain(
-      'Annotations: AnnotationSet{List: []Annotation{Annotation{Name: "resource", Value: "catalog"}}',
-    );
+    expect(metadata).toContain("Annotations: AnnotationSet{");
+    expect(metadata).toContain("List: []Annotation{");
     expect(metadata).toContain('"Description": FieldMetadata');
     expect(metadata).toContain('"deprecated": nil');
     expect(metadata).not.toContain("AllByName");

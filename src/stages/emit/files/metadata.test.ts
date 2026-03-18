@@ -70,7 +70,13 @@ describe("generateMetadataFile", () => {
       "func (m SchemaMetadata) GetType(name string) (TypeMetadata, bool) {",
     );
     expect(content).toContain(
+      "func (m TypeMetadata) GetField(name string) (FieldMetadata, bool) {",
+    );
+    expect(content).toContain(
       "func (m SchemaMetadata) GetEnum(name string) (EnumMetadata, bool) {",
+    );
+    expect(content).toContain(
+      "func (m EnumMetadata) GetMember(name string) (EnumMemberMetadata, bool) {",
     );
     expect(content).toContain(
       "func (m SchemaMetadata) GetConstant(name string) (ConstantMetadata, bool) {",
@@ -84,6 +90,9 @@ describe("generateMetadataFile", () => {
     expect(content).toContain('"Name": FieldMetadata{');
     expect(content).toContain('"Status": EnumMetadata{');
     expect(content).toContain('"ApiVersion": ConstantMetadata{');
+    expect(content).toContain("Annotations: AnnotationSet{");
+    expect(content).toContain("List: []Annotation{");
+    expect(content).toContain("ByName: map[string]any{");
     expect(content).toContain('"label": "Operational"');
     expect(content).toContain('"searchable": nil');
     expect(content).toContain('"resource": "catalog"');

@@ -18,7 +18,7 @@ func mustMember(enumName, memberName string, value any) gen.EnumMemberMetadata {
 	enumMetadata, ok := gen.VDLMetadata.GetEnum(enumName)
 	enumMetadata = testutil.MustPresent("enum metadata: "+enumName, enumMetadata, ok)
 
-	memberMetadata, ok := enumMetadata.Member(memberName)
+	memberMetadata, ok := enumMetadata.GetMember(memberName)
 	memberMetadata = testutil.MustPresent("enum member metadata: "+enumName+"."+memberName, memberMetadata, ok)
 	testutil.MustEqual(enumName+"."+memberName+" name", memberMetadata.Name, memberName)
 	testutil.MustEqual(enumName+"."+memberName+" value", memberMetadata.Value, value)
@@ -45,6 +45,6 @@ func main() {
 	missingEnum, ok := gen.VDLMetadata.GetEnum("Missing")
 	testutil.MustAbsent("missing enum metadata", missingEnum, ok, gen.EnumMetadata{})
 
-	missingMember, ok := gen.VDLMetadata.Enums["DeliveryState"].Member("Missing")
+	missingMember, ok := gen.VDLMetadata.Enums["DeliveryState"].GetMember("Missing")
 	testutil.MustAbsent("missing enum member metadata", missingMember, ok, gen.EnumMemberMetadata{})
 }

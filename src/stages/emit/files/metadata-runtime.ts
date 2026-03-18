@@ -66,8 +66,8 @@ export function renderMetadataSupportTypes(
   g.line("}");
   g.break();
 
-  g.line("// Field looks up a field by its generated Go name.");
-  g.line("func (m TypeMetadata) Field(name string) (FieldMetadata, bool) {");
+  g.line("// GetField looks up a field by its generated Go name.");
+  g.line("func (m TypeMetadata) GetField(name string) (FieldMetadata, bool) {");
   g.block(() => {
     g.line("field, ok := m.Fields[name]");
     g.line("return field, ok");
@@ -96,9 +96,11 @@ export function renderMetadataSupportTypes(
   g.line("}");
   g.break();
 
-  g.line("// Member looks up an enum member by its generated Go suffix name.");
   g.line(
-    "func (m EnumMetadata) Member(name string) (EnumMemberMetadata, bool) {",
+    "// GetMember looks up an enum member by its generated Go suffix name.",
+  );
+  g.line(
+    "func (m EnumMetadata) GetMember(name string) (EnumMemberMetadata, bool) {",
   );
   g.block(() => {
     g.line("member, ok := m.Members[name]");

@@ -1,9 +1,10 @@
 import { newGenerator } from "@varavel/gen";
+import type { Annotation } from "@varavel/vdl-plugin-sdk";
+import { arrays, objects } from "@varavel/vdl-plugin-sdk/utils";
 import { renderMetadataValueExpression } from "../../../shared/go-literals";
 import { renderGoFile } from "../../../shared/render/go-file";
 import type { GeneratedFile, GeneratorContext } from "../../model/types";
 import {
-  renderAnnotationSetLiteral,
   renderConstantMetadataType,
   renderTypeMetadataType,
 } from "./metadata-literals";
@@ -38,9 +39,7 @@ export function generateMetadataFile(
         writeEnumMetadataEntry(g, enumDescriptor.goName, () => {
           g.line(`Name: ${JSON.stringify(enumDescriptor.goName)},`);
           g.line(`Type: ${JSON.stringify(enumDescriptor.def.enumType)},`);
-          g.line(
-            `Annotations: ${renderAnnotationSetLiteral(enumDescriptor.def.annotations)},`,
-          );
+          writeAnnotationSetField(g, enumDescriptor.def.annotations);
           g.line("Members: map[string]EnumMemberMetadata{");
           g.block(() => {
             for (const member of enumDescriptor.members) {
@@ -50,9 +49,7 @@ export function generateMetadataFile(
                 g.line(
                   `Value: ${renderMetadataValueExpression(member.def.value)},`,
                 );
-                g.line(
-                  `Annotations: ${renderAnnotationSetLiteral(member.def.annotations)},`,
-                );
+                writeAnnotationSetField(g, member.def.annotations);
               });
               g.line("},");
             }
@@ -75,9 +72,7 @@ export function generateMetadataFile(
           g.line(
             `Value: ${renderMetadataValueExpression(constant.def.value)},`,
           );
-          g.line(
-            `Annotations: ${renderAnnotationSetLiteral(constant.def.annotations)},`,
-          );
+          writeAnnotationSetField(g, constant.def.annotations);
         });
         g.line("},");
       }
@@ -106,9 +101,7 @@ function writeTypeMetadataEntry(
     g.line(
       `Type: ${JSON.stringify(renderTypeMetadataType(descriptor, context))},`,
     );
-    g.line(
-      `Annotations: ${renderAnnotationSetLiteral(descriptor.annotations)},`,
-    );
+    writeAnnotationSetField(g, descriptor.annotations);
 
     if (descriptor.fields.length === 0) {
       g.line("Fields: nil,");
@@ -124,9 +117,7 @@ function writeTypeMetadataEntry(
           g.line(`JSONName: ${JSON.stringify(field.jsonName)},`);
           g.line(`Type: ${JSON.stringify(field.goType)},`);
           g.line(`Optional: ${String(field.def.optional)},`);
-          g.line(
-            `Annotations: ${renderAnnotationSetLiteral(field.def.annotations)},`,
-          );
+          writeAnnotationSetField(g, field.def.annotations);
         });
         g.line("},");
       }
@@ -143,5 +134,47 @@ function writeEnumMetadataEntry(
 ): void {
   g.line(`${JSON.stringify(enumGoName)}: EnumMetadata{`);
   g.block(writeBody);
+  g.line("},");
+}
+
+function writeAnnotationSetField(
+  g: ReturnType<typeof newGenerator>,
+  annotations: Annotation[],
+): void {
+  if (annotations.length === 0) {
+    g.line("Annotations: AnnotationSet{},");
+    return;
+  }
+
+  const grouped = arrays.groupBy(annotations, (annotation) => annotation.name);
+  const byName = objects.mapValues(grouped, (group) =>
+    renderMetadataValueExpression(group[group.length - 1]?.argument),
+  );
+
+  g.line("Annotations: AnnotationSet{");
+  g.block(() => {
+    g.line("List: []Annotation{");
+    g.block(() => {
+      for (const annotation of annotations) {
+        g.line("Annotation{");
+        g.block(() => {
+          g.line(`Name: ${JSON.stringify(annotation.name)},`);
+          g.line(
+            `Value: ${renderMetadataValueExpression(annotation.argument)},`,
+          );
+        });
+        g.line("},");
+      }
+    });
+    g.line("},");
+
+    g.line("ByName: map[string]any{");
+    g.block(() => {
+      for (const name of Object.keys(byName)) {
+        g.line(`${JSON.stringify(name)}: ${byName[name]},`);
+      }
+    });
+    g.line("},");
+  });
   g.line("},");
 }

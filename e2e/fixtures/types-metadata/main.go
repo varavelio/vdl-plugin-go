@@ -19,7 +19,7 @@ func mustField(typeName, fieldName, jsonName, typ string, optional bool) {
 	typeMetadata, ok := gen.VDLMetadata.GetType(typeName)
 	typeMetadata = testutil.MustPresent("type metadata: "+typeName, typeMetadata, ok)
 
-	fieldMetadata, ok := typeMetadata.Field(fieldName)
+	fieldMetadata, ok := typeMetadata.GetField(fieldName)
 	fieldMetadata = testutil.MustPresent("field metadata: "+typeName+"."+fieldName, fieldMetadata, ok)
 
 	testutil.MustEqual(typeName+"."+fieldName+" name", fieldMetadata.Name, fieldName)
@@ -44,7 +44,7 @@ func main() {
 	missingType, ok := gen.VDLMetadata.GetType("Missing")
 	testutil.MustAbsent("missing type metadata", missingType, ok, gen.TypeMetadata{})
 
-	missingField, ok := gen.VDLMetadata.Types["Profile"].Field("Missing")
+	missingField, ok := gen.VDLMetadata.Types["Profile"].GetField("Missing")
 	testutil.MustAbsent("missing field metadata", missingField, ok, gen.FieldMetadata{})
 
 	missingEnum, ok := gen.VDLMetadata.GetEnum("Missing")
