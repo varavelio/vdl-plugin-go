@@ -33,6 +33,7 @@ describe("build-context", () => {
       generatorOptions: {
         packageName: "vdl",
         genConsts: true,
+        strict: true,
       },
     });
 
@@ -63,6 +64,7 @@ describe("build-context", () => {
       generatorOptions: {
         packageName: "vdl",
         genConsts: true,
+        strict: true,
       },
     });
 
@@ -84,6 +86,7 @@ describe("build-context", () => {
       generatorOptions: {
         packageName: "vdl",
         genConsts: true,
+        strict: true,
       },
     });
 

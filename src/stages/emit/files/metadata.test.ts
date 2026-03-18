@@ -53,6 +53,7 @@ describe("generateMetadataFile", () => {
       generatorOptions: {
         packageName: "vdl",
         genConsts: true,
+        strict: true,
       },
     });
 

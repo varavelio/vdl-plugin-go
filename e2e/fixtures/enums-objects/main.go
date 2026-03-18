@@ -49,5 +49,9 @@ func main() {
 		Statuses: []gen.Status{},
 		Nested:   gen.EnvelopeNested{Status: gen.StatusUnknown},
 	})
-	testutil.MustErrContains("Envelope invalid marshal", err, "cannot marshal invalid value for enum Status")
+	testutil.MustErrContains(
+		"Envelope invalid marshal",
+		err,
+		"cannot marshal invalid value for enum Status",
+	)
 }

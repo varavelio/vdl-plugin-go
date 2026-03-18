@@ -15,6 +15,7 @@ import type {
 export interface GeneratorOptions {
   packageName: string;
   genConsts: boolean;
+  strict: boolean;
 }
 
 export type GeneratedFile = PluginOutputFile;

@@ -9,6 +9,7 @@ import type {
   GeneratorContext,
   NamedTypeDescriptor,
 } from "../../model/types";
+import { renderNamedTypeSchemaSupport } from "./types-schema";
 
 export function renderNamedType(
   g: ReturnType<typeof newGenerator>,
@@ -33,6 +34,9 @@ export function renderNamedType(
   if (descriptor.kind === "object") {
     renderStructType(g, descriptor);
     g.break();
+    if (renderNamedTypeSchemaSupport(g, descriptor, context)) {
+      g.break();
+    }
     renderGetters(g, descriptor.fields, descriptor.goName);
     return;
   }
@@ -40,6 +44,10 @@ export function renderNamedType(
   g.line(
     `type ${descriptor.goName} ${renderGoType(descriptor.typeRef, context, undefined, descriptor.position)}`,
   );
+
+  if (renderNamedTypeSchemaSupport(g, descriptor, context)) {
+    g.break();
+  }
 }
 
 function renderStructType(

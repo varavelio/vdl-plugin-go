@@ -10,6 +10,7 @@ describe("generateConstantsFile", () => {
       generatorOptions: {
         packageName: "vdl",
         genConsts: true,
+        strict: true,
       },
     });
     const disabled = createGeneratorContext({
@@ -25,6 +26,7 @@ describe("generateConstantsFile", () => {
       generatorOptions: {
         packageName: "vdl",
         genConsts: false,
+        strict: true,
       },
     });
 
@@ -74,6 +76,7 @@ describe("generateConstantsFile", () => {
       generatorOptions: {
         packageName: "vdl",
         genConsts: true,
+        strict: true,
       },
     });
 

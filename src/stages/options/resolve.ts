@@ -9,6 +9,7 @@ export function resolveGeneratorOptions(input: PluginInput): {
 } {
   const packageName = options.getOptionString(input.options, "package", "vdl");
   const genConsts = options.getOptionBool(input.options, "genConsts", true);
+  const strict = options.getOptionBool(input.options, "strict", true);
 
   if (!isValidGoPackageName(packageName)) {
     return {
@@ -25,6 +26,7 @@ export function resolveGeneratorOptions(input: PluginInput): {
     options: {
       packageName,
       genConsts,
+      strict,
     },
   };
 }

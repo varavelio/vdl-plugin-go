@@ -48,6 +48,129 @@ __export(index_exports, {
 });
 module.exports = __toCommonJS(index_exports);
 
+// node_modules/@varavel/vdl-plugin-sdk/dist/types-hJ-3ZrlX.js
+function hydrateAnnotation(input) {
+  return {
+    position: hydratePosition(input.position),
+    name: input.name,
+    argument: input.argument ? hydrateLiteralValue(input.argument) : input.argument
+  };
+}
+__name(hydrateAnnotation, "hydrateAnnotation");
+function hydrateConstantDef(input) {
+  return {
+    position: hydratePosition(input.position),
+    name: input.name,
+    doc: input.doc ? input.doc : input.doc,
+    annotations: input.annotations.map((el) => hydrateAnnotation(el)),
+    typeRef: hydrateTypeRef(input.typeRef),
+    value: hydrateLiteralValue(input.value)
+  };
+}
+__name(hydrateConstantDef, "hydrateConstantDef");
+function hydrateEnumDef(input) {
+  return {
+    position: hydratePosition(input.position),
+    name: input.name,
+    doc: input.doc ? input.doc : input.doc,
+    annotations: input.annotations.map((el) => hydrateAnnotation(el)),
+    enumType: input.enumType,
+    members: input.members.map((el) => hydrateEnumMember(el))
+  };
+}
+__name(hydrateEnumDef, "hydrateEnumDef");
+function hydrateEnumMember(input) {
+  return {
+    position: hydratePosition(input.position),
+    name: input.name,
+    value: hydrateLiteralValue(input.value),
+    doc: input.doc ? input.doc : input.doc,
+    annotations: input.annotations.map((el) => hydrateAnnotation(el))
+  };
+}
+__name(hydrateEnumMember, "hydrateEnumMember");
+function hydrateField(input) {
+  return {
+    position: hydratePosition(input.position),
+    name: input.name,
+    doc: input.doc ? input.doc : input.doc,
+    optional: input.optional,
+    annotations: input.annotations.map((el) => hydrateAnnotation(el)),
+    typeRef: hydrateTypeRef(input.typeRef)
+  };
+}
+__name(hydrateField, "hydrateField");
+function hydrateIrSchema(input) {
+  return {
+    entryPoint: input.entryPoint,
+    constants: input.constants.map((el) => hydrateConstantDef(el)),
+    enums: input.enums.map((el) => hydrateEnumDef(el)),
+    types: input.types.map((el) => hydrateTypeDef(el)),
+    docs: input.docs.map((el) => hydrateTopLevelDoc(el))
+  };
+}
+__name(hydrateIrSchema, "hydrateIrSchema");
+function hydrateLiteralValue(input) {
+  return {
+    position: hydratePosition(input.position),
+    kind: input.kind,
+    stringValue: input.stringValue ? input.stringValue : input.stringValue,
+    intValue: input.intValue ? input.intValue : input.intValue,
+    floatValue: input.floatValue ? input.floatValue : input.floatValue,
+    boolValue: input.boolValue ? input.boolValue : input.boolValue,
+    objectEntries: input.objectEntries ? input.objectEntries.map((el) => hydrateObjectEntry(el)) : input.objectEntries,
+    arrayItems: input.arrayItems ? input.arrayItems.map((el) => hydrateLiteralValue(el)) : input.arrayItems
+  };
+}
+__name(hydrateLiteralValue, "hydrateLiteralValue");
+function hydrateObjectEntry(input) {
+  return {
+    position: hydratePosition(input.position),
+    key: input.key,
+    value: hydrateLiteralValue(input.value)
+  };
+}
+__name(hydrateObjectEntry, "hydrateObjectEntry");
+function hydratePosition(input) {
+  return {
+    file: input.file,
+    line: input.line,
+    column: input.column
+  };
+}
+__name(hydratePosition, "hydratePosition");
+function hydrateTopLevelDoc(input) {
+  return {
+    position: hydratePosition(input.position),
+    content: input.content
+  };
+}
+__name(hydrateTopLevelDoc, "hydrateTopLevelDoc");
+function hydrateTypeDef(input) {
+  return {
+    position: hydratePosition(input.position),
+    name: input.name,
+    doc: input.doc ? input.doc : input.doc,
+    annotations: input.annotations.map((el) => hydrateAnnotation(el)),
+    typeRef: hydrateTypeRef(input.typeRef)
+  };
+}
+__name(hydrateTypeDef, "hydrateTypeDef");
+function hydrateTypeRef(input) {
+  return {
+    kind: input.kind,
+    primitiveName: input.primitiveName ? input.primitiveName : input.primitiveName,
+    typeName: input.typeName ? input.typeName : input.typeName,
+    enumName: input.enumName ? input.enumName : input.enumName,
+    enumType: input.enumType ? input.enumType : input.enumType,
+    arrayType: input.arrayType ? hydrateTypeRef(input.arrayType) : input.arrayType,
+    arrayDims: input.arrayDims ? input.arrayDims : input.arrayDims,
+    mapType: input.mapType ? hydrateTypeRef(input.mapType) : input.mapType,
+    objectFields: input.objectFields ? input.objectFields.map((el) => hydrateField(el)) : input.objectFields
+  };
+}
+__name(hydrateTypeRef, "hydrateTypeRef");
+
 // node_modules/@varavel/vdl-plugin-sdk/dist/index.js
 function definePlugin(handler) {
   return handler;
@@ -66,7 +189,7 @@ var __exportAll = /* @__PURE__ */ __name((all, no_symbols) => {
   return target;
 }, "__exportAll");
 
-// node_modules/@varavel/vdl-plugin-sdk/dist/objectSpread2-BvplBgg6.js
+// node_modules/@varavel/vdl-plugin-sdk/dist/objectSpread2-eK8xUo8N.js
 function _typeof(o) {
   "@babel/helpers - typeof";
   return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(o2) {
@@ -694,6 +817,109 @@ function getAnnotationArg(annotations, name) {
   return anno === null || anno === void 0 ? void 0 : anno.argument;
 }
 __name(getAnnotationArg, "getAnnotationArg");
+var ACRONYM_TO_CAPITALIZED_WORD_BOUNDARY_RE = /([A-Z]+)([A-Z][a-z])/g;
+var LOWERCASE_OR_DIGIT_TO_UPPERCASE_BOUNDARY_RE = /([a-z0-9])([A-Z])/g;
+var NON_ALPHANUMERIC_SEQUENCE_RE = /[^A-Za-z0-9]+/g;
+var WHITESPACE_SEQUENCE_RE = /\s+/;
+function words(str) {
+  const normalized = str.replace(ACRONYM_TO_CAPITALIZED_WORD_BOUNDARY_RE, "$1 $2").replace(LOWERCASE_OR_DIGIT_TO_UPPERCASE_BOUNDARY_RE, "$1 $2").replace(NON_ALPHANUMERIC_SEQUENCE_RE, " ").trim();
+  return normalized.length === 0 ? [] : normalized.split(WHITESPACE_SEQUENCE_RE);
+}
+__name(words, "words");
+function capitalize$1(word) {
+  return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+}
+__name(capitalize$1, "capitalize$1");
+function pascalCase(str) {
+  return words(str).map(capitalize$1).join("");
+}
+__name(pascalCase, "pascalCase");
+function hoistAnonymousTypes(schema, nameFn) {
+  const output = hydrateIrSchema(schema);
+  const usedNames = new Set(output.types.map((typeDef) => typeDef.name));
+  const flatTypes = [];
+  for (const typeDef of output.types) {
+    const hoisted = [];
+    typeDef.typeRef = visitTypeRef(typeDef.typeRef, [typeDef.name], typeDef.name, typeDef.position, hoisted, usedNames, nameFn, false);
+    flatTypes.push(typeDef, ...hoisted);
+  }
+  output.types = flatTypes;
+  return output;
+}
+__name(hoistAnonymousTypes, "hoistAnonymousTypes");
+function visitField(field, parts, parentName, hoisted, usedNames, nameFn) {
+  field.typeRef = visitTypeRef(field.typeRef, [...parts, field.name], parentName, field.position, hoisted, usedNames, nameFn, true);
+  return field;
+}
+__name(visitField, "visitField");
+function visitTypeRef(typeRef, parts, parentName, position, hoisted, usedNames, nameFn, shouldHoistObject) {
+  switch (typeRef.kind) {
+    case "array":
+      if (typeRef.arrayType) typeRef.arrayType = visitTypeRef(typeRef.arrayType, [...parts, "Item"], parentName, position, hoisted, usedNames, nameFn, true);
+      return typeRef;
+    case "map":
+      if (typeRef.mapType) typeRef.mapType = visitTypeRef(typeRef.mapType, [...parts, "Value"], parentName, position, hoisted, usedNames, nameFn, true);
+      return typeRef;
+    case "object":
+      var _typeRef$objectFields;
+      if (shouldHoistObject) return hoistObject(typeRef, parts, parentName, position, hoisted, usedNames, nameFn);
+      typeRef.objectFields = (_typeRef$objectFields = typeRef.objectFields) === null || _typeRef$objectFields === void 0 ? void 0 : _typeRef$objectFields.map((field) => visitField(field, parts, parentName, hoisted, usedNames, nameFn));
+      return typeRef;
+    default:
+      return typeRef;
+  }
+}
+__name(visitTypeRef, "visitTypeRef");
+function hoistObject(typeRef, parts, parentName, position, hoisted, usedNames, nameFn) {
+  var _nameFn, _typeRef$objectFields2;
+  const defaultName = pascalCase(parts.join(" "));
+  const baseName = ((_nameFn = nameFn === null || nameFn === void 0 ? void 0 : nameFn({
+    parts: [...parts],
+    parentName,
+    defaultName
+  })) !== null && _nameFn !== void 0 ? _nameFn : defaultName).trim();
+  if (baseName === "") throw new Error(`hoistAnonymousTypes could not generate a name for '${parts.join(".")}'.`);
+  const name = makeUniqueName(baseName, usedNames);
+  const generated = {
+    position: copyPosition(position),
+    name,
+    annotations: [],
+    typeRef: {
+      kind: "object",
+      objectFields: []
+    }
+  };
+  hoisted.push(generated);
+  generated.typeRef.objectFields = (_typeRef$objectFields2 = typeRef.objectFields) === null || _typeRef$objectFields2 === void 0 ? void 0 : _typeRef$objectFields2.map((field) => visitField(field, parts, name, hoisted, usedNames, nameFn));
+  return {
+    kind: "type",
+    typeName: name
+  };
+}
+__name(hoistObject, "hoistObject");
+function makeUniqueName(baseName, usedNames) {
+  if (!usedNames.has(baseName)) {
+    usedNames.add(baseName);
+    return baseName;
+  }
+  let index = 2;
+  let name = `${baseName}${index}`;
+  while (usedNames.has(name)) {
+    index += 1;
+    name = `${baseName}${index}`;
+  }
+  usedNames.add(name);
+  return name;
+}
+__name(makeUniqueName, "makeUniqueName");
+function copyPosition(position) {
+  return {
+    file: position.file,
+    line: position.line,
+    column: position.column
+  };
+}
+__name(copyPosition, "copyPosition");
 function unwrapLiteral(value) {
   return unwrapLiteralValue(value);
 }
@@ -726,6 +952,7 @@ __name(unwrapLiteralValue, "unwrapLiteralValue");
 var ir_exports = /* @__PURE__ */ __exportAll({
   getAnnotation: /* @__PURE__ */ __name(() => getAnnotation, "getAnnotation"),
   getAnnotationArg: /* @__PURE__ */ __name(() => getAnnotationArg, "getAnnotationArg"),
+  hoistAnonymousTypes: /* @__PURE__ */ __name(() => hoistAnonymousTypes, "hoistAnonymousTypes"),
   unwrapLiteral: /* @__PURE__ */ __name(() => unwrapLiteral, "unwrapLiteral")
 });
 function attempt$1(func) {
@@ -1209,23 +1436,14 @@ var options_exports = /* @__PURE__ */ __exportAll({
   getOptionNumber: /* @__PURE__ */ __name(() => getOptionNumber, "getOptionNumber"),
   getOptionString: /* @__PURE__ */ __name(() => getOptionString, "getOptionString")
 });
-var ACRONYM_TO_CAPITALIZED_WORD_BOUNDARY_RE = /([A-Z]+)([A-Z][a-z])/g;
-var LOWERCASE_OR_DIGIT_TO_UPPERCASE_BOUNDARY_RE = /([a-z0-9])([A-Z])/g;
-var NON_ALPHANUMERIC_SEQUENCE_RE = /[^A-Za-z0-9]+/g;
-var WHITESPACE_SEQUENCE_RE = /\s+/;
-function words(str) {
-  const normalized = str.replace(ACRONYM_TO_CAPITALIZED_WORD_BOUNDARY_RE, "$1 $2").replace(LOWERCASE_OR_DIGIT_TO_UPPERCASE_BOUNDARY_RE, "$1 $2").replace(NON_ALPHANUMERIC_SEQUENCE_RE, " ").trim();
-  return normalized.length === 0 ? [] : normalized.split(WHITESPACE_SEQUENCE_RE);
-}
-__name(words, "words");
-function capitalize$1(word) {
+function capitalize(word) {
   return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
 }
-__name(capitalize$1, "capitalize$1");
+__name(capitalize, "capitalize");
 function camelCase(str) {
   const parts = words(str);
   if (parts.length === 0) return "";
-  return parts.map((part, index) => index === 0 ? part.toLowerCase() : capitalize$1(part)).join("");
+  return parts.map((part, index) => index === 0 ? part.toLowerCase() : capitalize(part)).join("");
 }
 __name(camelCase, "camelCase");
 function ownKeys2(object, enumerableOnly) {
@@ -1400,14 +1618,6 @@ function padRight(str, length, chars) {
   return padding.length === 0 ? str : `${str}${padding}`;
 }
 __name(padRight, "padRight");
-function capitalize(word) {
-  return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-}
-__name(capitalize, "capitalize");
-function pascalCase(str) {
-  return words(str).map(capitalize).join("");
-}
-__name(pascalCase, "pascalCase");
 function snakeCase(str, upperCase2 = false) {
   return words(str).map((part) => upperCase2 ? part.toUpperCase() : part.toLowerCase()).join("_");
 }
@@ -2692,7 +2902,7 @@ function generatePointersFile(context) {
 __name(generatePointersFile, "generatePointersFile");
 
 // src/stages/emit/files/types-enums.ts
-function renderEnum(g, enumDescriptor) {
+function renderEnum(g, enumDescriptor, strict) {
   writeDocComment(
     g,
     buildDocCommentLines({
@@ -2737,10 +2947,12 @@ function renderEnum(g, enumDescriptor) {
   renderEnumStringMethod(g, enumDescriptor);
   g.break();
   renderEnumIsValidMethod(g, enumDescriptor);
-  g.break();
-  renderEnumMarshalJSONMethod(g, enumDescriptor);
-  g.break();
-  renderEnumUnmarshalJSONMethod(g, enumDescriptor);
+  if (strict) {
+    g.break();
+    renderEnumMarshalJSONMethod(g, enumDescriptor);
+    g.break();
+    renderEnumUnmarshalJSONMethod(g, enumDescriptor);
+  }
 }
 __name(renderEnum, "renderEnum");
 function renderEnumMemberLiteral(enumDescriptor, member) {
@@ -2864,6 +3076,219 @@ function renderEnumUnmarshalJSONMethod(g, enumDescriptor) {
 }
 __name(renderEnumUnmarshalJSONMethod, "renderEnumUnmarshalJSONMethod");
 
+// src/stages/emit/files/types-schema.ts
+function renderNamedTypeSchemaSupport(g, descriptor, context) {
+  if (!context.options.strict) {
+    return false;
+  }
+  if (descriptor.kind === "object") {
+    if (!descriptorHasRequiredFields(descriptor)) {
+      return false;
+    }
+    renderPreObjectType(g, descriptor);
+    g.break();
+    renderPreObjectValidateMethod(g, descriptor);
+    g.break();
+    renderPreObjectTransformMethod(g, descriptor);
+    g.break();
+    renderObjectUnmarshalJSONMethod(g, descriptor);
+    return true;
+  }
+  const strictBehavior = resolveStrictAliasBehavior(
+    descriptor.typeRef,
+    context,
+    descriptor.position
+  );
+  if (strictBehavior === "enum") {
+    renderAliasMarshalJSONMethod(g, descriptor, context);
+    g.break();
+    renderAliasUnmarshalJSONMethod(g, descriptor, context);
+    return true;
+  }
+  if (strictBehavior === "object") {
+    renderAliasUnmarshalJSONMethod(g, descriptor, context);
+    return true;
+  }
+  return false;
+}
+__name(renderNamedTypeSchemaSupport, "renderNamedTypeSchemaSupport");
+function renderPreObjectType(g, descriptor) {
+  const preTypeName = toPreTypeName(descriptor.goName);
+  g.line(
+    `// ${preTypeName} is the presence-aware JSON form of ${descriptor.goName}.`
+  );
+  g.line(`type ${preTypeName} struct {`);
+  g.block(() => {
+    for (const field of descriptor.fields) {
+      const jsonTag = field.def.optional ? `json:${JSON.stringify(`${field.jsonName},omitempty`)}` : `json:${JSON.stringify(field.jsonName)}`;
+      g.line(`${field.goName} ${renderPreFieldGoType(field)} \`${jsonTag}\``);
+    }
+  });
+  g.line("}");
+}
+__name(renderPreObjectType, "renderPreObjectType");
+function renderPreObjectValidateMethod(g, descriptor) {
+  const preTypeName = toPreTypeName(descriptor.goName);
+  g.line(`// validate checks JSON field presence for ${descriptor.goName}.`);
+  g.line(`func (p *${preTypeName}) validate() error {`);
+  g.block(() => {
+    for (const field of descriptor.fields) {
+      if (field.def.optional) {
+        continue;
+      }
+      g.line(`if p.${field.goName} == nil {`);
+      g.block(() => {
+        g.line(
+          `return fmt.Errorf(${JSON.stringify("field %q is required")}, ${JSON.stringify(field.jsonName)})`
+        );
+      });
+      g.line("}");
+    }
+    g.line("return nil");
+  });
+  g.line("}");
+}
+__name(renderPreObjectValidateMethod, "renderPreObjectValidateMethod");
+function renderPreObjectTransformMethod(g, descriptor) {
+  const preTypeName = toPreTypeName(descriptor.goName);
+  g.line(`// transform converts ${preTypeName} into ${descriptor.goName}.`);
+  g.line(`func (p *${preTypeName}) transform() ${descriptor.goName} {`);
+  g.block(() => {
+    g.line(`return ${descriptor.goName}{`);
+    g.block(() => {
+      for (const field of descriptor.fields) {
+        const valueExpression = field.def.optional ? `p.${field.goName}` : `*p.${field.goName}`;
+        g.line(`${field.goName}: ${valueExpression},`);
+      }
+    });
+    g.line("}");
+  });
+  g.line("}");
+}
+__name(renderPreObjectTransformMethod, "renderPreObjectTransformMethod");
+function renderObjectUnmarshalJSONMethod(g, descriptor) {
+  const preTypeName = toPreTypeName(descriptor.goName);
+  g.line("// UnmarshalJSON implements json.Unmarshaler.");
+  g.line(`func (x *${descriptor.goName}) UnmarshalJSON(data []byte) error {`);
+  g.block(() => {
+    g.line(`var pre ${preTypeName}`);
+    g.line("if err := json.Unmarshal(data, &pre); err != nil {");
+    g.block(() => {
+      g.line("return err");
+    });
+    g.line("}");
+    g.line("if err := pre.validate(); err != nil {");
+    g.block(() => {
+      g.line("return err");
+    });
+    g.line("}");
+    g.line("*x = pre.transform()");
+    g.line("return nil");
+  });
+  g.line("}");
+}
+__name(renderObjectUnmarshalJSONMethod, "renderObjectUnmarshalJSONMethod");
+function renderAliasMarshalJSONMethod(g, descriptor, context) {
+  const underlyingType = renderGoType(
+    descriptor.typeRef,
+    context,
+    void 0,
+    descriptor.position
+  );
+  g.line("// MarshalJSON implements json.Marshaler.");
+  g.line(`func (x ${descriptor.goName}) MarshalJSON() ([]byte, error) {`);
+  g.block(() => {
+    g.line(`return json.Marshal(${underlyingType}(x))`);
+  });
+  g.line("}");
+}
+__name(renderAliasMarshalJSONMethod, "renderAliasMarshalJSONMethod");
+function renderAliasUnmarshalJSONMethod(g, descriptor, context) {
+  const underlyingType = renderGoType(
+    descriptor.typeRef,
+    context,
+    void 0,
+    descriptor.position
+  );
+  g.line("// UnmarshalJSON implements json.Unmarshaler.");
+  g.line(`func (x *${descriptor.goName}) UnmarshalJSON(data []byte) error {`);
+  g.block(() => {
+    g.line(`var value ${underlyingType}`);
+    g.line("if err := json.Unmarshal(data, &value); err != nil {");
+    g.block(() => {
+      g.line("return err");
+    });
+    g.line("}");
+    g.line(`*x = ${descriptor.goName}(value)`);
+    g.line("return nil");
+  });
+  g.line("}");
+}
+__name(renderAliasUnmarshalJSONMethod, "renderAliasUnmarshalJSONMethod");
+function descriptorHasRequiredFields(descriptor) {
+  return descriptor.fields.some((field) => !field.def.optional);
+}
+__name(descriptorHasRequiredFields, "descriptorHasRequiredFields");
+function resolveStrictAliasBehavior(typeRef, context, position, visited = /* @__PURE__ */ new Set()) {
+  switch (typeRef.kind) {
+    case "enum":
+      return "enum";
+    case "object":
+      return typeRefHasRequiredFields(typeRef) ? "object" : void 0;
+    case "type": {
+      const typeName = expectValue(
+        typeRef.typeName,
+        "Encountered a named type reference without a type name.",
+        position
+      );
+      if (visited.has(typeName)) {
+        return void 0;
+      }
+      visited.add(typeName);
+      const referencedType = getReferencedTypeRef(typeName, context, position);
+      return resolveStrictAliasBehavior(
+        referencedType,
+        context,
+        position,
+        visited
+      );
+    }
+    case "primitive":
+    case "array":
+    case "map":
+      return void 0;
+    default:
+      return void 0;
+  }
+}
+__name(resolveStrictAliasBehavior, "resolveStrictAliasBehavior");
+function getReferencedTypeRef(typeName, context, position) {
+  const typeDef = expectValue(
+    context.typeDefsByVdlName.get(typeName),
+    `Unknown VDL type reference ${JSON.stringify(typeName)}.`,
+    position
+  );
+  return typeDef.typeRef;
+}
+__name(getReferencedTypeRef, "getReferencedTypeRef");
+function typeRefHasRequiredFields(typeRef) {
+  if (typeRef.kind !== "object") {
+    return false;
+  }
+  return getEffectiveObjectFields(typeRef.objectFields).some(
+    (field) => !field.optional
+  );
+}
+__name(typeRefHasRequiredFields, "typeRefHasRequiredFields");
+function renderPreFieldGoType(field) {
+  return field.def.optional ? field.goType : `*${field.goType}`;
+}
+__name(renderPreFieldGoType, "renderPreFieldGoType");
+function toPreTypeName(goName) {
+  return `pre${goName}`;
+}
+__name(toPreTypeName, "toPreTypeName");
+
 // src/stages/emit/files/types-named-types.ts
 function renderNamedType(g, descriptor, context) {
   const fallback = descriptor.inline ? `${descriptor.goName} represents the inline VDL object at ${descriptor.path}.` : descriptor.kind === "object" ? `${descriptor.goName} is a VDL object type.` : `${descriptor.goName} is a VDL type.`;
@@ -2878,12 +3303,18 @@ function renderNamedType(g, descriptor, context) {
   if (descriptor.kind === "object") {
     renderStructType(g, descriptor);
     g.break();
+    if (renderNamedTypeSchemaSupport(g, descriptor, context)) {
+      g.break();
+    }
     renderGetters(g, descriptor.fields, descriptor.goName);
     return;
   }
   g.line(
     `type ${descriptor.goName} ${renderGoType(descriptor.typeRef, context, void 0, descriptor.position)}`
   );
+  if (renderNamedTypeSchemaSupport(g, descriptor, context)) {
+    g.break();
+  }
 }
 __name(renderNamedType, "renderNamedType");
 function renderStructType(g, descriptor) {
@@ -2973,28 +3404,31 @@ function generateTypesFile(context) {
     return void 0;
   }
   const imports = new ImportSet();
-  if (context.enumDescriptors.length > 0) {
-    imports.add("encoding/json");
-    imports.add("fmt");
-  }
   for (const namedType of context.namedTypes) {
     collectImportsForTypeRef(namedType.typeRef, imports);
   }
   const g = newGenerator().withTabs();
   for (const enumDescriptor of context.enumDescriptors) {
-    renderEnum(g, enumDescriptor);
+    renderEnum(g, enumDescriptor, context.options.strict);
     g.break();
   }
   for (const namedType of context.namedTypes) {
     renderNamedType(g, namedType, context);
     g.break();
   }
+  const body = g.toString();
+  if (body.includes("json.")) {
+    imports.add("encoding/json");
+  }
+  if (body.includes("fmt.")) {
+    imports.add("fmt");
+  }
   return {
     path: "types.go",
     content: renderGoFile({
       packageName: context.options.packageName,
       imports,
-      body: g.toString()
+      body
     })
   };
 }
@@ -3374,6 +3808,7 @@ __name(createGeneratorContext, "createGeneratorContext");
 function resolveGeneratorOptions(input) {
   const packageName = options_exports.getOptionString(input.options, "package", "vdl");
   const genConsts = options_exports.getOptionBool(input.options, "genConsts", true);
+  const strict = options_exports.getOptionBool(input.options, "strict", true);
   if (!isValidGoPackageName(packageName)) {
     return {
       errors: [
@@ -3387,7 +3822,8 @@ function resolveGeneratorOptions(input) {
     errors: [],
     options: {
       packageName,
-      genConsts
+      genConsts,
+      strict
     }
   };
 }

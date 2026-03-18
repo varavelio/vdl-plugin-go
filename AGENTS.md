@@ -43,7 +43,7 @@ When updating this document, do so with the context of the entire document in mi
   - `src/index.ts`: SDK-facing plugin export. Keep it thin.
   - `src/generate.ts`: pure orchestration that resolves options, builds context, emits files, and converts thrown failures into plugin errors.
 - **Stage Layout**:
-  - `src/stages/options/resolve.ts`: parses plugin options. Current options are `package` and `genConsts`.
+  - `src/stages/options/resolve.ts`: parses plugin options. Current options are `package`, `genConsts`, and `strict`.
   - `src/stages/model/build-context.ts`: builds the shared generation context and aggregates stage errors.
   - `src/stages/model/*.ts`: indexes schema definitions, derives Go names, discovers inline object types recursively, builds descriptors, and validates Go-specific symbol collisions.
   - `src/stages/emit/generate-files.ts`: emits files in fixed order.
@@ -141,6 +141,14 @@ This order is intentional and covered by tests. Preserve it unless the test suit
 - Optional object fields render as pointers.
 - Inline objects become named Go structs in generated output; anonymous struct expressions are mainly used for composite literals and metadata type strings.
 
+### Strict JSON Rules
+
+- `strict` enables runtime JSON guards for generated Go code and defaults to `true`.
+- Object types use generated unexported `pre<Type>` decoder structs plus `UnmarshalJSON()` so required fields are checked by JSON presence rather than Go zero values.
+- Object types do not generate custom `MarshalJSON()` methods; zero values remain the Go-native output behavior.
+- Enums always generate `IsValid()`, and `strict` additionally generates enum `MarshalJSON()` and `UnmarshalJSON()` methods that reject out-of-set values.
+- Named aliases only get strict JSON helpers when they wrap object or enum behavior that needs delegation; plain primitive and collection aliases stay lightweight.
+
 ### Literal Rules
 
 - Scalar aliases render as typed conversions.
@@ -197,10 +205,12 @@ This order is intentional and covered by tests. Preserve it unless the test suit
 - Recursive inline object discovery.
 - Datetime import propagation.
 - `genConsts` option behavior.
+- `strict` option behavior.
 - Runtime helper name collision reporting.
 - Last duplicate object field wins.
 - Optional fields use pointers and `omitempty`.
 - Enum marshal/unmarshal validation.
+- Object strict JSON presence checks and enum strict JSON behavior.
 - Metadata helper behavior and repeated annotation handling.
 
 ### Test Conventions

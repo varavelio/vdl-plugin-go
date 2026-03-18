@@ -8,6 +8,7 @@ import type { EnumDescriptor } from "../../model/types";
 export function renderEnum(
   g: ReturnType<typeof newGenerator>,
   enumDescriptor: EnumDescriptor,
+  strict: boolean,
 ): void {
   writeDocComment(
     g,
@@ -58,10 +59,13 @@ export function renderEnum(
   renderEnumStringMethod(g, enumDescriptor);
   g.break();
   renderEnumIsValidMethod(g, enumDescriptor);
-  g.break();
-  renderEnumMarshalJSONMethod(g, enumDescriptor);
-  g.break();
-  renderEnumUnmarshalJSONMethod(g, enumDescriptor);
+
+  if (strict) {
+    g.break();
+    renderEnumMarshalJSONMethod(g, enumDescriptor);
+    g.break();
+    renderEnumUnmarshalJSONMethod(g, enumDescriptor);
+  }
 }
 
 function renderEnumMemberLiteral(

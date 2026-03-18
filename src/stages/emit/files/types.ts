@@ -15,11 +15,6 @@ export function generateTypesFile(
 
   const imports = new ImportSet();
 
-  if (context.enumDescriptors.length > 0) {
-    imports.add("encoding/json");
-    imports.add("fmt");
-  }
-
   for (const namedType of context.namedTypes) {
     collectImportsForTypeRef(namedType.typeRef, imports);
   }
@@ -27,7 +22,7 @@ export function generateTypesFile(
   const g = newGenerator().withTabs();
 
   for (const enumDescriptor of context.enumDescriptors) {
-    renderEnum(g, enumDescriptor);
+    renderEnum(g, enumDescriptor, context.options.strict);
     g.break();
   }
 
@@ -36,12 +31,22 @@ export function generateTypesFile(
     g.break();
   }
 
+  const body = g.toString();
+
+  if (body.includes("json.")) {
+    imports.add("encoding/json");
+  }
+
+  if (body.includes("fmt.")) {
+    imports.add("fmt");
+  }
+
   return {
     path: "types.go",
     content: renderGoFile({
       packageName: context.options.packageName,
       imports,
-      body: g.toString(),
+      body,
     }),
   };
 }

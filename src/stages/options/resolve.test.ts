@@ -10,6 +10,7 @@ describe("options", () => {
     expect(result.options).toEqual({
       packageName: "vdl",
       genConsts: true,
+      strict: true,
     });
   });
 
@@ -19,6 +20,7 @@ describe("options", () => {
         options: {
           package: "catalog",
           genConsts: "off",
+          strict: "false",
         },
       }),
     );
@@ -27,6 +29,7 @@ describe("options", () => {
     expect(result.options).toEqual({
       packageName: "catalog",
       genConsts: false,
+      strict: false,
     });
   });
 
@@ -35,12 +38,14 @@ describe("options", () => {
       irb.pluginInput({
         options: {
           genConsts: "definitely",
+          strict: "definitely",
         },
       }),
     );
 
     expect(result.errors).toEqual([]);
     expect(result.options?.genConsts).toBe(true);
+    expect(result.options?.strict).toBe(true);
   });
 
   it("rejects an invalid Go package name", () => {

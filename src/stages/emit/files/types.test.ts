@@ -10,6 +10,7 @@ describe("generateTypesFile", () => {
       generatorOptions: {
         packageName: "vdl",
         genConsts: true,
+        strict: true,
       },
     });
 
@@ -67,6 +68,7 @@ describe("generateTypesFile", () => {
       generatorOptions: {
         packageName: "vdl",
         genConsts: true,
+        strict: true,
       },
     });
 
@@ -106,12 +108,134 @@ describe("generateTypesFile", () => {
       generatorOptions: {
         packageName: "vdl",
         genConsts: true,
+        strict: true,
       },
     });
 
     const file = generateTypesFile(expectContext(result.context));
 
     expect(file?.content).toContain("case PriorityLow, PriorityHigh:");
+  });
+
+  it("renders strict object unmarshal helpers", () => {
+    const result = createGeneratorContext({
+      schema: irb.schema({
+        enums: [
+          irb.enumDef("Status", "string", [
+            irb.enumMember("Ready", irb.stringLiteral("ready")),
+          ]),
+        ],
+        types: [
+          irb.typeDef(
+            "Payload",
+            irb.objectType([
+              irb.field("name", irb.primitiveType("string")),
+              irb.field("status", irb.enumType("Status", "string")),
+              irb.field(
+                "items",
+                irb.arrayType(
+                  irb.objectType([
+                    irb.field("id", irb.primitiveType("string")),
+                  ]),
+                ),
+              ),
+            ]),
+          ),
+        ],
+      }),
+      generatorOptions: {
+        packageName: "vdl",
+        genConsts: true,
+        strict: true,
+      },
+    });
+
+    const file = generateTypesFile(expectContext(result.context));
+
+    expect(file?.content).toContain("type prePayload struct {");
+    expect(file?.content).toContain('Status *Status `json:"status"`');
+    expect(file?.content).toContain(
+      "func (x *Payload) UnmarshalJSON(data []byte) error {",
+    );
+    expect(file?.content).toContain("func (p *prePayload) validate() error {");
+    expect(file?.content).toContain(
+      'return fmt.Errorf("field %q is required", "items")',
+    );
+    expect(file?.content).not.toContain(
+      "func (x Payload) ValidateSchema() error {",
+    );
+    expect(file?.content).not.toContain(
+      "func (x Payload) MarshalJSON() ([]byte, error) {",
+    );
+  });
+
+  it("does not emit useless object validation methods", () => {
+    const result = createGeneratorContext({
+      schema: irb.schema({
+        types: [
+          irb.typeDef(
+            "Primitives",
+            irb.objectType([
+              irb.field("text", irb.primitiveType("string")),
+              irb.field("optText", irb.primitiveType("string"), {
+                optional: true,
+              }),
+            ]),
+          ),
+        ],
+      }),
+      generatorOptions: {
+        packageName: "vdl",
+        genConsts: true,
+        strict: true,
+      },
+    });
+
+    const file = generateTypesFile(expectContext(result.context));
+
+    expect(file?.content).not.toContain(
+      "func (x Primitives) ValidateSchema() error {",
+    );
+    expect(file?.content).not.toContain(
+      "func (x Primitives) MarshalJSON() ([]byte, error) {",
+    );
+  });
+
+  it("omits strict helpers when strict mode is disabled", () => {
+    const result = createGeneratorContext({
+      schema: irb.schema({
+        enums: [
+          irb.enumDef("Status", "string", [
+            irb.enumMember("Ready", irb.stringLiteral("ready")),
+          ]),
+        ],
+        types: [
+          irb.typeDef(
+            "Payload",
+            irb.objectType([irb.field("name", irb.primitiveType("string"))]),
+          ),
+        ],
+      }),
+      generatorOptions: {
+        packageName: "vdl",
+        genConsts: true,
+        strict: false,
+      },
+    });
+
+    const file = generateTypesFile(expectContext(result.context));
+
+    expect(file?.content).not.toContain("type prePayload struct {");
+    expect(file?.content).not.toContain(
+      "func (x *Payload) UnmarshalJSON(data []byte) error {",
+    );
+    expect(file?.content).not.toContain(
+      "func (e Status) MarshalJSON() ([]byte, error) {",
+    );
+    expect(file?.content).not.toContain(
+      "func (e *Status) UnmarshalJSON(data []byte) error {",
+    );
+    expect(file?.content).toContain("func (x *Payload) GetName() string {");
   });
 });
 

@@ -165,6 +165,7 @@ function buildContext() {
     generatorOptions: {
       packageName: "vdl",
       genConsts: true,
+      strict: true,
     },
   });
 

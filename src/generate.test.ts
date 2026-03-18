@@ -177,6 +177,14 @@ describe("generate", () => {
       'Description *string `json:"description,omitempty"`',
     );
     expect(types).toContain("type ProductAddress struct");
+    expect(types).toContain("type preProduct struct {");
+    expect(types).toContain(
+      "func (x *Product) UnmarshalJSON(data []byte) error {",
+    );
+    expect(types).not.toContain("func (x Product) ValidateSchema() error {");
+    expect(types).not.toContain(
+      "func (x Product) MarshalJSON() ([]byte, error) {",
+    );
     expect(types).toContain("func (x *Product) GetDescription() string");
     expect(types).toContain("type UserIDs []UserId");
 
@@ -292,6 +300,40 @@ describe("generate", () => {
     );
     expect(result.files?.some((file) => file.path === "metadata.go")).toBe(
       true,
+    );
+  });
+
+  it("omits strict helpers when strict mode is disabled", () => {
+    const result = generate(
+      irb.pluginInput({
+        options: {
+          strict: "false",
+        },
+        ir: irb.schema({
+          enums: [
+            irb.enumDef("Status", "string", [
+              irb.enumMember("Ready", irb.stringLiteral("ready")),
+            ]),
+          ],
+          types: [
+            irb.typeDef(
+              "Payload",
+              irb.objectType([
+                irb.field("status", irb.enumType("Status", "string")),
+              ]),
+            ),
+          ],
+        }),
+      }),
+    );
+
+    const types = fileContent(result, "types.go");
+
+    expect(types).not.toContain(
+      "func (x *Payload) UnmarshalJSON(data []byte) error {",
+    );
+    expect(types).not.toContain(
+      "func (e Status) MarshalJSON() ([]byte, error) {",
     );
   });
 
