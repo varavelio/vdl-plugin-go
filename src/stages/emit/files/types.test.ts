@@ -20,34 +20,6 @@ describe("generateTypesFile", () => {
   it("renders imports, docs, deprecated comments, and getters", () => {
     const result = createGeneratorContext({
       schema: irb.schema({
-        enums: [
-          irb.enumDef(
-            "Priority",
-            "int",
-            [
-              irb.enumMember(
-                "Low",
-                {
-                  kind: "int",
-                  position: { file: "schema.vdl", line: 1, column: 1 },
-                  intValue: 1,
-                },
-                {
-                  doc: "Low priority.",
-                  annotations: [
-                    irb.annotation(
-                      "deprecated",
-                      irb.stringLiteral("Use Medium instead."),
-                    ),
-                  ],
-                },
-              ),
-            ],
-            {
-              doc: "Priority enum.",
-            },
-          ),
-        ],
         types: [
           irb.typeDef(
             "Timeline",
@@ -77,44 +49,14 @@ describe("generateTypesFile", () => {
     expect(file?.content).toContain('"encoding/json"');
     expect(file?.content).toContain('"fmt"');
     expect(file?.content).toContain('"time"');
-    expect(file?.content).toContain("// Priority enum.");
-    expect(file?.content).toContain("// Low priority.");
-    expect(file?.content).toContain("// Deprecated: Use Medium instead.");
     expect(file?.content).toContain("// Timeline doc.");
     expect(file?.content).toContain("CreatedAt time.Time");
     expect(file?.content).toContain(
       "func (x *Timeline) GetNoteOr(defaultValue string) string {",
     );
-  });
-
-  it("renders enum IsValid with all cases in one branch", () => {
-    const result = createGeneratorContext({
-      schema: irb.schema({
-        enums: [
-          irb.enumDef("Priority", "int", [
-            irb.enumMember("Low", {
-              kind: "int",
-              position: { file: "schema.vdl", line: 1, column: 1 },
-              intValue: 0,
-            }),
-            irb.enumMember("High", {
-              kind: "int",
-              position: { file: "schema.vdl", line: 1, column: 1 },
-              intValue: 9,
-            }),
-          ]),
-        ],
-      }),
-      generatorOptions: {
-        packageName: "vdl",
-        genConsts: true,
-        strict: true,
-      },
-    });
-
-    const file = generateTypesFile(expectContext(result.context));
-
-    expect(file?.content).toContain("case PriorityLow, PriorityHigh:");
+    expect(file?.content).toContain(
+      "// GetNoteOr returns the Note field. It returns defaultValue when the receiver or field is nil.",
+    );
   });
 
   it("renders strict object unmarshal helpers", () => {

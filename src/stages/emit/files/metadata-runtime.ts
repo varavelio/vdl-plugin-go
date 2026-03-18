@@ -3,7 +3,7 @@ import type { newGenerator } from "@varavel/gen";
 export function renderMetadataSupportTypes(
   g: ReturnType<typeof newGenerator>,
 ): void {
-  g.line("// Annotation describes a single VDL annotation.");
+  g.line("// Annotation describes a single VDL annotation entry.");
   g.line("type Annotation struct {");
   g.block(() => {
     g.line("Name string");
@@ -53,29 +53,23 @@ export function renderMetadataSupportTypes(
   g.line("}");
   g.break();
 
-  g.line("// FieldMetadata describes a generated Go struct field.");
+  g.line("// FieldMetadata describes a generated field.");
   g.line("type FieldMetadata struct {");
   g.block(() => {
     g.line("Name string");
-    g.line("VDLName string");
     g.line("JSONName string");
-    g.line("GoType string");
+    g.line("Type string");
     g.line("Optional bool");
     g.line("Annotations AnnotationSet");
   });
   g.line("}");
   g.break();
 
-  g.line("// TypeMetadata describes a generated Go type.");
+  g.line("// TypeMetadata describes a generated type.");
   g.line("type TypeMetadata struct {");
   g.block(() => {
     g.line("Name string");
-    g.line("VDLName string");
-    g.line("Path string");
-    g.line("Parent string");
-    g.line("Kind string");
-    g.line("GoType string");
-    g.line("Inline bool");
+    g.line("Type string");
     g.line("Annotations AnnotationSet");
     g.line("Fields map[string]FieldMetadata");
   });
@@ -91,24 +85,21 @@ export function renderMetadataSupportTypes(
   g.line("}");
   g.break();
 
-  g.line("// EnumMemberMetadata describes a generated enum member constant.");
+  g.line("// EnumMemberMetadata describes a generated enum value.");
   g.line("type EnumMemberMetadata struct {");
   g.block(() => {
     g.line("Name string");
-    g.line("VDLName string");
-    g.line("ConstName string");
     g.line("Value any");
     g.line("Annotations AnnotationSet");
   });
   g.line("}");
   g.break();
 
-  g.line("// EnumMetadata describes a generated enum type.");
+  g.line("// EnumMetadata describes a generated enum.");
   g.line("type EnumMetadata struct {");
   g.block(() => {
     g.line("Name string");
-    g.line("VDLName string");
-    g.line("ValueType string");
+    g.line("Type string");
     g.line("Annotations AnnotationSet");
     g.line("Members map[string]EnumMemberMetadata");
   });
@@ -126,18 +117,20 @@ export function renderMetadataSupportTypes(
   g.line("}");
   g.break();
 
-  g.line("// ConstantMetadata describes a generated Go constant or variable.");
+  g.line("// ConstantMetadata describes a generated constant value.");
   g.line("type ConstantMetadata struct {");
   g.block(() => {
     g.line("Name string");
-    g.line("VDLName string");
-    g.line("GoType string");
+    g.line("Type string");
+    g.line("Value any");
     g.line("Annotations AnnotationSet");
   });
   g.line("}");
   g.break();
 
-  g.line("// SchemaMetadata exposes metadata for every generated declaration.");
+  g.line(
+    "// SchemaMetadata collects metadata for every generated declaration.",
+  );
   g.line("type SchemaMetadata struct {");
   g.block(() => {
     g.line("Types map[string]TypeMetadata");

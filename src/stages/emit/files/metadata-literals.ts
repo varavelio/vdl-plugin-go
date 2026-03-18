@@ -15,9 +15,9 @@ export function renderTypeMetadataLiteral(
   descriptor: NamedTypeDescriptor,
   context: GeneratorContext,
 ): string {
-  const goType =
+  const typeLiteral =
     descriptor.kind === "object"
-      ? descriptor.goName
+      ? "object"
       : renderGoType(
           descriptor.typeRef,
           context,
@@ -30,20 +30,20 @@ export function renderTypeMetadataLiteral(
       : `map[string]FieldMetadata{${descriptor.fields
           .map(
             (field) =>
-              `${JSON.stringify(field.goName)}: FieldMetadata{Name: ${JSON.stringify(field.goName)}, VDLName: ${JSON.stringify(field.def.name)}, JSONName: ${JSON.stringify(field.jsonName)}, GoType: ${JSON.stringify(field.goType)}, Optional: ${String(field.def.optional)}, Annotations: ${renderAnnotationSetLiteral(field.def.annotations)}}`,
+              `${JSON.stringify(field.goName)}: FieldMetadata{Name: ${JSON.stringify(field.goName)}, JSONName: ${JSON.stringify(field.jsonName)}, Type: ${JSON.stringify(field.goType)}, Optional: ${String(field.def.optional)}, Annotations: ${renderAnnotationSetLiteral(field.def.annotations)}}`,
           )
           .join(", ")}}`;
 
-  return `TypeMetadata{Name: ${JSON.stringify(descriptor.goName)}, VDLName: ${JSON.stringify(descriptor.vdlName)}, Path: ${JSON.stringify(descriptor.path)}, Parent: ${JSON.stringify(descriptor.parentGoName ?? "")}, Kind: ${JSON.stringify(descriptor.kind)}, GoType: ${JSON.stringify(goType)}, Inline: ${String(descriptor.inline)}, Annotations: ${renderAnnotationSetLiteral(descriptor.annotations)}, Fields: ${fieldsLiteral}}`;
+  return `TypeMetadata{Name: ${JSON.stringify(descriptor.goName)}, Type: ${JSON.stringify(typeLiteral)}, Annotations: ${renderAnnotationSetLiteral(descriptor.annotations)}, Fields: ${fieldsLiteral}}`;
 }
 
 export function renderEnumMetadataLiteral(
   enumDescriptor: EnumDescriptor,
 ): string {
-  return `EnumMetadata{Name: ${JSON.stringify(enumDescriptor.goName)}, VDLName: ${JSON.stringify(enumDescriptor.def.name)}, ValueType: ${JSON.stringify(enumDescriptor.def.enumType)}, Annotations: ${renderAnnotationSetLiteral(enumDescriptor.def.annotations)}, Members: map[string]EnumMemberMetadata{${enumDescriptor.members
+  return `EnumMetadata{Name: ${JSON.stringify(enumDescriptor.goName)}, Type: ${JSON.stringify(enumDescriptor.def.enumType)}, Annotations: ${renderAnnotationSetLiteral(enumDescriptor.def.annotations)}, Members: map[string]EnumMemberMetadata{${enumDescriptor.members
     .map(
       (member) =>
-        `${JSON.stringify(member.goName)}: EnumMemberMetadata{Name: ${JSON.stringify(member.goName)}, VDLName: ${JSON.stringify(member.def.name)}, ConstName: ${JSON.stringify(member.constName)}, Value: ${renderMetadataValueExpression(member.def.value)}, Annotations: ${renderAnnotationSetLiteral(member.def.annotations)}}`,
+        `${JSON.stringify(member.goName)}: EnumMemberMetadata{Name: ${JSON.stringify(member.goName)}, Value: ${renderMetadataValueExpression(member.def.value)}, Annotations: ${renderAnnotationSetLiteral(member.def.annotations)}}`,
     )
     .join(", ")}}}`;
 }
@@ -52,10 +52,10 @@ export function renderConstantMetadataLiteral(
   constant: ConstantDescriptor,
   context: GeneratorContext,
 ): string {
-  return `ConstantMetadata{Name: ${JSON.stringify(constant.goName)}, VDLName: ${JSON.stringify(constant.def.name)}, GoType: ${JSON.stringify(renderMetadataGoType(constant, context))}, Annotations: ${renderAnnotationSetLiteral(constant.def.annotations)}}`;
+  return `ConstantMetadata{Name: ${JSON.stringify(constant.goName)}, Type: ${JSON.stringify(renderMetadataType(constant, context))}, Value: ${renderMetadataValueExpression(constant.def.value)}, Annotations: ${renderAnnotationSetLiteral(constant.def.annotations)}}`;
 }
 
-function renderMetadataGoType(
+function renderMetadataType(
   constant: ConstantDescriptor,
   context: GeneratorContext,
 ): string {

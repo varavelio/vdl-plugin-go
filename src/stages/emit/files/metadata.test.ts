@@ -71,6 +71,8 @@ describe("generateMetadataFile", () => {
     expect(file.content).toContain(
       "func (m SchemaMetadata) Type(name string) (TypeMetadata, bool) {",
     );
+    expect(file.content).toContain("Type string");
+    expect(file.content).toContain("Value any");
     expect(file.content).toContain("ByName map[string]any");
     expect(file.content).toContain("AllByName map[string][]any");
     expect(file.content).toContain('"label": "Operational"');
@@ -80,6 +82,9 @@ describe("generateMetadataFile", () => {
     expect(file.content).toContain('"resource": "catalog"');
     expect(file.content).toContain('"resource": []any{"catalog"}');
     expect(file.content).toContain('"ApiVersion": ConstantMetadata');
+    expect(file.content).not.toContain("VDLName string");
+    expect(file.content).not.toContain("GoType string");
+    expect(file.content).not.toContain("Path string");
   });
 });
 

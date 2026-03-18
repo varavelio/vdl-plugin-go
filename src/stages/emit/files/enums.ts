@@ -1,29 +1,26 @@
 import { newGenerator } from "@varavel/gen";
-import { collectImportsForTypeRef } from "../../../shared/go-types";
 import { renderGoFile } from "../../../shared/render/go-file";
 import { ImportSet } from "../../../shared/render/imports";
 import type { GeneratedFile, GeneratorContext } from "../../model/types";
-import { renderNamedType } from "./types-named-types";
+import { renderEnum } from "./types-enums";
 
-export function generateTypesFile(
+export function generateEnumsFile(
   context: GeneratorContext,
 ): GeneratedFile | undefined {
-  if (context.namedTypes.length === 0) {
+  if (context.enumDescriptors.length === 0) {
     return undefined;
   }
 
   const imports = new ImportSet();
-
-  for (const namedType of context.namedTypes) {
-    collectImportsForTypeRef(namedType.typeRef, imports);
-  }
-
   const g = newGenerator().withTabs();
 
-  for (const namedType of context.namedTypes) {
-    renderNamedType(g, namedType, context);
+  for (const enumDescriptor of context.enumDescriptors) {
+    renderEnum(g, enumDescriptor, context.options.strict);
 
-    if (namedType !== context.namedTypes[context.namedTypes.length - 1]) {
+    if (
+      enumDescriptor !==
+      context.enumDescriptors[context.enumDescriptors.length - 1]
+    ) {
       g.break();
     }
   }
@@ -39,7 +36,7 @@ export function generateTypesFile(
   }
 
   return {
-    path: "types.go",
+    path: "enums.go",
     content: renderGoFile({
       packageName: context.options.packageName,
       imports,

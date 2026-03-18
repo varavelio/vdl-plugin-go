@@ -15,7 +15,7 @@ export function renderEnum(
     buildDocCommentLines({
       doc: enumDescriptor.def.doc,
       annotations: enumDescriptor.def.annotations,
-      fallback: `${enumDescriptor.goName} is a VDL enum.`,
+      fallback: `${enumDescriptor.goName} defines a generated enum.`,
     }),
   );
   g.line(
@@ -23,7 +23,9 @@ export function renderEnum(
   );
   g.break();
 
-  g.line(`// ${enumDescriptor.goName} enum values.`);
+  g.line(
+    `// ${enumDescriptor.goName} constants define the declared values of ${enumDescriptor.goName}.`,
+  );
   g.line("const (");
   g.block(() => {
     for (const member of enumDescriptor.members) {
@@ -84,7 +86,7 @@ function renderEnumStringMethod(
   enumDescriptor: EnumDescriptor,
 ): void {
   g.line(
-    `// String returns the string representation of ${enumDescriptor.goName}.`,
+    `// String returns a readable representation of ${enumDescriptor.goName}.`,
   );
   g.line(`func (e ${enumDescriptor.goName}) String() string {`);
   g.block(() => {
@@ -138,7 +140,9 @@ function renderEnumMarshalJSONMethod(
   g: ReturnType<typeof newGenerator>,
   enumDescriptor: EnumDescriptor,
 ): void {
-  g.line("// MarshalJSON implements json.Marshaler.");
+  g.line(
+    `// MarshalJSON encodes ${enumDescriptor.goName} and rejects values outside the declared enum set.`,
+  );
   g.line(`func (e ${enumDescriptor.goName}) MarshalJSON() ([]byte, error) {`);
   g.block(() => {
     g.line("if !e.IsValid() {");
@@ -163,7 +167,9 @@ function renderEnumUnmarshalJSONMethod(
   g: ReturnType<typeof newGenerator>,
   enumDescriptor: EnumDescriptor,
 ): void {
-  g.line("// UnmarshalJSON implements json.Unmarshaler.");
+  g.line(
+    `// UnmarshalJSON decodes ${enumDescriptor.goName} and rejects values outside the declared enum set.`,
+  );
   g.line(
     `func (e *${enumDescriptor.goName}) UnmarshalJSON(data []byte) error {`,
   );

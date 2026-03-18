@@ -61,7 +61,7 @@ function renderPreObjectType(
   const preTypeName = toPreTypeName(descriptor.goName);
 
   g.line(
-    `// ${preTypeName} is the presence-aware JSON form of ${descriptor.goName}.`,
+    `// ${preTypeName} mirrors ${descriptor.goName} during strict JSON decoding.`,
   );
   g.line(`type ${preTypeName} struct {`);
   g.block(() => {
@@ -82,7 +82,9 @@ function renderPreObjectValidateMethod(
 ): void {
   const preTypeName = toPreTypeName(descriptor.goName);
 
-  g.line(`// validate checks JSON field presence for ${descriptor.goName}.`);
+  g.line(
+    `// validate reports whether all required JSON fields are present in ${preTypeName}.`,
+  );
   g.line(`func (p *${preTypeName}) validate() error {`);
   g.block(() => {
     for (const field of descriptor.fields) {
@@ -110,7 +112,7 @@ function renderPreObjectTransformMethod(
 ): void {
   const preTypeName = toPreTypeName(descriptor.goName);
 
-  g.line(`// transform converts ${preTypeName} into ${descriptor.goName}.`);
+  g.line(`// transform converts ${preTypeName} to ${descriptor.goName}.`);
   g.line(`func (p *${preTypeName}) transform() ${descriptor.goName} {`);
   g.block(() => {
     g.line(`return ${descriptor.goName}{`);
@@ -133,7 +135,9 @@ function renderObjectUnmarshalJSONMethod(
 ): void {
   const preTypeName = toPreTypeName(descriptor.goName);
 
-  g.line("// UnmarshalJSON implements json.Unmarshaler.");
+  g.line(
+    `// UnmarshalJSON decodes ${descriptor.goName} while requiring every non-optional JSON field.`,
+  );
   g.line(`func (x *${descriptor.goName}) UnmarshalJSON(data []byte) error {`);
   g.block(() => {
     g.line(`var pre ${preTypeName}`);
@@ -165,7 +169,9 @@ function renderAliasMarshalJSONMethod(
     descriptor.position,
   );
 
-  g.line("// MarshalJSON implements json.Marshaler.");
+  g.line(
+    `// MarshalJSON encodes ${descriptor.goName} using its underlying strict JSON representation.`,
+  );
   g.line(`func (x ${descriptor.goName}) MarshalJSON() ([]byte, error) {`);
   g.block(() => {
     g.line(`return json.Marshal(${underlyingType}(x))`);
@@ -185,7 +191,9 @@ function renderAliasUnmarshalJSONMethod(
     descriptor.position,
   );
 
-  g.line("// UnmarshalJSON implements json.Unmarshaler.");
+  g.line(
+    `// UnmarshalJSON decodes ${descriptor.goName} using its underlying strict JSON representation.`,
+  );
   g.line(`func (x *${descriptor.goName}) UnmarshalJSON(data []byte) error {`);
   g.block(() => {
     g.line(`var value ${underlyingType}`);

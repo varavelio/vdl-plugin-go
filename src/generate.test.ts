@@ -159,17 +159,23 @@ describe("generate", () => {
 
     expect(result.errors).toBeUndefined();
     expect(result.files?.map((file) => file.path)).toEqual([
+      "enums.go",
       "types.go",
       "constants.go",
       "metadata.go",
       "pointers.go",
     ]);
 
+    const enums = fileContent(result, "enums.go");
+    expect(enums).toContain("package catalog");
+    expect(enums).toContain("type OrderStatus string");
+    expect(enums).toContain('OrderStatusPending OrderStatus = "pending"');
+    expect(enums).toContain("Deprecated: Use FulfillmentStatus instead.");
+    expect(enums).toContain(
+      "func (e OrderStatus) MarshalJSON() ([]byte, error) {",
+    );
+
     const types = fileContent(result, "types.go");
-    expect(types).toContain("package catalog");
-    expect(types).toContain("type OrderStatus string");
-    expect(types).toContain('OrderStatusPending OrderStatus = "pending"');
-    expect(types).toContain("Deprecated: Use FulfillmentStatus instead.");
     expect(types).toContain("type UserId string");
     expect(types).toContain("type Labels map[string]string");
     expect(types).toContain("type Product struct");
@@ -214,7 +220,8 @@ describe("generate", () => {
       'AllByName: map[string][]any{"deprecated": []any{nil}}',
     );
     expect(metadata).toContain('"OrderStatus": EnumMetadata');
-    expect(metadata).toContain('ConstName: "OrderStatusPending"');
+    expect(metadata).toContain('Type: "string"');
+    expect(metadata).toContain('Value: "pending"');
     expect(metadata).toContain('"DefaultProduct": ConstantMetadata');
     expect(metadata).toContain('map[string]any{"scope": "public"}');
 
@@ -269,11 +276,13 @@ describe("generate", () => {
     expect(types).toContain(
       'import (\n\t"encoding/json"\n\t"fmt"\n\t"time"\n)',
     );
-    expect(types).toContain("type Priority int");
-    expect(types).toContain('return fmt.Sprintf("Priority(%d)", e)');
     expect(types).toContain("CreatedAt time.Time");
     expect(types).toContain("Events []TimelineEvents");
     expect(types).toContain("type TimelineEvents struct");
+
+    const enums = fileContent(result, "enums.go");
+    expect(enums).toContain("type Priority int");
+    expect(enums).toContain('return fmt.Sprintf("Priority(%d)", e)');
   });
 
   it("omits constants.go when genConsts is disabled", () => {

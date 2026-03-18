@@ -111,6 +111,27 @@ describe("literal-renderer", () => {
     ).toBe('map[string]any{"owner": "core", "tags": []any{"a", "b"}}');
   });
 
+  it("uses the last object entry for metadata values", () => {
+    expect(
+      renderMetadataValueExpression({
+        kind: "object",
+        position: { file: "schema.vdl", line: 1, column: 1 },
+        objectEntries: [
+          {
+            key: "region",
+            value: irb.stringLiteral("eu"),
+            position: { file: "schema.vdl", line: 1, column: 2 },
+          },
+          {
+            key: "region",
+            value: irb.stringLiteral("us"),
+            position: { file: "schema.vdl", line: 1, column: 3 },
+          },
+        ],
+      }),
+    ).toBe('map[string]any{"region": "us"}');
+  });
+
   it("throws a typed error for invalid enum literals", () => {
     const context = buildContext();
 

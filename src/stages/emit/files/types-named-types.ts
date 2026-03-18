@@ -17,10 +17,10 @@ export function renderNamedType(
   context: GeneratorContext,
 ): void {
   const fallback = descriptor.inline
-    ? `${descriptor.goName} represents the inline VDL object at ${descriptor.path}.`
+    ? `${descriptor.goName} represents the inline object declared at ${descriptor.path}.`
     : descriptor.kind === "object"
-      ? `${descriptor.goName} is a VDL object type.`
-      : `${descriptor.goName} is a VDL type.`;
+      ? `${descriptor.goName} represents a VDL object.`
+      : `${descriptor.goName} declares a VDL type alias.`;
 
   writeDocComment(
     g,
@@ -82,10 +82,14 @@ function renderGetters(
 ): void {
   for (const field of fields) {
     const valueType = stripPointer(field.goType);
+    const getterFallback = field.def.optional
+      ? `Get${field.goName} returns the ${field.goName} field. It returns the zero value when the receiver or field is nil.`
+      : `Get${field.goName} returns the ${field.goName} field. It returns the zero value when the receiver is nil.`;
+    const getterOrFallback = field.def.optional
+      ? `Get${field.goName}Or returns the ${field.goName} field. It returns defaultValue when the receiver or field is nil.`
+      : `Get${field.goName}Or returns the ${field.goName} field. It returns defaultValue when the receiver is nil.`;
 
-    g.line(
-      `// Get${field.goName} returns ${field.goName} or its zero value when unavailable.`,
-    );
+    g.line(`// ${getterFallback}`);
     g.line(`func (x *${receiverType}) Get${field.goName}() ${valueType} {`);
     g.block(() => {
       if (field.def.optional) {
@@ -109,9 +113,7 @@ function renderGetters(
     g.line("}");
     g.break();
 
-    g.line(
-      `// Get${field.goName}Or returns ${field.goName} or the provided default when unavailable.`,
-    );
+    g.line(`// ${getterOrFallback}`);
     g.line(
       `func (x *${receiverType}) Get${field.goName}Or(defaultValue ${valueType}) ${valueType} {`,
     );

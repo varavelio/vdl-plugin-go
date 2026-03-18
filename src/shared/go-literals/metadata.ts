@@ -19,7 +19,7 @@ export function renderMetadataValueExpression(
     case "array":
       return `[]any{${(value.arrayItems ?? []).map((item) => renderMetadataValueExpression(item)).join(", ")}}`;
     case "object":
-      return `map[string]any{${(value.objectEntries ?? [])
+      return `map[string]any{${getLastObjectEntries(value.objectEntries ?? [])
         .map(
           (entry) =>
             `${JSON.stringify(entry.key)}: ${renderMetadataValueExpression(entry.value)}`,
@@ -28,4 +28,16 @@ export function renderMetadataValueExpression(
     default:
       return "nil";
   }
+}
+
+function getLastObjectEntries(
+  entries: NonNullable<LiteralValue["objectEntries"]>,
+): NonNullable<LiteralValue["objectEntries"]> {
+  const lastByKey = new Map<string, (typeof entries)[number]>();
+
+  for (const entry of entries) {
+    lastByKey.set(entry.key, entry);
+  }
+
+  return [...lastByKey.values()];
 }

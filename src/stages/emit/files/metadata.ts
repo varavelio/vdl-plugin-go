@@ -14,9 +14,7 @@ export function generateMetadataFile(context: GeneratorContext): GeneratedFile {
   renderMetadataSupportTypes(g);
   g.break();
 
-  g.line(
-    "// VDLMetadata contains generated annotation metadata for this schema.",
-  );
+  g.line("// VDLMetadata exposes generated metadata for the current schema.");
   g.line("var VDLMetadata = SchemaMetadata{");
   g.block(() => {
     g.line("Types: map[string]TypeMetadata{");

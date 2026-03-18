@@ -37,7 +37,7 @@ export function generateConstantsFile(
       buildDocCommentLines({
         doc: constant.def.doc,
         annotations: constant.def.annotations,
-        fallback: `${constant.goName} is a VDL constant.`,
+        fallback: `${constant.goName} holds a generated VDL constant.`,
       }),
     );
 
