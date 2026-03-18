@@ -216,9 +216,7 @@ describe("generate", () => {
     );
     expect(metadata).toContain('"Description": FieldMetadata');
     expect(metadata).toContain('"deprecated": nil');
-    expect(metadata).toContain(
-      'AllByName: map[string][]any{"deprecated": []any{nil}}',
-    );
+    expect(metadata).not.toContain("AllByName");
     expect(metadata).toContain('"OrderStatus": EnumMetadata');
     expect(metadata).toContain('Type: "string"');
     expect(metadata).toContain('Value: "pending"');
@@ -309,6 +307,29 @@ describe("generate", () => {
     );
     expect(result.files?.some((file) => file.path === "metadata.go")).toBe(
       true,
+    );
+  });
+
+  it("omits metadata.go when genMeta is disabled", () => {
+    const result = generate(
+      irb.pluginInput({
+        options: {
+          genMeta: "false",
+        },
+        ir: irb.schema({
+          types: [
+            irb.typeDef(
+              "Payload",
+              irb.objectType([irb.field("name", irb.primitiveType("string"))]),
+            ),
+          ],
+        }),
+      }),
+    );
+
+    expect(result.errors).toBeUndefined();
+    expect(result.files?.some((file) => file.path === "metadata.go")).toBe(
+      false,
     );
   });
 

@@ -19,7 +19,6 @@ export function renderMetadataSupportTypes(
   g.block(() => {
     g.line("List []Annotation");
     g.line("ByName map[string]any");
-    g.line("AllByName map[string][]any");
   });
   g.line("}");
   g.break();
@@ -40,15 +39,6 @@ export function renderMetadataSupportTypes(
   g.block(() => {
     g.line("value, ok := a.ByName[name]");
     g.line("return value, ok");
-  });
-  g.line("}");
-  g.break();
-
-  g.line("// GetAll returns every value associated with the annotation name.");
-  g.line("func (a AnnotationSet) GetAll(name string) ([]any, bool) {");
-  g.block(() => {
-    g.line("values, ok := a.AllByName[name]");
-    g.line("return values, ok");
   });
   g.line("}");
   g.break();
@@ -140,8 +130,8 @@ export function renderMetadataSupportTypes(
   g.line("}");
   g.break();
 
-  g.line("// Type looks up a type by its generated Go name.");
-  g.line("func (m SchemaMetadata) Type(name string) (TypeMetadata, bool) {");
+  g.line("// GetType looks up a type by its generated Go name.");
+  g.line("func (m SchemaMetadata) GetType(name string) (TypeMetadata, bool) {");
   g.block(() => {
     g.line("value, ok := m.Types[name]");
     g.line("return value, ok");
@@ -149,8 +139,8 @@ export function renderMetadataSupportTypes(
   g.line("}");
   g.break();
 
-  g.line("// Enum looks up an enum by its generated Go name.");
-  g.line("func (m SchemaMetadata) Enum(name string) (EnumMetadata, bool) {");
+  g.line("// GetEnum looks up an enum by its generated Go name.");
+  g.line("func (m SchemaMetadata) GetEnum(name string) (EnumMetadata, bool) {");
   g.block(() => {
     g.line("value, ok := m.Enums[name]");
     g.line("return value, ok");
@@ -158,9 +148,9 @@ export function renderMetadataSupportTypes(
   g.line("}");
   g.break();
 
-  g.line("// Constant looks up a constant by its generated Go name.");
+  g.line("// GetConstant looks up a constant by its generated Go name.");
   g.line(
-    "func (m SchemaMetadata) Constant(name string) (ConstantMetadata, bool) {",
+    "func (m SchemaMetadata) GetConstant(name string) (ConstantMetadata, bool) {",
   );
   g.block(() => {
     g.line("value, ok := m.Constants[name]");

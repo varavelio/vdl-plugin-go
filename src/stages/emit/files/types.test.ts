@@ -10,6 +10,7 @@ describe("generateTypesFile", () => {
       generatorOptions: {
         packageName: "vdl",
         genConsts: true,
+        genMeta: true,
         strict: true,
       },
     });
@@ -40,6 +41,7 @@ describe("generateTypesFile", () => {
       generatorOptions: {
         packageName: "vdl",
         genConsts: true,
+        genMeta: true,
         strict: true,
       },
     });
@@ -88,6 +90,7 @@ describe("generateTypesFile", () => {
       generatorOptions: {
         packageName: "vdl",
         genConsts: true,
+        genMeta: true,
         strict: true,
       },
     });
@@ -129,6 +132,7 @@ describe("generateTypesFile", () => {
       generatorOptions: {
         packageName: "vdl",
         genConsts: true,
+        genMeta: true,
         strict: true,
       },
     });
@@ -161,6 +165,7 @@ describe("generateTypesFile", () => {
       generatorOptions: {
         packageName: "vdl",
         genConsts: true,
+        genMeta: true,
         strict: false,
       },
     });

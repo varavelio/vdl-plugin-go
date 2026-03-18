@@ -15,6 +15,7 @@ import type {
 export interface GeneratorOptions {
   packageName: string;
   genConsts: boolean;
+  genMeta: boolean;
   strict: boolean;
 }
 

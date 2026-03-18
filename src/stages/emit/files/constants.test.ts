@@ -10,6 +10,7 @@ describe("generateConstantsFile", () => {
       generatorOptions: {
         packageName: "vdl",
         genConsts: true,
+        genMeta: true,
         strict: true,
       },
     });
@@ -26,6 +27,7 @@ describe("generateConstantsFile", () => {
       generatorOptions: {
         packageName: "vdl",
         genConsts: false,
+        genMeta: true,
         strict: true,
       },
     });
@@ -76,6 +78,7 @@ describe("generateConstantsFile", () => {
       generatorOptions: {
         packageName: "vdl",
         genConsts: true,
+        genMeta: true,
         strict: true,
       },
     });
