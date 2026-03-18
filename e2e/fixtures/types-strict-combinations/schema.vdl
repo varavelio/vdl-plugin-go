@@ -1,0 +1,13 @@
+type Credentials {
+  username string
+  password string
+}
+
+type Envelope {
+  direct Credentials
+  list Credentials[]
+  matrix Credentials[][]
+  lookup map[Credentials]
+  buckets map[Credentials[]]
+  optDirect? Credentials
+}

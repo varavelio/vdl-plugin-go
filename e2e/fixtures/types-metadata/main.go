@@ -6,21 +6,16 @@ import (
 	"varavel.com/testutil"
 )
 
-func mustType(name, vdlName, path, parent, goType string, inline bool) {
+func mustType(name, typ string) {
 	metadata, ok := gen.VDLMetadata.Type(name)
 	metadata = testutil.MustPresent("type metadata: "+name, metadata, ok)
 
 	testutil.MustEqual(name+" name", metadata.Name, name)
-	testutil.MustEqual(name+" VDL name", metadata.VDLName, vdlName)
-	testutil.MustEqual(name+" path", metadata.Path, path)
-	testutil.MustEqual(name+" parent", metadata.Parent, parent)
-	testutil.MustEqual(name+" kind", metadata.Kind, "object")
-	testutil.MustEqual(name+" Go type", metadata.GoType, goType)
-	testutil.MustEqual(name+" inline", metadata.Inline, inline)
+	testutil.MustEqual(name+" type", metadata.Type, typ)
 	testutil.MustAnnotationMissing(name, metadata.Annotations)
 }
 
-func mustField(typeName, fieldName, vdlName, jsonName, goType string, optional bool) {
+func mustField(typeName, fieldName, jsonName, typ string, optional bool) {
 	typeMetadata, ok := gen.VDLMetadata.Type(typeName)
 	typeMetadata = testutil.MustPresent("type metadata: "+typeName, typeMetadata, ok)
 
@@ -28,9 +23,8 @@ func mustField(typeName, fieldName, vdlName, jsonName, goType string, optional b
 	fieldMetadata = testutil.MustPresent("field metadata: "+typeName+"."+fieldName, fieldMetadata, ok)
 
 	testutil.MustEqual(typeName+"."+fieldName+" name", fieldMetadata.Name, fieldName)
-	testutil.MustEqual(typeName+"."+fieldName+" VDL name", fieldMetadata.VDLName, vdlName)
 	testutil.MustEqual(typeName+"."+fieldName+" JSON name", fieldMetadata.JSONName, jsonName)
-	testutil.MustEqual(typeName+"."+fieldName+" Go type", fieldMetadata.GoType, goType)
+	testutil.MustEqual(typeName+"."+fieldName+" type", fieldMetadata.Type, typ)
 	testutil.MustEqual(typeName+"."+fieldName+" optional", fieldMetadata.Optional, optional)
 	testutil.MustAnnotationMissing(typeName+"."+fieldName, fieldMetadata.Annotations)
 }
@@ -40,12 +34,12 @@ func main() {
 	testutil.MustEqual("enum count", len(gen.VDLMetadata.Enums), 0)
 	testutil.MustEqual("constant count", len(gen.VDLMetadata.Constants), 0)
 
-	mustType("Profile", "Profile", "Profile", "", "Profile", false)
-	mustType("ProfileSettings", "settings", "Profile.settings", "Profile", "ProfileSettings", true)
+	mustType("Profile", "object")
+	mustType("ProfileSettings", "object")
 
-	mustField("Profile", "Name", "name", "name", "string", false)
-	mustField("Profile", "Settings", "settings", "settings", "ProfileSettings", false)
-	mustField("ProfileSettings", "Enabled", "enabled", "enabled", "*bool", true)
+	mustField("Profile", "Name", "name", "string", false)
+	mustField("Profile", "Settings", "settings", "ProfileSettings", false)
+	mustField("ProfileSettings", "Enabled", "enabled", "*bool", true)
 
 	missingType, ok := gen.VDLMetadata.Type("Missing")
 	testutil.MustAbsent("missing type metadata", missingType, ok, gen.TypeMetadata{})

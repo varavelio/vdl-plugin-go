@@ -6,10 +6,12 @@ enum Status {
 type Payload {
   name string
   status Status
+
   items {
     id string
     status Status
   }[]
+
   statusesByName map[Status]
   note? string
 }

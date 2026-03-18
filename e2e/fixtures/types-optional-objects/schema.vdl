@@ -4,6 +4,7 @@ type Child {
 
 type Holder {
   child? Child
+
   inline? {
     title string
     count? int

@@ -10,7 +10,5 @@ enum Priority {
 }
 
 const defaultStatus = Status.Active
-
 const copiedStatus = defaultStatus
-
 const defaultPriority = Priority.High

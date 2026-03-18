@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fixture/gen"
 	"reflect"
 
@@ -22,4 +23,9 @@ func main() {
 	testutil.MustEqual("DefaultStatus enum conversion", gen.Status(gen.DefaultStatus), gen.StatusActive)
 	testutil.MustEqual("CopiedStatus enum conversion", gen.Status(gen.CopiedStatus), gen.StatusActive)
 	testutil.MustEqual("DefaultPriority enum conversion", gen.Priority(gen.DefaultPriority), gen.PriorityHigh)
+	testutil.MustEqual("DefaultStatus is valid", gen.Status(gen.DefaultStatus).IsValid(), true)
+	testutil.MustEqual("DefaultPriority string", gen.Priority(gen.DefaultPriority).String(), "High")
+	testutil.MustJSON("DefaultStatus json", gen.Status(gen.DefaultStatus), `"active"`)
+	_, err := json.Marshal(gen.Status("ghost"))
+	testutil.MustErrContains("invalid enum marshal", err, "cannot marshal invalid value for enum Status")
 }

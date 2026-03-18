@@ -1,4 +1,10 @@
+enum Status {
+  Unknown = ""
+  Ready = "ready"
+}
+
 type Payload {
   name string
+  status Status
   items string[]
 }

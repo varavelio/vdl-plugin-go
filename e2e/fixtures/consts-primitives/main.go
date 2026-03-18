@@ -22,4 +22,6 @@ func main() {
 	testutil.MustEqual("MaxItems runtime type", reflect.TypeOf(any(gen.MaxItems)).String(), "int")
 	testutil.MustEqual("Ratio runtime type", reflect.TypeOf(any(gen.Ratio)).String(), "float64")
 	testutil.MustEqual("FeatureEnabled runtime type", reflect.TypeOf(any(gen.FeatureEnabled)).String(), "bool")
+	testutil.MustEqual("MaxItems arithmetic", gen.MaxItems+1, 2147483648)
+	testutil.MustEqual("Ratio multiplication", gen.Ratio*2, 7.0)
 }

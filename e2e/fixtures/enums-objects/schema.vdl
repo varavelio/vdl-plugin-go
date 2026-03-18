@@ -14,6 +14,7 @@ type Envelope {
   optStatus? Status
   priority Priority
   statuses Status[]
+
   nested {
     status Status
   }

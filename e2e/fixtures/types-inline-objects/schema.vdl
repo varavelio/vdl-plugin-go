@@ -9,8 +9,8 @@ type Envelope {
   }[]
 
   lookup map[{
-    id string
-  }]
+  id string
+}]
 
   nested {
     child {

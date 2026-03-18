@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fixture/gen"
 
 	"varavel.com/testutil"
@@ -55,4 +56,45 @@ func main() {
 
 	var nilChild *gen.EnvelopeNestedChild
 	testutil.MustEqual("nil child GetNoteOr", nilChild.GetNoteOr("fallback"), "fallback")
+
+	var decoded gen.Envelope
+	err := json.Unmarshal([]byte(`{
+		"item": {"label": "alpha"},
+		"items": [{"code": "A"}],
+		"lookup": {"first": {"id": "1"}},
+		"nested": {"child": {"note": "ready"}}
+	}`), &decoded)
+	testutil.MustNoError("strict inline valid", err)
+
+	err = json.Unmarshal([]byte(`{
+		"item": {},
+		"items": [{"code": "A"}],
+		"lookup": {"first": {"id": "1"}},
+		"nested": {"child": {}}
+	}`), &decoded)
+	testutil.MustErrContains("strict inline item", err, `field "label" is required`)
+
+	err = json.Unmarshal([]byte(`{
+		"item": {"label": "alpha"},
+		"items": [{}],
+		"lookup": {"first": {"id": "1"}},
+		"nested": {"child": {}}
+	}`), &decoded)
+	testutil.MustErrContains("strict inline items", err, `field "code" is required`)
+
+	err = json.Unmarshal([]byte(`{
+		"item": {"label": "alpha"},
+		"items": [{"code": "A"}],
+		"lookup": {"first": {}},
+		"nested": {"child": {}}
+	}`), &decoded)
+	testutil.MustErrContains("strict inline lookup", err, `field "id" is required`)
+
+	err = json.Unmarshal([]byte(`{
+		"item": {"label": "alpha"},
+		"items": [{"code": "A"}],
+		"lookup": {"first": {"id": "1"}},
+		"nested": {}
+	}`), &decoded)
+	testutil.MustErrContains("strict inline nested", err, `field "child" is required`)
 }

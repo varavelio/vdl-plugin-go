@@ -83,6 +83,10 @@ func main() {
 	testutil.MustEqual("Matrix type", reflect.TypeOf(gen.Matrix).String(), "[][]int64")
 	testutil.MustEqual("BuildInfo type", reflect.TypeOf(gen.BuildInfo).String(), "struct { Name string; Tags []string }")
 	testutil.MustEqual("ExtendedProfile type", reflect.TypeOf(gen.ExtendedProfile).String(), "struct { Id string; Versions []string; Labels struct { Env string; Region string } }")
+	testutil.MustEqual("Versions length", len(gen.Versions), 2)
+	testutil.MustEqual("Matrix nested value", gen.Matrix[0][1], int64(2))
+	testutil.MustEqual("BuildInfo first tag", gen.BuildInfo.Tags[0], "go")
+	testutil.MustEqual("BaseProfile label env", gen.BaseProfile.Labels.Env, "prod")
 	testutil.MustEqual("spread overrides region", gen.ExtendedProfile.Labels.Region, "us")
 	testutil.MustEqual("spread keeps id", gen.ExtendedProfile.Id, gen.BaseProfile.Id)
 }

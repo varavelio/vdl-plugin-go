@@ -6,12 +6,12 @@ import (
 	"varavel.com/testutil"
 )
 
-func mustConstant(name, vdlName, goType string) gen.ConstantMetadata {
+func mustConstant(name, typ string, value any) gen.ConstantMetadata {
 	metadata, ok := gen.VDLMetadata.Constant(name)
 	metadata = testutil.MustPresent("constant metadata: "+name, metadata, ok)
 	testutil.MustEqual(name+" name", metadata.Name, name)
-	testutil.MustEqual(name+" VDL name", metadata.VDLName, vdlName)
-	testutil.MustEqual(name+" Go type", metadata.GoType, goType)
+	testutil.MustEqual(name+" type", metadata.Type, typ)
+	testutil.MustEqual(name+" value", metadata.Value, value)
 	return metadata
 }
 
@@ -22,13 +22,13 @@ func main() {
 
 	status, ok := gen.VDLMetadata.Enum("Status")
 	status = testutil.MustPresent("enum metadata: Status", status, ok)
-	testutil.MustEqual("Status value type", status.ValueType, "string")
+	testutil.MustEqual("Status type", status.Type, "string")
 
-	apiVersion := mustConstant("ApiVersion", "apiVersion", "string")
+	apiVersion := mustConstant("ApiVersion", "string", "1.2.3")
 	testutil.MustAnnotationValue("ApiVersion meta", apiVersion.Annotations, "meta", map[string]any{"area": "release"})
 	testutil.MustAnnotationValues("ApiVersion meta", apiVersion.Annotations, "meta", []any{map[string]any{"area": "release"}})
 
-	defaultStatus := mustConstant("DefaultStatus", "defaultStatus", "string")
+	defaultStatus := mustConstant("DefaultStatus", "string", "active")
 	testutil.MustAnnotationValue("DefaultStatus tag", defaultStatus.Annotations, "tag", nil)
 	testutil.MustAnnotationValues("DefaultStatus tag", defaultStatus.Annotations, "tag", []any{nil})
 
