@@ -43,7 +43,7 @@ When updating this document, do so with the context of the entire document in mi
   - `src/index.ts`: SDK-facing plugin export. Keep it thin.
   - `src/generate.ts`: pure orchestration that resolves options, builds context, emits files, and converts thrown failures into plugin errors.
 - **Stage Layout**:
-  - `src/stages/options/resolve.ts`: parses plugin options. Current options are `package`, `genConsts`, and `strict`.
+- `src/stages/options/resolve.ts`: parses plugin options. Current options are `package`, `genConsts`, `genMeta`, and `strict`.
   - `src/stages/model/build-context.ts`: builds the shared generation context and aggregates stage errors.
   - `src/stages/model/*.ts`: indexes schema definitions, derives Go names, discovers inline object types recursively, builds descriptors, and validates Go-specific symbol collisions.
   - `src/stages/emit/generate-files.ts`: emits files in fixed order.
@@ -105,7 +105,7 @@ When updating this document, do so with the context of the entire document in mi
    - `enums.go` (optional)
    - `types.go` (optional)
    - `constants.go` (optional)
-   - `metadata.go`
+   - `metadata.go` (optional)
    - `pointers.go`
 5. If any phase fails, the plugin returns `errors` instead of partial success.
 
@@ -179,10 +179,11 @@ This order is intentional and covered by tests. Preserve it unless the test suit
 
 ### Metadata Rules
 
-- `metadata.go` is always emitted.
+- `metadata.go` is emitted only when `genMeta` is enabled (default `true`).
 - `VDLMetadata` exposes generated metadata for types, enums, and constants.
 - Metadata is intentionally compact: keep generated names, simple type/value data, fields, enum members, and annotations, but avoid duplicating lower-value generation internals such as VDL names, parent paths, or generated constant identifiers.
-- Annotation metadata preserves declaration order in `List`, latest value in `ByName`, and all repeated values in `AllByName`.
+- Annotation metadata preserves declaration order in `List` and latest value in `ByName`.
+- Schema lookup helpers are `GetType`, `GetEnum`, and `GetConstant`.
 - Missing metadata lookups must return zero values plus `false`, not panic.
 
 ### Pointer Helper Rules
@@ -206,13 +207,14 @@ This order is intentional and covered by tests. Preserve it unless the test suit
 - Recursive inline object discovery.
 - Datetime import propagation.
 - `genConsts` option behavior.
+- `genMeta` option behavior.
 - `strict` option behavior.
 - Runtime helper name collision reporting.
 - Last duplicate object field wins.
 - Optional fields use pointers and `omitempty`.
 - Enum marshal/unmarshal validation.
 - Object strict JSON presence checks and enum strict JSON behavior.
-- Metadata helper behavior and repeated annotation handling.
+- Metadata helper behavior and annotation handling.
 
 ### Test Conventions
 
@@ -260,7 +262,7 @@ For behavior changes in generated output, run at least the focused unit tests pl
 
 ## Known Caveats
 
-- `metadata.go` and `pointers.go` are emitted even for empty schemas.
+- `pointers.go` is emitted even for empty schemas.
 - Maps are hardcoded to string keys.
 - Datetime literals are not currently supported as Go const values.
 - The generator trusts validated, flattened VDL IR for most semantic correctness checks and keeps validation focused on Go-specific output constraints and current SDK limitations.
