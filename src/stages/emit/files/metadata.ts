@@ -1,9 +1,8 @@
 import { newGenerator } from "@varavel/gen";
-import type { Annotation } from "@varavel/vdl-plugin-sdk";
-import { arrays, objects } from "@varavel/vdl-plugin-sdk/utils";
 import { renderMetadataValueExpression } from "../../../shared/go-literals";
 import { renderGoFile } from "../../../shared/render/go-file";
 import type { GeneratedFile, GeneratorContext } from "../../model/types";
+import { writeAnnotationSetField } from "./metadata-annotations";
 import {
   renderConstantMetadataType,
   renderTypeMetadataType,
@@ -134,47 +133,5 @@ function writeEnumMetadataEntry(
 ): void {
   g.line(`${JSON.stringify(enumGoName)}: EnumMetadata{`);
   g.block(writeBody);
-  g.line("},");
-}
-
-function writeAnnotationSetField(
-  g: ReturnType<typeof newGenerator>,
-  annotations: Annotation[],
-): void {
-  if (annotations.length === 0) {
-    g.line("Annotations: AnnotationSet{},");
-    return;
-  }
-
-  const grouped = arrays.groupBy(annotations, (annotation) => annotation.name);
-  const byName = objects.mapValues(grouped, (group) =>
-    renderMetadataValueExpression(group[group.length - 1]?.argument),
-  );
-
-  g.line("Annotations: AnnotationSet{");
-  g.block(() => {
-    g.line("List: []Annotation{");
-    g.block(() => {
-      for (const annotation of annotations) {
-        g.line("Annotation{");
-        g.block(() => {
-          g.line(`Name: ${JSON.stringify(annotation.name)},`);
-          g.line(
-            `Value: ${renderMetadataValueExpression(annotation.argument)},`,
-          );
-        });
-        g.line("},");
-      }
-    });
-    g.line("},");
-
-    g.line("ByName: map[string]any{");
-    g.block(() => {
-      for (const name of Object.keys(byName)) {
-        g.line(`${JSON.stringify(name)}: ${byName[name]},`);
-      }
-    });
-    g.line("},");
-  });
   g.line("},");
 }

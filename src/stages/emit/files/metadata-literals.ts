@@ -1,5 +1,3 @@
-import { arrays, objects } from "@varavel/vdl-plugin-sdk/utils";
-import { renderMetadataValueExpression } from "../../../shared/go-literals";
 import {
   renderAnonymousGoTypeExpression,
   renderGoType,
@@ -35,35 +33,4 @@ export function renderConstantMetadataType(
         undefined,
         constant.def.position,
       );
-}
-
-export function renderAnnotationSetLiteral(
-  annotations: NamedTypeDescriptor["annotations"],
-): string {
-  if (annotations.length === 0) {
-    return "AnnotationSet{}";
-  }
-
-  const annotationsByName = arrays.groupBy(
-    annotations,
-    (annotation) => annotation.name,
-  );
-  const byName = objects.mapValues(
-    annotationsByName,
-    (group) =>
-      group.map((annotation) =>
-        renderMetadataValueExpression(annotation.argument),
-      )[group.length - 1] ?? "nil",
-  );
-
-  const byNameEntries = Object.keys(byName).map(
-    (name) => `${JSON.stringify(name)}: ${byName[name]}`,
-  );
-
-  return `AnnotationSet{List: []Annotation{${annotations
-    .map(
-      (annotation) =>
-        `Annotation{Name: ${JSON.stringify(annotation.name)}, Value: ${renderMetadataValueExpression(annotation.argument)}}`,
-    )
-    .join(", ")}}, ByName: map[string]any{${byNameEntries.join(", ")}}}`;
 }
