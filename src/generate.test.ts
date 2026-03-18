@@ -332,6 +332,49 @@ describe("generate", () => {
     );
   });
 
+  it("omits pointers.go when genPointerUtils is disabled", () => {
+    const result = generate(
+      irb.pluginInput({
+        options: {
+          genPointerUtils: "false",
+        },
+        ir: irb.schema({
+          constants: [
+            irb.constantDef(
+              "DefaultPayload",
+              irb.namedType("Payload"),
+              irb.objectLiteral({
+                description: irb.stringLiteral("hello"),
+              }),
+            ),
+          ],
+          types: [
+            irb.typeDef(
+              "Payload",
+              irb.objectType([
+                irb.field("name", irb.primitiveType("string")),
+                irb.field("description", irb.primitiveType("string"), {
+                  optional: true,
+                }),
+              ]),
+            ),
+          ],
+        }),
+      }),
+    );
+
+    expect(result.errors).toBeUndefined();
+    expect(result.files?.some((file) => file.path === "pointers.go")).toBe(
+      false,
+    );
+
+    const constants = fileContent(result, "constants.go");
+    expect(constants).not.toContain("Ptr(");
+    expect(constants).toContain(
+      'Description: func() *string { value := "hello"; return &value }()',
+    );
+  });
+
   it("omits strict helpers when strict mode is disabled", () => {
     const result = generate(
       irb.pluginInput({

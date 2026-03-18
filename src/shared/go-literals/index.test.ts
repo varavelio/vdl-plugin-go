@@ -188,6 +188,7 @@ function buildContext() {
       genConsts: true,
       genMeta: true,
       strict: true,
+      genPointerUtils: true,
     },
   });
 

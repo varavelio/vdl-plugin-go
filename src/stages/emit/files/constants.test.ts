@@ -12,6 +12,7 @@ describe("generateConstantsFile", () => {
         genConsts: true,
         genMeta: true,
         strict: true,
+        genPointerUtils: true,
       },
     });
     const disabled = createGeneratorContext({
@@ -29,6 +30,7 @@ describe("generateConstantsFile", () => {
         genConsts: false,
         genMeta: true,
         strict: true,
+        genPointerUtils: true,
       },
     });
 
@@ -80,6 +82,7 @@ describe("generateConstantsFile", () => {
         genConsts: true,
         genMeta: true,
         strict: true,
+        genPointerUtils: true,
       },
     });
 

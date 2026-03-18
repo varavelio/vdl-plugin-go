@@ -12,6 +12,7 @@ describe("generateTypesFile", () => {
         genConsts: true,
         genMeta: true,
         strict: true,
+        genPointerUtils: true,
       },
     });
 
@@ -43,6 +44,7 @@ describe("generateTypesFile", () => {
         genConsts: true,
         genMeta: true,
         strict: true,
+        genPointerUtils: true,
       },
     });
 
@@ -92,6 +94,7 @@ describe("generateTypesFile", () => {
         genConsts: true,
         genMeta: true,
         strict: true,
+        genPointerUtils: true,
       },
     });
 
@@ -134,6 +137,7 @@ describe("generateTypesFile", () => {
         genConsts: true,
         genMeta: true,
         strict: true,
+        genPointerUtils: true,
       },
     });
 
@@ -167,6 +171,7 @@ describe("generateTypesFile", () => {
         genConsts: true,
         genMeta: true,
         strict: false,
+        genPointerUtils: true,
       },
     });
 

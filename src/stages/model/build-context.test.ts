@@ -35,6 +35,7 @@ describe("build-context", () => {
         genConsts: true,
         genMeta: true,
         strict: true,
+        genPointerUtils: true,
       },
     });
 
@@ -67,6 +68,7 @@ describe("build-context", () => {
         genConsts: true,
         genMeta: true,
         strict: true,
+        genPointerUtils: true,
       },
     });
 
@@ -90,6 +92,7 @@ describe("build-context", () => {
         genConsts: true,
         genMeta: true,
         strict: true,
+        genPointerUtils: true,
       },
     });
 

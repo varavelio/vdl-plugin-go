@@ -11,6 +11,11 @@ export function resolveGeneratorOptions(input: PluginInput): {
   const genConsts = options.getOptionBool(input.options, "genConsts", true);
   const genMeta = options.getOptionBool(input.options, "genMeta", true);
   const strict = options.getOptionBool(input.options, "strict", true);
+  const genPointerUtils = options.getOptionBool(
+    input.options,
+    "genPointerUtils",
+    true,
+  );
 
   if (!isValidGoPackageName(packageName)) {
     return {
@@ -29,6 +34,7 @@ export function resolveGeneratorOptions(input: PluginInput): {
       genConsts,
       genMeta,
       strict,
+      genPointerUtils,
     },
   };
 }

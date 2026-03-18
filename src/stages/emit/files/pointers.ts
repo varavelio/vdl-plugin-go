@@ -2,7 +2,13 @@ import { newGenerator } from "@varavel/gen";
 import { renderGoFile } from "../../../shared/render/go-file";
 import type { GeneratedFile, GeneratorContext } from "../../model/types";
 
-export function generatePointersFile(context: GeneratorContext): GeneratedFile {
+export function generatePointersFile(
+  context: GeneratorContext,
+): GeneratedFile | undefined {
+  if (context.options.genPointerUtils === false) {
+    return undefined;
+  }
+
   const g = newGenerator().withTabs();
 
   g.line("// Ptr returns a pointer to the provided value.");

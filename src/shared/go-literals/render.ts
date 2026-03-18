@@ -233,9 +233,26 @@ function renderObjectLiteral(
       childTypeGoName,
     );
 
-    entries.push(
-      `${toGoFieldName(field.name)}: ${field.optional ? `Ptr(${renderedValue})` : renderedValue}`,
-    );
+    if (!field.optional) {
+      entries.push(`${toGoFieldName(field.name)}: ${renderedValue}`);
+      continue;
+    }
+
+    if (context.options.genPointerUtils === false) {
+      const valueType = renderAnonymousGoTypeExpression(
+        field.typeRef,
+        context,
+        entry.position,
+        childTypeGoName,
+      );
+
+      entries.push(
+        `${toGoFieldName(field.name)}: func() *${valueType} { value := ${renderedValue}; return &value }()`,
+      );
+      continue;
+    }
+
+    entries.push(`${toGoFieldName(field.name)}: Ptr(${renderedValue})`);
   }
 
   return `${typeExpression}{${entries.join(", ")}}`;

@@ -12,6 +12,7 @@ describe("options", () => {
       genConsts: true,
       genMeta: true,
       strict: true,
+      genPointerUtils: true,
     });
   });
 
@@ -23,6 +24,7 @@ describe("options", () => {
           genConsts: "off",
           genMeta: "off",
           strict: "false",
+          genPointerUtils: "false",
         },
       }),
     );
@@ -33,6 +35,7 @@ describe("options", () => {
       genConsts: false,
       genMeta: false,
       strict: false,
+      genPointerUtils: false,
     });
   });
 
@@ -43,6 +46,7 @@ describe("options", () => {
           genConsts: "definitely",
           genMeta: "definitely",
           strict: "definitely",
+          genPointerUtils: "definitely",
         },
       }),
     );
@@ -51,6 +55,7 @@ describe("options", () => {
     expect(result.options?.genConsts).toBe(true);
     expect(result.options?.genMeta).toBe(true);
     expect(result.options?.strict).toBe(true);
+    expect(result.options?.genPointerUtils).toBe(true);
   });
 
   it("rejects an invalid Go package name", () => {

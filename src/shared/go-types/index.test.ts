@@ -25,6 +25,7 @@ describe("type-ref", () => {
         genConsts: true,
         genMeta: true,
         strict: true,
+        genPointerUtils: true,
       },
     });
 
@@ -66,6 +67,7 @@ describe("type-ref", () => {
         genConsts: true,
         genMeta: true,
         strict: true,
+        genPointerUtils: true,
       },
     });
 
@@ -126,6 +128,7 @@ describe("type-ref", () => {
         genConsts: true,
         genMeta: true,
         strict: true,
+        genPointerUtils: true,
       },
     });
 

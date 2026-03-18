@@ -16,6 +16,7 @@ export interface GeneratorOptions {
   packageName: string;
   genConsts: boolean;
   genMeta: boolean;
+  genPointerUtils: boolean;
   strict: boolean;
 }
 

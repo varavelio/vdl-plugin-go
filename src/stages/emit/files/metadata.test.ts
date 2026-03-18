@@ -55,6 +55,7 @@ describe("generateMetadataFile", () => {
         genConsts: true,
         genMeta: true,
         strict: true,
+        genPointerUtils: true,
       },
     });
 
@@ -118,6 +119,7 @@ describe("generateMetadataFile", () => {
         genConsts: true,
         genMeta: false,
         strict: true,
+        genPointerUtils: true,
       },
     });
 
