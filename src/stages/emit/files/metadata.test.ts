@@ -62,36 +62,38 @@ describe("generateMetadataFile", () => {
     expect(file).toBeDefined();
     const content = file?.content ?? "";
 
-    expect(content).toContain("func (a AnnotationSet) Has(name string) bool {");
     expect(content).toContain(
-      "func (a AnnotationSet) Get(name string) (any, bool) {",
+      "func (a VDLAnnotationSet) Has(name string) bool {",
     );
     expect(content).toContain(
-      "func (m SchemaMetadata) GetType(name string) (TypeMetadata, bool) {",
+      "func (a VDLAnnotationSet) Get(name string) (any, bool) {",
     );
     expect(content).toContain(
-      "func (m TypeMetadata) GetField(name string) (FieldMetadata, bool) {",
+      "func (m VDLSchemaMetadata) GetType(name string) (VDLTypeMetadata, bool) {",
     );
     expect(content).toContain(
-      "func (m SchemaMetadata) GetEnum(name string) (EnumMetadata, bool) {",
+      "func (m VDLTypeMetadata) GetField(name string) (VDLFieldMetadata, bool) {",
     );
     expect(content).toContain(
-      "func (m EnumMetadata) GetMember(name string) (EnumMemberMetadata, bool) {",
+      "func (m VDLSchemaMetadata) GetEnum(name string) (VDLEnumMetadata, bool) {",
     );
     expect(content).toContain(
-      "func (m SchemaMetadata) GetConstant(name string) (ConstantMetadata, bool) {",
+      "func (m VDLEnumMetadata) GetMember(name string) (VDLEnumMemberMetadata, bool) {",
+    );
+    expect(content).toContain(
+      "func (m VDLSchemaMetadata) GetConstant(name string) (VDLConstantMetadata, bool) {",
     );
     expect(content).toContain("Type string");
     expect(content).toContain("Value any");
     expect(content).toContain("ByName map[string]any");
     expect(content).not.toContain("AllByName map[string][]any");
     expect(content).not.toContain("GetAll(name string)");
-    expect(content).toContain('"Product": TypeMetadata{');
-    expect(content).toContain('"Name": FieldMetadata{');
-    expect(content).toContain('"Status": EnumMetadata{');
-    expect(content).toContain('"ApiVersion": ConstantMetadata{');
-    expect(content).toContain("Annotations: AnnotationSet{");
-    expect(content).toContain("List: []Annotation{");
+    expect(content).toContain('"Product": VDLTypeMetadata{');
+    expect(content).toContain('"Name": VDLFieldMetadata{');
+    expect(content).toContain('"Status": VDLEnumMetadata{');
+    expect(content).toContain('"ApiVersion": VDLConstantMetadata{');
+    expect(content).toContain("Annotations: VDLAnnotationSet{");
+    expect(content).toContain("List: []VDLAnnotation{");
     expect(content).toContain("ByName: map[string]any{");
     expect(content).toContain('"label": "Operational"');
     expect(content).toContain('"searchable": nil');

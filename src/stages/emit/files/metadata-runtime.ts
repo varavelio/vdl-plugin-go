@@ -3,8 +3,8 @@ import type { newGenerator } from "@varavel/gen";
 export function renderMetadataSupportTypes(
   g: ReturnType<typeof newGenerator>,
 ): void {
-  g.line("// Annotation describes a single VDL annotation entry.");
-  g.line("type Annotation struct {");
+  g.line("// VDLAnnotation describes a single VDL annotation entry.");
+  g.line("type VDLAnnotation struct {");
   g.block(() => {
     g.line("Name string");
     g.line("Value any");
@@ -13,18 +13,18 @@ export function renderMetadataSupportTypes(
   g.break();
 
   g.line(
-    "// AnnotationSet groups annotations in declaration order and by name.",
+    "// VDLAnnotationSet groups annotations in declaration order and by name.",
   );
-  g.line("type AnnotationSet struct {");
+  g.line("type VDLAnnotationSet struct {");
   g.block(() => {
-    g.line("List []Annotation");
+    g.line("List []VDLAnnotation");
     g.line("ByName map[string]any");
   });
   g.line("}");
   g.break();
 
   g.line("// Has reports whether an annotation exists in the set.");
-  g.line("func (a AnnotationSet) Has(name string) bool {");
+  g.line("func (a VDLAnnotationSet) Has(name string) bool {");
   g.block(() => {
     g.line("_, ok := a.ByName[name]");
     g.line("return ok");
@@ -35,7 +35,7 @@ export function renderMetadataSupportTypes(
   g.line(
     "// Get returns the latest value associated with the annotation name.",
   );
-  g.line("func (a AnnotationSet) Get(name string) (any, bool) {");
+  g.line("func (a VDLAnnotationSet) Get(name string) (any, bool) {");
   g.block(() => {
     g.line("value, ok := a.ByName[name]");
     g.line("return value, ok");
@@ -43,31 +43,33 @@ export function renderMetadataSupportTypes(
   g.line("}");
   g.break();
 
-  g.line("// FieldMetadata describes a generated field.");
-  g.line("type FieldMetadata struct {");
+  g.line("// VDLFieldMetadata describes a generated field.");
+  g.line("type VDLFieldMetadata struct {");
   g.block(() => {
     g.line("Name string");
     g.line("JSONName string");
     g.line("Type string");
     g.line("Optional bool");
-    g.line("Annotations AnnotationSet");
+    g.line("Annotations VDLAnnotationSet");
   });
   g.line("}");
   g.break();
 
-  g.line("// TypeMetadata describes a generated type.");
-  g.line("type TypeMetadata struct {");
+  g.line("// VDLTypeMetadata describes a generated type.");
+  g.line("type VDLTypeMetadata struct {");
   g.block(() => {
     g.line("Name string");
     g.line("Type string");
-    g.line("Annotations AnnotationSet");
-    g.line("Fields map[string]FieldMetadata");
+    g.line("Annotations VDLAnnotationSet");
+    g.line("Fields map[string]VDLFieldMetadata");
   });
   g.line("}");
   g.break();
 
   g.line("// GetField looks up a field by its generated Go name.");
-  g.line("func (m TypeMetadata) GetField(name string) (FieldMetadata, bool) {");
+  g.line(
+    "func (m VDLTypeMetadata) GetField(name string) (VDLFieldMetadata, bool) {",
+  );
   g.block(() => {
     g.line("field, ok := m.Fields[name]");
     g.line("return field, ok");
@@ -75,23 +77,23 @@ export function renderMetadataSupportTypes(
   g.line("}");
   g.break();
 
-  g.line("// EnumMemberMetadata describes a generated enum value.");
-  g.line("type EnumMemberMetadata struct {");
+  g.line("// VDLEnumMemberMetadata describes a generated enum value.");
+  g.line("type VDLEnumMemberMetadata struct {");
   g.block(() => {
     g.line("Name string");
     g.line("Value any");
-    g.line("Annotations AnnotationSet");
+    g.line("Annotations VDLAnnotationSet");
   });
   g.line("}");
   g.break();
 
-  g.line("// EnumMetadata describes a generated enum.");
-  g.line("type EnumMetadata struct {");
+  g.line("// VDLEnumMetadata describes a generated enum.");
+  g.line("type VDLEnumMetadata struct {");
   g.block(() => {
     g.line("Name string");
     g.line("Type string");
-    g.line("Annotations AnnotationSet");
-    g.line("Members map[string]EnumMemberMetadata");
+    g.line("Annotations VDLAnnotationSet");
+    g.line("Members map[string]VDLEnumMemberMetadata");
   });
   g.line("}");
   g.break();
@@ -100,7 +102,7 @@ export function renderMetadataSupportTypes(
     "// GetMember looks up an enum member by its generated Go suffix name.",
   );
   g.line(
-    "func (m EnumMetadata) GetMember(name string) (EnumMemberMetadata, bool) {",
+    "func (m VDLEnumMetadata) GetMember(name string) (VDLEnumMemberMetadata, bool) {",
   );
   g.block(() => {
     g.line("member, ok := m.Members[name]");
@@ -109,31 +111,33 @@ export function renderMetadataSupportTypes(
   g.line("}");
   g.break();
 
-  g.line("// ConstantMetadata describes a generated constant value.");
-  g.line("type ConstantMetadata struct {");
+  g.line("// VDLConstantMetadata describes a generated constant value.");
+  g.line("type VDLConstantMetadata struct {");
   g.block(() => {
     g.line("Name string");
     g.line("Type string");
     g.line("Value any");
-    g.line("Annotations AnnotationSet");
+    g.line("Annotations VDLAnnotationSet");
   });
   g.line("}");
   g.break();
 
   g.line(
-    "// SchemaMetadata collects metadata for every generated declaration.",
+    "// VDLSchemaMetadata collects metadata for every generated declaration.",
   );
-  g.line("type SchemaMetadata struct {");
+  g.line("type VDLSchemaMetadata struct {");
   g.block(() => {
-    g.line("Types map[string]TypeMetadata");
-    g.line("Enums map[string]EnumMetadata");
-    g.line("Constants map[string]ConstantMetadata");
+    g.line("Types map[string]VDLTypeMetadata");
+    g.line("Enums map[string]VDLEnumMetadata");
+    g.line("Constants map[string]VDLConstantMetadata");
   });
   g.line("}");
   g.break();
 
   g.line("// GetType looks up a type by its generated Go name.");
-  g.line("func (m SchemaMetadata) GetType(name string) (TypeMetadata, bool) {");
+  g.line(
+    "func (m VDLSchemaMetadata) GetType(name string) (VDLTypeMetadata, bool) {",
+  );
   g.block(() => {
     g.line("value, ok := m.Types[name]");
     g.line("return value, ok");
@@ -142,7 +146,9 @@ export function renderMetadataSupportTypes(
   g.break();
 
   g.line("// GetEnum looks up an enum by its generated Go name.");
-  g.line("func (m SchemaMetadata) GetEnum(name string) (EnumMetadata, bool) {");
+  g.line(
+    "func (m VDLSchemaMetadata) GetEnum(name string) (VDLEnumMetadata, bool) {",
+  );
   g.block(() => {
     g.line("value, ok := m.Enums[name]");
     g.line("return value, ok");
@@ -152,7 +158,7 @@ export function renderMetadataSupportTypes(
 
   g.line("// GetConstant looks up a constant by its generated Go name.");
   g.line(
-    "func (m SchemaMetadata) GetConstant(name string) (ConstantMetadata, bool) {",
+    "func (m VDLSchemaMetadata) GetConstant(name string) (VDLConstantMetadata, bool) {",
   );
   g.block(() => {
     g.line("value, ok := m.Constants[name]");

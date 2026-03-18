@@ -209,17 +209,17 @@ describe("generate", () => {
     );
 
     const metadata = fileContent(result, "metadata.go");
-    expect(metadata).toContain("var VDLMetadata = SchemaMetadata{");
-    expect(metadata).toContain('"Product": TypeMetadata');
-    expect(metadata).toContain("Annotations: AnnotationSet{");
-    expect(metadata).toContain("List: []Annotation{");
-    expect(metadata).toContain('"Description": FieldMetadata');
+    expect(metadata).toContain("var VDLMetadata = VDLSchemaMetadata{");
+    expect(metadata).toContain('"Product": VDLTypeMetadata');
+    expect(metadata).toContain("Annotations: VDLAnnotationSet{");
+    expect(metadata).toContain("List: []VDLAnnotation{");
+    expect(metadata).toContain('"Description": VDLFieldMetadata');
     expect(metadata).toContain('"deprecated": nil');
     expect(metadata).not.toContain("AllByName");
-    expect(metadata).toContain('"OrderStatus": EnumMetadata');
+    expect(metadata).toContain('"OrderStatus": VDLEnumMetadata');
     expect(metadata).toContain('Type: "string"');
     expect(metadata).toContain('Value: "pending"');
-    expect(metadata).toContain('"DefaultProduct": ConstantMetadata');
+    expect(metadata).toContain('"DefaultProduct": VDLConstantMetadata');
     expect(metadata).toContain('map[string]any{"scope": "public"}');
 
     const pointers = fileContent(result, "pointers.go");
@@ -364,6 +364,29 @@ describe("generate", () => {
     expect(types).not.toContain(
       "func (e Status) MarshalJSON() ([]byte, error) {",
     );
+  });
+
+  it("allows schema symbols that used to collide with metadata runtime names", () => {
+    const result = generate(
+      irb.pluginInput({
+        ir: irb.schema({
+          types: [
+            irb.typeDef(
+              "Annotation",
+              irb.objectType([irb.field("name", irb.primitiveType("string"))]),
+            ),
+          ],
+        }),
+      }),
+    );
+
+    expect(result.errors).toBeUndefined();
+    const types = fileContent(result, "types.go");
+    expect(types).toContain("type Annotation struct");
+
+    const metadata = fileContent(result, "metadata.go");
+    expect(metadata).toContain("type VDLAnnotation struct {");
+    expect(metadata).toContain('"Annotation": VDLTypeMetadata{');
   });
 
   it("returns an error when generated names collide with runtime helpers", () => {

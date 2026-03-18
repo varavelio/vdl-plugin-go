@@ -22,9 +22,9 @@ export function generateMetadataFile(
   g.break();
 
   g.line("// VDLMetadata exposes generated metadata for the current schema.");
-  g.line("var VDLMetadata = SchemaMetadata{");
+  g.line("var VDLMetadata = VDLSchemaMetadata{");
   g.block(() => {
-    g.line("Types: map[string]TypeMetadata{");
+    g.line("Types: map[string]VDLTypeMetadata{");
     g.block(() => {
       for (const descriptor of context.namedTypes) {
         writeTypeMetadataEntry(g, descriptor, context);
@@ -32,17 +32,19 @@ export function generateMetadataFile(
     });
     g.line("},");
 
-    g.line("Enums: map[string]EnumMetadata{");
+    g.line("Enums: map[string]VDLEnumMetadata{");
     g.block(() => {
       for (const enumDescriptor of context.enumDescriptors) {
         writeEnumMetadataEntry(g, enumDescriptor.goName, () => {
           g.line(`Name: ${JSON.stringify(enumDescriptor.goName)},`);
           g.line(`Type: ${JSON.stringify(enumDescriptor.def.enumType)},`);
           writeAnnotationSetField(g, enumDescriptor.def.annotations);
-          g.line("Members: map[string]EnumMemberMetadata{");
+          g.line("Members: map[string]VDLEnumMemberMetadata{");
           g.block(() => {
             for (const member of enumDescriptor.members) {
-              g.line(`${JSON.stringify(member.goName)}: EnumMemberMetadata{`);
+              g.line(
+                `${JSON.stringify(member.goName)}: VDLEnumMemberMetadata{`,
+              );
               g.block(() => {
                 g.line(`Name: ${JSON.stringify(member.goName)},`);
                 g.line(
@@ -59,10 +61,10 @@ export function generateMetadataFile(
     });
     g.line("},");
 
-    g.line("Constants: map[string]ConstantMetadata{");
+    g.line("Constants: map[string]VDLConstantMetadata{");
     g.block(() => {
       for (const constant of context.constantDescriptors) {
-        g.line(`${JSON.stringify(constant.goName)}: ConstantMetadata{`);
+        g.line(`${JSON.stringify(constant.goName)}: VDLConstantMetadata{`);
         g.block(() => {
           g.line(`Name: ${JSON.stringify(constant.goName)},`);
           g.line(
@@ -94,7 +96,7 @@ function writeTypeMetadataEntry(
   descriptor: GeneratorContext["namedTypes"][number],
   context: GeneratorContext,
 ): void {
-  g.line(`${JSON.stringify(descriptor.goName)}: TypeMetadata{`);
+  g.line(`${JSON.stringify(descriptor.goName)}: VDLTypeMetadata{`);
   g.block(() => {
     g.line(`Name: ${JSON.stringify(descriptor.goName)},`);
     g.line(
@@ -107,10 +109,10 @@ function writeTypeMetadataEntry(
       return;
     }
 
-    g.line("Fields: map[string]FieldMetadata{");
+    g.line("Fields: map[string]VDLFieldMetadata{");
     g.block(() => {
       for (const field of descriptor.fields) {
-        g.line(`${JSON.stringify(field.goName)}: FieldMetadata{`);
+        g.line(`${JSON.stringify(field.goName)}: VDLFieldMetadata{`);
         g.block(() => {
           g.line(`Name: ${JSON.stringify(field.goName)},`);
           g.line(`JSONName: ${JSON.stringify(field.jsonName)},`);
@@ -131,7 +133,7 @@ function writeEnumMetadataEntry(
   enumGoName: string,
   writeBody: () => void,
 ): void {
-  g.line(`${JSON.stringify(enumGoName)}: EnumMetadata{`);
+  g.line(`${JSON.stringify(enumGoName)}: VDLEnumMetadata{`);
   g.block(writeBody);
   g.line("},");
 }

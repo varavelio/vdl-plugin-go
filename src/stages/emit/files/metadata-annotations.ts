@@ -8,18 +8,18 @@ export function writeAnnotationSetField(
   annotations: Annotation[],
 ): void {
   if (annotations.length === 0) {
-    g.line("Annotations: AnnotationSet{},");
+    g.line("Annotations: VDLAnnotationSet{},");
     return;
   }
 
   const byName = buildByNameEntries(annotations);
 
-  g.line("Annotations: AnnotationSet{");
+  g.line("Annotations: VDLAnnotationSet{");
   g.block(() => {
-    g.line("List: []Annotation{");
+    g.line("List: []VDLAnnotation{");
     g.block(() => {
       for (const annotation of annotations) {
-        g.line("Annotation{");
+        g.line("VDLAnnotation{");
         g.block(() => {
           g.line(`Name: ${JSON.stringify(annotation.name)},`);
           g.line(

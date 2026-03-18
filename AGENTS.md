@@ -86,7 +86,7 @@ When updating this document, do so with the context of the entire document in mi
 - **Do not bypass context building**: All file emitters depend on the normalized `GeneratorContext` from `src/stages/model/build-context.ts`. New generation features should usually be modeled there first, not computed ad hoc inside emitters.
 - **Use errors as data**: Validation failures should become `PluginOutputError` objects with `position` when available. Throw only when it simplifies internal control flow, then map through `toPluginOutputError`.
 - **Preserve determinism**: File order, import sorting, symbol naming, enum member resolution, and object field behavior are intentionally stable and covered by tests.
-- **Respect Go symbol reservations**: `src/stages/model/symbols.ts` reserves helper and metadata symbols such as `Ptr`, `Val`, `Or`, `Annotation`, `FieldMetadata`, and `VDLMetadata`. Any new generated symbol must participate in collision checking.
+- **Respect Go symbol reservations**: `src/stages/model/symbols.ts` reserves helper and metadata symbols such as `Ptr`, `Val`, `Or`, `VDLAnnotation`, `VDLFieldMetadata`, and `VDLMetadata`. Any new generated symbol must participate in collision checking.
 - **Keep `src/index.ts` thin**: Business logic belongs in pure helpers, not the SDK export wrapper.
 - **Follow existing TypeScript style**: ESM imports, small focused modules, explicit helper functions, early returns, and discriminated-union switching over IR kinds.
 - **Prefer SDK utilities over ad hoc helpers**: In plugin runtime code, reach for `@varavel/vdl-plugin-sdk/utils` namespaces such as `strings`, `arrays`, `objects`, `options`, `ir`, etc before introducing custom utility layers or third-party helpers.
