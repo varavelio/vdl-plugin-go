@@ -182,10 +182,12 @@ This order is intentional and covered by tests. Preserve it unless the test suit
 
 - `metadata.go` is emitted only when `genMeta` is enabled (default `true`).
 - `VDLMetadata` exposes generated metadata for types, enums, and constants.
-- Metadata is intentionally compact: keep generated names, simple type/value data, fields, enum members, and annotations, but avoid duplicating lower-value generation internals such as VDL names, parent paths, or generated constant identifiers.
+- Metadata is intentionally compact: avoid dumping raw IR, positions, docs, or fully duplicated constant values into the generated Go runtime.
+- Types, constants, and fields now describe shape through a recursive `VDLTypeRef` tree (`kind`, named target, array dims, element, and nested object fields) so annotations remain reachable inside arrays, maps, and inline objects without bloating the output.
 - Annotation metadata preserves declaration order in `List` and latest value in `ByName`.
 - Schema lookup helpers are `GetType`, `GetEnum`, and `GetConstant`.
-- Nested metadata lookup helpers are `GetField` on `VDLTypeMetadata` and `GetMember` on `VDLEnumMetadata`.
+- Nested metadata lookup helpers are `GetField` on both `VDLTypeMetadata` and `VDLTypeRef`, plus `GetMember` on `VDLEnumMetadata`.
+- Enum member metadata keeps resolved values, but constant metadata intentionally omits duplicated runtime values.
 - Missing metadata lookups must return zero values plus `false`, not panic.
 
 ### Pointer Helper Rules
