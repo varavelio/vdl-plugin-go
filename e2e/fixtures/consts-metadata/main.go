@@ -6,12 +6,12 @@ import (
 	"varavel.com/testutil"
 )
 
-func mustConstant(name, typ string, value any) gen.ConstantMetadata {
+func mustConstant(name, kind, typeName string) gen.VDLConstantMetadata {
 	metadata, ok := gen.VDLMetadata.GetConstant(name)
 	metadata = testutil.MustPresent("constant metadata: "+name, metadata, ok)
 	testutil.MustEqual(name+" name", metadata.Name, name)
-	testutil.MustEqual(name+" type", metadata.Type, typ)
-	testutil.MustEqual(name+" value", metadata.Value, value)
+	testutil.MustEqual(name+" kind", metadata.Type.Kind, kind)
+	testutil.MustEqual(name+" type name", metadata.Type.Name, typeName)
 	return metadata
 }
 
@@ -22,17 +22,17 @@ func main() {
 
 	status, ok := gen.VDLMetadata.GetEnum("Status")
 	status = testutil.MustPresent("enum metadata: Status", status, ok)
-	testutil.MustEqual("Status type", status.Type, "string")
+	testutil.MustEqual("Status member count", len(status.Members), 2)
 
-	apiVersion := mustConstant("ApiVersion", "string", "1.2.3")
+	apiVersion := mustConstant("ApiVersion", "primitive", "string")
 	testutil.MustAnnotationValue("ApiVersion meta", apiVersion.Annotations, "meta", map[string]any{"area": "release"})
 
-	defaultStatus := mustConstant("DefaultStatus", "string", "active")
+	defaultStatus := mustConstant("DefaultStatus", "primitive", "string")
 	testutil.MustAnnotationValue("DefaultStatus tag", defaultStatus.Annotations, "tag", nil)
 
 	missingConstant, ok := gen.VDLMetadata.GetConstant("Missing")
-	testutil.MustAbsent("missing constant metadata", missingConstant, ok, gen.ConstantMetadata{})
+	testutil.MustAbsent("missing constant metadata", missingConstant, ok, gen.VDLConstantMetadata{})
 
 	missingEnum, ok := gen.VDLMetadata.GetEnum("Missing")
-	testutil.MustAbsent("missing enum metadata", missingEnum, ok, gen.EnumMetadata{})
+	testutil.MustAbsent("missing enum metadata", missingEnum, ok, gen.VDLEnumMetadata{})
 }

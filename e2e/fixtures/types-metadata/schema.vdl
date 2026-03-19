@@ -1,7 +1,15 @@
+@resource("profiles")
 type Profile {
+  @searchable
   name string
 
   settings {
+    @secure
     enabled? bool
   }
+
+  sessions {
+    @token
+    id string
+  }[]
 }
