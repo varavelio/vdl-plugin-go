@@ -2457,9 +2457,23 @@ function renderObjectLiteral(typeExpression, typeRef, literal, context, position
       entry.position,
       childTypeGoName
     );
-    entries.push(
-      `${toGoFieldName(field.name)}: ${field.optional ? `Ptr(${renderedValue})` : renderedValue}`
-    );
+    if (!field.optional) {
+      entries.push(`${toGoFieldName(field.name)}: ${renderedValue}`);
+      continue;
+    }
+    if (context.options.genPointerUtils === false) {
+      const valueType = renderAnonymousGoTypeExpression(
+        field.typeRef,
+        context,
+        entry.position,
+        childTypeGoName
+      );
+      entries.push(
+        `${toGoFieldName(field.name)}: func() *${valueType} { value := ${renderedValue}; return &value }()`
+      );
+      continue;
+    }
+    entries.push(`${toGoFieldName(field.name)}: Ptr(${renderedValue})`);
   }
   return `${typeExpression}{${entries.join(", ")}}`;
 }
@@ -2790,16 +2804,16 @@ __name(generateEnumsFile, "generateEnumsFile");
 // src/stages/emit/files/metadata-annotations.ts
 function writeAnnotationSetField(g, annotations) {
   if (annotations.length === 0) {
-    g.line("Annotations: AnnotationSet{},");
+    g.line("Annotations: VDLAnnotationSet{},");
     return;
   }
   const byName = buildByNameEntries(annotations);
-  g.line("Annotations: AnnotationSet{");
+  g.line("Annotations: VDLAnnotationSet{");
   g.block(() => {
-    g.line("List: []Annotation{");
+    g.line("List: []VDLAnnotation{");
     g.block(() => {
       for (const annotation of annotations) {
-        g.line("Annotation{");
+        g.line("VDLAnnotation{");
         g.block(() => {
           g.line(`Name: ${JSON.stringify(annotation.name)},`);
           g.line(
@@ -2837,29 +2851,10 @@ function buildByNameEntries(annotations) {
 }
 __name(buildByNameEntries, "buildByNameEntries");
 
-// src/stages/emit/files/metadata-literals.ts
-function renderTypeMetadataType(descriptor, context) {
-  return descriptor.kind === "object" ? "object" : renderGoType(descriptor.typeRef, context, void 0, descriptor.position);
-}
-__name(renderTypeMetadataType, "renderTypeMetadataType");
-function renderConstantMetadataType(constant, context) {
-  return constant.def.typeRef.kind === "object" ? renderAnonymousGoTypeExpression(
-    constant.def.typeRef,
-    context,
-    constant.def.position
-  ) : renderGoType(
-    constant.def.typeRef,
-    context,
-    void 0,
-    constant.def.position
-  );
-}
-__name(renderConstantMetadataType, "renderConstantMetadataType");
-
 // src/stages/emit/files/metadata-runtime.ts
 function renderMetadataSupportTypes(g) {
-  g.line("// Annotation describes a single VDL annotation entry.");
-  g.line("type Annotation struct {");
+  g.line("// VDLAnnotation describes a single VDL annotation entry.");
+  g.line("type VDLAnnotation struct {");
   g.block(() => {
     g.line("Name string");
     g.line("Value any");
@@ -2867,17 +2862,17 @@ function renderMetadataSupportTypes(g) {
   g.line("}");
   g.break();
   g.line(
-    "// AnnotationSet groups annotations in declaration order and by name."
+    "// VDLAnnotationSet groups annotations in declaration order and by name."
   );
-  g.line("type AnnotationSet struct {");
+  g.line("type VDLAnnotationSet struct {");
   g.block(() => {
-    g.line("List []Annotation");
+    g.line("List []VDLAnnotation");
     g.line("ByName map[string]any");
   });
   g.line("}");
   g.break();
   g.line("// Has reports whether an annotation exists in the set.");
-  g.line("func (a AnnotationSet) Has(name string) bool {");
+  g.line("func (a VDLAnnotationSet) Has(name string) bool {");
   g.block(() => {
     g.line("_, ok := a.ByName[name]");
     g.line("return ok");
@@ -2887,58 +2882,78 @@ function renderMetadataSupportTypes(g) {
   g.line(
     "// Get returns the latest value associated with the annotation name."
   );
-  g.line("func (a AnnotationSet) Get(name string) (any, bool) {");
+  g.line("func (a VDLAnnotationSet) Get(name string) (any, bool) {");
   g.block(() => {
     g.line("value, ok := a.ByName[name]");
     g.line("return value, ok");
   });
   g.line("}");
   g.break();
-  g.line("// FieldMetadata describes a generated field.");
-  g.line("type FieldMetadata struct {");
+  g.line("// VDLTypeRef describes the recursive shape of a VDL type.");
+  g.line("type VDLTypeRef struct {");
   g.block(() => {
+    g.line("Kind string");
     g.line("Name string");
-    g.line("JSONName string");
-    g.line("Type string");
-    g.line("Optional bool");
-    g.line("Annotations AnnotationSet");
+    g.line("ArrayDims int");
+    g.line("Element *VDLTypeRef");
+    g.line("Fields map[string]VDLFieldMetadata");
   });
   g.line("}");
   g.break();
-  g.line("// TypeMetadata describes a generated type.");
-  g.line("type TypeMetadata struct {");
+  g.line("// GetField looks up an object field by its generated Go name.");
+  g.line(
+    "func (r VDLTypeRef) GetField(name string) (VDLFieldMetadata, bool) {"
+  );
   g.block(() => {
-    g.line("Name string");
-    g.line("Type string");
-    g.line("Annotations AnnotationSet");
-    g.line("Fields map[string]FieldMetadata");
-  });
-  g.line("}");
-  g.break();
-  g.line("// GetField looks up a field by its generated Go name.");
-  g.line("func (m TypeMetadata) GetField(name string) (FieldMetadata, bool) {");
-  g.block(() => {
-    g.line("field, ok := m.Fields[name]");
+    g.line("field, ok := r.Fields[name]");
     g.line("return field, ok");
   });
   g.line("}");
   g.break();
-  g.line("// EnumMemberMetadata describes a generated enum value.");
-  g.line("type EnumMemberMetadata struct {");
+  g.line("// VDLFieldMetadata describes a generated field.");
+  g.line("type VDLFieldMetadata struct {");
   g.block(() => {
     g.line("Name string");
-    g.line("Value any");
-    g.line("Annotations AnnotationSet");
+    g.line("JSONName string");
+    g.line("Optional bool");
+    g.line("Type VDLTypeRef");
+    g.line("Annotations VDLAnnotationSet");
   });
   g.line("}");
   g.break();
-  g.line("// EnumMetadata describes a generated enum.");
-  g.line("type EnumMetadata struct {");
+  g.line("// VDLTypeMetadata describes a generated type.");
+  g.line("type VDLTypeMetadata struct {");
   g.block(() => {
     g.line("Name string");
-    g.line("Type string");
-    g.line("Annotations AnnotationSet");
-    g.line("Members map[string]EnumMemberMetadata");
+    g.line("Annotations VDLAnnotationSet");
+    g.line("Type VDLTypeRef");
+  });
+  g.line("}");
+  g.break();
+  g.line("// GetField looks up a field by its generated Go name.");
+  g.line(
+    "func (m VDLTypeMetadata) GetField(name string) (VDLFieldMetadata, bool) {"
+  );
+  g.block(() => {
+    g.line("return m.Type.GetField(name)");
+  });
+  g.line("}");
+  g.break();
+  g.line("// VDLEnumMemberMetadata describes a generated enum value.");
+  g.line("type VDLEnumMemberMetadata struct {");
+  g.block(() => {
+    g.line("Name string");
+    g.line("Value any");
+    g.line("Annotations VDLAnnotationSet");
+  });
+  g.line("}");
+  g.break();
+  g.line("// VDLEnumMetadata describes a generated enum.");
+  g.line("type VDLEnumMetadata struct {");
+  g.block(() => {
+    g.line("Name string");
+    g.line("Annotations VDLAnnotationSet");
+    g.line("Members map[string]VDLEnumMemberMetadata");
   });
   g.line("}");
   g.break();
@@ -2946,7 +2961,7 @@ function renderMetadataSupportTypes(g) {
     "// GetMember looks up an enum member by its generated Go suffix name."
   );
   g.line(
-    "func (m EnumMetadata) GetMember(name string) (EnumMemberMetadata, bool) {"
+    "func (m VDLEnumMetadata) GetMember(name string) (VDLEnumMemberMetadata, bool) {"
   );
   g.block(() => {
     g.line("member, ok := m.Members[name]");
@@ -2954,29 +2969,30 @@ function renderMetadataSupportTypes(g) {
   });
   g.line("}");
   g.break();
-  g.line("// ConstantMetadata describes a generated constant value.");
-  g.line("type ConstantMetadata struct {");
+  g.line("// VDLConstantMetadata describes a generated constant value.");
+  g.line("type VDLConstantMetadata struct {");
   g.block(() => {
     g.line("Name string");
-    g.line("Type string");
-    g.line("Value any");
-    g.line("Annotations AnnotationSet");
+    g.line("Annotations VDLAnnotationSet");
+    g.line("Type VDLTypeRef");
   });
   g.line("}");
   g.break();
   g.line(
-    "// SchemaMetadata collects metadata for every generated declaration."
+    "// VDLSchemaMetadata collects metadata for every generated declaration."
   );
-  g.line("type SchemaMetadata struct {");
+  g.line("type VDLSchemaMetadata struct {");
   g.block(() => {
-    g.line("Types map[string]TypeMetadata");
-    g.line("Enums map[string]EnumMetadata");
-    g.line("Constants map[string]ConstantMetadata");
+    g.line("Types map[string]VDLTypeMetadata");
+    g.line("Enums map[string]VDLEnumMetadata");
+    g.line("Constants map[string]VDLConstantMetadata");
   });
   g.line("}");
   g.break();
   g.line("// GetType looks up a type by its generated Go name.");
-  g.line("func (m SchemaMetadata) GetType(name string) (TypeMetadata, bool) {");
+  g.line(
+    "func (m VDLSchemaMetadata) GetType(name string) (VDLTypeMetadata, bool) {"
+  );
   g.block(() => {
     g.line("value, ok := m.Types[name]");
     g.line("return value, ok");
@@ -2984,7 +3000,9 @@ function renderMetadataSupportTypes(g) {
   g.line("}");
   g.break();
   g.line("// GetEnum looks up an enum by its generated Go name.");
-  g.line("func (m SchemaMetadata) GetEnum(name string) (EnumMetadata, bool) {");
+  g.line(
+    "func (m VDLSchemaMetadata) GetEnum(name string) (VDLEnumMetadata, bool) {"
+  );
   g.block(() => {
     g.line("value, ok := m.Enums[name]");
     g.line("return value, ok");
@@ -2993,7 +3011,7 @@ function renderMetadataSupportTypes(g) {
   g.break();
   g.line("// GetConstant looks up a constant by its generated Go name.");
   g.line(
-    "func (m SchemaMetadata) GetConstant(name string) (ConstantMetadata, bool) {"
+    "func (m VDLSchemaMetadata) GetConstant(name string) (VDLConstantMetadata, bool) {"
   );
   g.block(() => {
     g.line("value, ok := m.Constants[name]");
@@ -3002,6 +3020,124 @@ function renderMetadataSupportTypes(g) {
   g.line("}");
 }
 __name(renderMetadataSupportTypes, "renderMetadataSupportTypes");
+
+// src/stages/emit/files/metadata-types.ts
+function writeMetadataTypeField(g, typeRef, context) {
+  g.line("Type: VDLTypeRef{");
+  g.block(() => {
+    writeMetadataTypeRefBody(g, typeRef, context);
+  });
+  g.line("},");
+}
+__name(writeMetadataTypeField, "writeMetadataTypeField");
+function writeMetadataTypeRefBody(g, typeRef, context) {
+  var _a2;
+  g.line(`Kind: ${JSON.stringify(typeRef.kind)},`);
+  switch (typeRef.kind) {
+    case "primitive":
+      g.line(
+        `Name: ${JSON.stringify(
+          expectValue(
+            typeRef.primitiveName,
+            "Encountered a primitive type reference without a primitive name."
+          )
+        )},`
+      );
+      return;
+    case "type": {
+      const typeName = expectValue(
+        typeRef.typeName,
+        "Encountered a named type reference without a type name."
+      );
+      g.line(
+        `Name: ${JSON.stringify(
+          expectValue(
+            context.typeGoNamesByVdlName.get(typeName),
+            `Unknown VDL type reference ${JSON.stringify(typeName)}.`
+          )
+        )},`
+      );
+      return;
+    }
+    case "enum": {
+      const enumName = expectValue(
+        typeRef.enumName,
+        "Encountered an enum reference without an enum name."
+      );
+      g.line(
+        `Name: ${JSON.stringify(
+          expectValue(
+            context.enumGoNamesByVdlName.get(enumName),
+            `Unknown VDL enum reference ${JSON.stringify(enumName)}.`
+          )
+        )},`
+      );
+      return;
+    }
+    case "array": {
+      g.line(`ArrayDims: ${String((_a2 = typeRef.arrayDims) != null ? _a2 : 1)},`);
+      g.line("Element: &VDLTypeRef{");
+      g.block(() => {
+        writeMetadataTypeRefBody(
+          g,
+          expectValue(
+            typeRef.arrayType,
+            "Encountered an array type reference without an element type."
+          ),
+          context
+        );
+      });
+      g.line("},");
+      return;
+    }
+    case "map": {
+      g.line("Element: &VDLTypeRef{");
+      g.block(() => {
+        writeMetadataTypeRefBody(
+          g,
+          expectValue(
+            typeRef.mapType,
+            "Encountered a map type reference without a value type."
+          ),
+          context
+        );
+      });
+      g.line("},");
+      return;
+    }
+    case "object": {
+      const fields = getEffectiveObjectFields(typeRef.objectFields);
+      if (fields.length === 0) {
+        g.line("Fields: nil,");
+        return;
+      }
+      g.line("Fields: map[string]VDLFieldMetadata{");
+      g.block(() => {
+        for (const field of fields) {
+          writeMetadataFieldEntry(g, field, context);
+        }
+      });
+      g.line("},");
+      return;
+    }
+    default:
+      fail(`Unsupported VDL type kind ${JSON.stringify(typeRef.kind)}.`);
+  }
+}
+__name(writeMetadataTypeRefBody, "writeMetadataTypeRefBody");
+function writeMetadataFieldEntry(g, field, context) {
+  const goName = toGoFieldName(field.name);
+  g.line(`${JSON.stringify(goName)}: VDLFieldMetadata{`);
+  g.block(() => {
+    g.line(`Name: ${JSON.stringify(goName)},`);
+    g.line(`JSONName: ${JSON.stringify(toGoJsonName(field.name))},`);
+    g.line(`Optional: ${String(field.optional)},`);
+    writeMetadataTypeField(g, field.typeRef, context);
+    writeAnnotationSetField(g, field.annotations);
+  });
+  g.line("},");
+}
+__name(writeMetadataFieldEntry, "writeMetadataFieldEntry");
 
 // src/stages/emit/files/metadata.ts
 function generateMetadataFile(context) {
@@ -3012,26 +3148,27 @@ function generateMetadataFile(context) {
   renderMetadataSupportTypes(g);
   g.break();
   g.line("// VDLMetadata exposes generated metadata for the current schema.");
-  g.line("var VDLMetadata = SchemaMetadata{");
+  g.line("var VDLMetadata = VDLSchemaMetadata{");
   g.block(() => {
-    g.line("Types: map[string]TypeMetadata{");
+    g.line("Types: map[string]VDLTypeMetadata{");
     g.block(() => {
       for (const descriptor of context.namedTypes) {
         writeTypeMetadataEntry(g, descriptor, context);
       }
     });
     g.line("},");
-    g.line("Enums: map[string]EnumMetadata{");
+    g.line("Enums: map[string]VDLEnumMetadata{");
     g.block(() => {
       for (const enumDescriptor of context.enumDescriptors) {
         writeEnumMetadataEntry(g, enumDescriptor.goName, () => {
           g.line(`Name: ${JSON.stringify(enumDescriptor.goName)},`);
-          g.line(`Type: ${JSON.stringify(enumDescriptor.def.enumType)},`);
           writeAnnotationSetField(g, enumDescriptor.def.annotations);
-          g.line("Members: map[string]EnumMemberMetadata{");
+          g.line("Members: map[string]VDLEnumMemberMetadata{");
           g.block(() => {
             for (const member of enumDescriptor.members) {
-              g.line(`${JSON.stringify(member.goName)}: EnumMemberMetadata{`);
+              g.line(
+                `${JSON.stringify(member.goName)}: VDLEnumMemberMetadata{`
+              );
               g.block(() => {
                 g.line(`Name: ${JSON.stringify(member.goName)},`);
                 g.line(
@@ -3047,19 +3184,14 @@ function generateMetadataFile(context) {
       }
     });
     g.line("},");
-    g.line("Constants: map[string]ConstantMetadata{");
+    g.line("Constants: map[string]VDLConstantMetadata{");
     g.block(() => {
       for (const constant of context.constantDescriptors) {
-        g.line(`${JSON.stringify(constant.goName)}: ConstantMetadata{`);
+        g.line(`${JSON.stringify(constant.goName)}: VDLConstantMetadata{`);
         g.block(() => {
           g.line(`Name: ${JSON.stringify(constant.goName)},`);
-          g.line(
-            `Type: ${JSON.stringify(renderConstantMetadataType(constant, context))},`
-          );
-          g.line(
-            `Value: ${renderMetadataValueExpression(constant.def.value)},`
-          );
           writeAnnotationSetField(g, constant.def.annotations);
+          writeMetadataTypeField(g, constant.def.typeRef, context);
         });
         g.line("},");
       }
@@ -3077,38 +3209,17 @@ function generateMetadataFile(context) {
 }
 __name(generateMetadataFile, "generateMetadataFile");
 function writeTypeMetadataEntry(g, descriptor, context) {
-  g.line(`${JSON.stringify(descriptor.goName)}: TypeMetadata{`);
+  g.line(`${JSON.stringify(descriptor.goName)}: VDLTypeMetadata{`);
   g.block(() => {
     g.line(`Name: ${JSON.stringify(descriptor.goName)},`);
-    g.line(
-      `Type: ${JSON.stringify(renderTypeMetadataType(descriptor, context))},`
-    );
     writeAnnotationSetField(g, descriptor.annotations);
-    if (descriptor.fields.length === 0) {
-      g.line("Fields: nil,");
-      return;
-    }
-    g.line("Fields: map[string]FieldMetadata{");
-    g.block(() => {
-      for (const field of descriptor.fields) {
-        g.line(`${JSON.stringify(field.goName)}: FieldMetadata{`);
-        g.block(() => {
-          g.line(`Name: ${JSON.stringify(field.goName)},`);
-          g.line(`JSONName: ${JSON.stringify(field.jsonName)},`);
-          g.line(`Type: ${JSON.stringify(field.goType)},`);
-          g.line(`Optional: ${String(field.def.optional)},`);
-          writeAnnotationSetField(g, field.def.annotations);
-        });
-        g.line("},");
-      }
-    });
-    g.line("},");
+    writeMetadataTypeField(g, descriptor.typeRef, context);
   });
   g.line("},");
 }
 __name(writeTypeMetadataEntry, "writeTypeMetadataEntry");
 function writeEnumMetadataEntry(g, enumGoName, writeBody) {
-  g.line(`${JSON.stringify(enumGoName)}: EnumMetadata{`);
+  g.line(`${JSON.stringify(enumGoName)}: VDLEnumMetadata{`);
   g.block(writeBody);
   g.line("},");
 }
@@ -3116,6 +3227,9 @@ __name(writeEnumMetadataEntry, "writeEnumMetadataEntry");
 
 // src/stages/emit/files/pointers.ts
 function generatePointersFile(context) {
+  if (context.options.genPointerUtils === false) {
+    return void 0;
+  }
   const g = newGenerator().withTabs();
   g.line("// Ptr returns a pointer to the provided value.");
   g.line("func Ptr[T any](value T) *T {");
@@ -3829,14 +3943,15 @@ var RESERVED_PACKAGE_SCOPE_SYMBOLS = [
   "Ptr",
   "Val",
   "Or",
-  "Annotation",
-  "AnnotationSet",
-  "FieldMetadata",
-  "TypeMetadata",
-  "EnumMemberMetadata",
-  "EnumMetadata",
-  "ConstantMetadata",
-  "SchemaMetadata",
+  "VDLAnnotation",
+  "VDLAnnotationSet",
+  "VDLTypeRef",
+  "VDLFieldMetadata",
+  "VDLTypeMetadata",
+  "VDLEnumMemberMetadata",
+  "VDLEnumMetadata",
+  "VDLConstantMetadata",
+  "VDLSchemaMetadata",
   "VDLMetadata"
 ];
 var _symbols;
@@ -3901,6 +4016,11 @@ function resolveGeneratorOptions(input) {
   const genConsts = options_exports.getOptionBool(input.options, "genConsts", true);
   const genMeta = options_exports.getOptionBool(input.options, "genMeta", true);
   const strict = options_exports.getOptionBool(input.options, "strict", true);
+  const genPointerUtils = options_exports.getOptionBool(
+    input.options,
+    "genPointerUtils",
+    true
+  );
   if (!isValidGoPackageName(packageName)) {
     return {
       errors: [
@@ -3916,7 +4036,8 @@ function resolveGeneratorOptions(input) {
       packageName,
       genConsts,
       genMeta,
-      strict
+      strict,
+      genPointerUtils
     }
   };
 }
