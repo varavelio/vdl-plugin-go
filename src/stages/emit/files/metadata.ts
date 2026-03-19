@@ -3,11 +3,8 @@ import { renderMetadataValueExpression } from "../../../shared/go-literals";
 import { renderGoFile } from "../../../shared/render/go-file";
 import type { GeneratedFile, GeneratorContext } from "../../model/types";
 import { writeAnnotationSetField } from "./metadata-annotations";
-import {
-  renderConstantMetadataType,
-  renderTypeMetadataType,
-} from "./metadata-literals";
 import { renderMetadataSupportTypes } from "./metadata-runtime";
+import { writeMetadataTypeField } from "./metadata-types";
 
 export function generateMetadataFile(
   context: GeneratorContext,
@@ -37,7 +34,6 @@ export function generateMetadataFile(
       for (const enumDescriptor of context.enumDescriptors) {
         writeEnumMetadataEntry(g, enumDescriptor.goName, () => {
           g.line(`Name: ${JSON.stringify(enumDescriptor.goName)},`);
-          g.line(`Type: ${JSON.stringify(enumDescriptor.def.enumType)},`);
           writeAnnotationSetField(g, enumDescriptor.def.annotations);
           g.line("Members: map[string]VDLEnumMemberMetadata{");
           g.block(() => {
@@ -67,13 +63,8 @@ export function generateMetadataFile(
         g.line(`${JSON.stringify(constant.goName)}: VDLConstantMetadata{`);
         g.block(() => {
           g.line(`Name: ${JSON.stringify(constant.goName)},`);
-          g.line(
-            `Type: ${JSON.stringify(renderConstantMetadataType(constant, context))},`,
-          );
-          g.line(
-            `Value: ${renderMetadataValueExpression(constant.def.value)},`,
-          );
           writeAnnotationSetField(g, constant.def.annotations);
+          writeMetadataTypeField(g, constant.def.typeRef, context);
         });
         g.line("},");
       }
@@ -99,31 +90,8 @@ function writeTypeMetadataEntry(
   g.line(`${JSON.stringify(descriptor.goName)}: VDLTypeMetadata{`);
   g.block(() => {
     g.line(`Name: ${JSON.stringify(descriptor.goName)},`);
-    g.line(
-      `Type: ${JSON.stringify(renderTypeMetadataType(descriptor, context))},`,
-    );
     writeAnnotationSetField(g, descriptor.annotations);
-
-    if (descriptor.fields.length === 0) {
-      g.line("Fields: nil,");
-      return;
-    }
-
-    g.line("Fields: map[string]VDLFieldMetadata{");
-    g.block(() => {
-      for (const field of descriptor.fields) {
-        g.line(`${JSON.stringify(field.goName)}: VDLFieldMetadata{`);
-        g.block(() => {
-          g.line(`Name: ${JSON.stringify(field.goName)},`);
-          g.line(`JSONName: ${JSON.stringify(field.jsonName)},`);
-          g.line(`Type: ${JSON.stringify(field.goType)},`);
-          g.line(`Optional: ${String(field.def.optional)},`);
-          writeAnnotationSetField(g, field.def.annotations);
-        });
-        g.line("},");
-      }
-    });
-    g.line("},");
+    writeMetadataTypeField(g, descriptor.typeRef, context);
   });
   g.line("},");
 }

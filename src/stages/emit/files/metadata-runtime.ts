@@ -43,13 +43,36 @@ export function renderMetadataSupportTypes(
   g.line("}");
   g.break();
 
+  g.line("// VDLTypeRef describes the recursive shape of a VDL type.");
+  g.line("type VDLTypeRef struct {");
+  g.block(() => {
+    g.line("Kind string");
+    g.line("Name string");
+    g.line("ArrayDims int");
+    g.line("Element *VDLTypeRef");
+    g.line("Fields map[string]VDLFieldMetadata");
+  });
+  g.line("}");
+  g.break();
+
+  g.line("// GetField looks up an object field by its generated Go name.");
+  g.line(
+    "func (r VDLTypeRef) GetField(name string) (VDLFieldMetadata, bool) {",
+  );
+  g.block(() => {
+    g.line("field, ok := r.Fields[name]");
+    g.line("return field, ok");
+  });
+  g.line("}");
+  g.break();
+
   g.line("// VDLFieldMetadata describes a generated field.");
   g.line("type VDLFieldMetadata struct {");
   g.block(() => {
     g.line("Name string");
     g.line("JSONName string");
-    g.line("Type string");
     g.line("Optional bool");
+    g.line("Type VDLTypeRef");
     g.line("Annotations VDLAnnotationSet");
   });
   g.line("}");
@@ -59,9 +82,8 @@ export function renderMetadataSupportTypes(
   g.line("type VDLTypeMetadata struct {");
   g.block(() => {
     g.line("Name string");
-    g.line("Type string");
     g.line("Annotations VDLAnnotationSet");
-    g.line("Fields map[string]VDLFieldMetadata");
+    g.line("Type VDLTypeRef");
   });
   g.line("}");
   g.break();
@@ -71,8 +93,7 @@ export function renderMetadataSupportTypes(
     "func (m VDLTypeMetadata) GetField(name string) (VDLFieldMetadata, bool) {",
   );
   g.block(() => {
-    g.line("field, ok := m.Fields[name]");
-    g.line("return field, ok");
+    g.line("return m.Type.GetField(name)");
   });
   g.line("}");
   g.break();
@@ -91,7 +112,6 @@ export function renderMetadataSupportTypes(
   g.line("type VDLEnumMetadata struct {");
   g.block(() => {
     g.line("Name string");
-    g.line("Type string");
     g.line("Annotations VDLAnnotationSet");
     g.line("Members map[string]VDLEnumMemberMetadata");
   });
@@ -115,9 +135,8 @@ export function renderMetadataSupportTypes(
   g.line("type VDLConstantMetadata struct {");
   g.block(() => {
     g.line("Name string");
-    g.line("Type string");
-    g.line("Value any");
     g.line("Annotations VDLAnnotationSet");
+    g.line("Type VDLTypeRef");
   });
   g.line("}");
   g.break();

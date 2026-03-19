@@ -6,6 +6,7 @@ const RESERVED_PACKAGE_SCOPE_SYMBOLS = [
   "Or",
   "VDLAnnotation",
   "VDLAnnotationSet",
+  "VDLTypeRef",
   "VDLFieldMetadata",
   "VDLTypeMetadata",
   "VDLEnumMemberMetadata",

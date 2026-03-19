@@ -210,6 +210,7 @@ describe("generate", () => {
 
     const metadata = fileContent(result, "metadata.go");
     expect(metadata).toContain("var VDLMetadata = VDLSchemaMetadata{");
+    expect(metadata).toContain("type VDLTypeRef struct {");
     expect(metadata).toContain('"Product": VDLTypeMetadata');
     expect(metadata).toContain("Annotations: VDLAnnotationSet{");
     expect(metadata).toContain("List: []VDLAnnotation{");
@@ -217,10 +218,12 @@ describe("generate", () => {
     expect(metadata).toContain('"deprecated": nil');
     expect(metadata).not.toContain("AllByName");
     expect(metadata).toContain('"OrderStatus": VDLEnumMetadata');
-    expect(metadata).toContain('Type: "string"');
     expect(metadata).toContain('Value: "pending"');
     expect(metadata).toContain('"DefaultProduct": VDLConstantMetadata');
-    expect(metadata).toContain('map[string]any{"scope": "public"}');
+    expect(metadata).toContain("Type: VDLTypeRef{");
+    expect(metadata).toContain('Kind: "type"');
+    expect(metadata).toContain('Name: "Product"');
+    expect(metadata).toContain('"scope": "public"');
 
     const pointers = fileContent(result, "pointers.go");
     expect(pointers).toContain("func Ptr[T any](value T) *T {");
