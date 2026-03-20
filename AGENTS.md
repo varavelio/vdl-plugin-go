@@ -177,7 +177,7 @@ This order is intentional and covered by tests. Preserve it unless the test suit
   - `String()`
   - `IsValid()`
   - `strict` additionally generates enum `MarshalJSON()` and `UnmarshalJSON()` methods.
-- Enum JSON handling rejects invalid values and now includes the rejected value plus the allowed set in the returned error.
+- Enum JSON handling rejects invalid values.
 - Top-level constants whose declared type is a direct enum currently emit as untyped underlying scalar constants; tests lock this behavior in.
 
 ### Metadata Rules
