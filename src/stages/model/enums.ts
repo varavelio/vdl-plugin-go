@@ -1,5 +1,5 @@
 import type { EnumDef, PluginOutputError } from "@varavel/vdl-plugin-sdk";
-import { getLiteralValueKey } from "../../shared/literal-key";
+import { crypto } from "@varavel/vdl-plugin-sdk/utils";
 import { toGoEnumMemberName } from "../../shared/naming";
 import type { PackageScopeSymbolTable } from "./symbols";
 import type {
@@ -82,7 +82,7 @@ function buildEnumDescriptor(
       def: member,
       goName: memberGoName,
       constName: `${goName}${memberGoName}`,
-      valueKey: getLiteralValueKey(member.value),
+      valueKey: crypto.hash(member.value),
     };
 
     members.push(descriptor);

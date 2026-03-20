@@ -4,13 +4,13 @@ import type {
   PrimitiveType,
   TypeRef,
 } from "@varavel/vdl-plugin-sdk";
+import { crypto } from "@varavel/vdl-plugin-sdk/utils";
 import type {
   EnumDescriptor,
   GeneratorContext,
 } from "../../stages/model/types";
 import { expectValue, fail } from "../errors";
 import { resolveNonTypeRef } from "../go-types";
-import { getLiteralValueKey } from "../literal-key";
 
 interface ScalarTarget {
   primitiveName?: PrimitiveType;
@@ -62,7 +62,7 @@ export function renderDirectEnumExpression(
   literal: LiteralValue,
   position?: Position,
 ): string {
-  const member = enumDescriptor.memberByValue.get(getLiteralValueKey(literal));
+  const member = enumDescriptor.memberByValue.get(crypto.hash(literal));
 
   if (!member) {
     fail(
@@ -124,7 +124,7 @@ function renderEnumScalarLiteral(
   literal: LiteralValue,
   position?: Position,
 ): string {
-  if (!enumDescriptor.memberByValue.has(getLiteralValueKey(literal))) {
+  if (!enumDescriptor.memberByValue.has(crypto.hash(literal))) {
     fail(
       `Invalid literal for ${JSON.stringify(enumDescriptor.def.name)} enum. Expected one of its declared members.`,
       position,
