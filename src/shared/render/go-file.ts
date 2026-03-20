@@ -1,6 +1,19 @@
 import { newGenerator } from "@varavel/gen";
 import type { ImportSet } from "./imports";
 
+/**
+ * Renders a complete Go source file with a package declaration, imports, and a body.
+ *
+ * This function handles the boilerplate of a Go file, ensuring the correct order
+ * of declarations and appropriate spacing between sections. It uses the `Generator`
+ * from `@varavel/gen` to produce properly indented output with tabs.
+ *
+ * @param options - The file rendering options.
+ * @param options.packageName - The name of the Go package.
+ * @param options.imports - An optional set of imports to include.
+ * @param options.body - The main content of the file (types, functions, constants, etc.).
+ * @returns The full Go source code as a string.
+ */
 export function renderGoFile(options: {
   packageName: string;
   imports?: ImportSet;
