@@ -5,7 +5,9 @@ const config = {
       src "../../../dist/index.js"
       schema "./schema.vdl"
       outDir "./gen"
-      options { package "gen" }
+      options {
+        package "gen"
+      }
     }
   ]
 }

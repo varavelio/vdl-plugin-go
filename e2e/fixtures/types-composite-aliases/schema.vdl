@@ -5,14 +5,14 @@ enum Status {
 }
 
 type StatusValues Status[]
-type StatusByID map[Status]
+type StatusById map[Status]
 
 type Event {
   id string
   statuses StatusValues
-  byId StatusByID
+  byId StatusById
   nested {
     statuses StatusValues
-    byId StatusByID
+    byId StatusById
   }
 }

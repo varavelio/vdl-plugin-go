@@ -4,7 +4,10 @@ const labels = {
 }
 
 const versions = ["1.0.0" "1.1.0"]
-const matrix = [[1 2] [3]]
+const matrix = [
+  [1 2]
+  [3]
+]
 
 const buildInfo = {
   name "plugin-go"
