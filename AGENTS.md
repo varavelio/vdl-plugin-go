@@ -147,6 +147,8 @@ This order is intentional and covered by tests. Preserve it unless the test suit
 
 - `strict` enables runtime JSON guards for generated Go code and defaults to `true`.
 - Object types use generated unexported `pre<Type>` decoder structs plus `UnmarshalJSON()` so required fields are checked by JSON presence rather than Go zero values.
+- Strict decode propagates through nested objects, arrays, and maps by decoding nested object shapes into matching `pre<Type>` values before transforming them into final Go types.
+- Generated `validate(parentPath string)` methods build contextual field paths such as `items[0].code` or `lookup["primary"].id`, so nested required-field failures report where they happened. Path assembly is inlined inside generated methods rather than emitted as shared runtime helper functions, which avoids extra package-level symbols and keeps collision risk low.
 - Object types do not generate custom `MarshalJSON()` methods; zero values remain the Go-native output behavior.
 - Enums always generate `IsValid()`, and `strict` additionally generates enum `MarshalJSON()` and `UnmarshalJSON()` methods that reject out-of-set values.
 - Named aliases only get strict JSON helpers when they wrap object or enum behavior that needs delegation; plain primitive and collection aliases stay lightweight.
@@ -175,7 +177,7 @@ This order is intentional and covered by tests. Preserve it unless the test suit
   - `String()`
   - `IsValid()`
   - `strict` additionally generates enum `MarshalJSON()` and `UnmarshalJSON()` methods.
-- Enum JSON handling rejects invalid values.
+- Enum JSON handling rejects invalid values and now includes the rejected value plus the allowed set in the returned error.
 - Top-level constants whose declared type is a direct enum currently emit as untyped underlying scalar constants; tests lock this behavior in.
 
 ### Metadata Rules
