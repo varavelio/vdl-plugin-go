@@ -52,6 +52,6 @@ func main() {
 	testutil.MustErrContains(
 		"Envelope invalid marshal",
 		err,
-		"cannot marshal invalid value for enum Status",
+		`cannot marshal invalid value "ghost" for enum Status`,
 	)
 }

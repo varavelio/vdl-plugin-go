@@ -40,7 +40,7 @@ func main() {
 	testutil.MustErrContains(
 		"Unmarshal missing required field",
 		err,
-		"field \"name\" is required",
+		"field name is required",
 	)
 
 	err = json.Unmarshal(
@@ -50,7 +50,7 @@ func main() {
 	testutil.MustErrContains(
 		"Unmarshal invalid enum",
 		err,
-		"invalid value for enum Status",
+		`invalid value "ghost" for enum Status`,
 	)
 
 	invalidCollection := gen.Payload{
@@ -81,7 +81,7 @@ func main() {
 	testutil.MustErrContains(
 		"Marshal invalid nested item",
 		err,
-		"cannot marshal invalid value for enum Status",
+		`cannot marshal invalid value "ghost" for enum Status`,
 	)
 
 	invalidMap := gen.Payload{
@@ -97,6 +97,6 @@ func main() {
 	testutil.MustErrContains(
 		"Marshal invalid map value",
 		err,
-		"cannot marshal invalid value for enum Status",
+		`cannot marshal invalid value "ghost" for enum Status`,
 	)
 }

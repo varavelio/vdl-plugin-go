@@ -38,7 +38,7 @@ func main() {
 			"byId": {}
 		}
 	}`), &value)
-	testutil.MustErrContains("invalid enum in alias list", err, "invalid value for enum Status")
+	testutil.MustErrContains("invalid enum in alias list", err, `invalid value "ghost" for enum Status`)
 
 	err = json.Unmarshal([]byte(`{
 		"id": "evt-3",
@@ -51,7 +51,7 @@ func main() {
 			"byId": {}
 		}
 	}`), &value)
-	testutil.MustErrContains("invalid enum in alias map", err, "invalid value for enum Status")
+	testutil.MustErrContains("invalid enum in alias map", err, `invalid value "ghost" for enum Status`)
 
 	invalid := gen.Event{
 		Id:       "evt-4",
@@ -63,7 +63,7 @@ func main() {
 		},
 	}
 	_, err = json.Marshal(invalid)
-	testutil.MustErrContains("marshal invalid alias list", err, "cannot marshal invalid value for enum Status")
+	testutil.MustErrContains("marshal invalid alias list", err, `cannot marshal invalid value "ghost" for enum Status`)
 
 	invalidNested := gen.Event{
 		Id:       "evt-5",
@@ -75,5 +75,5 @@ func main() {
 		},
 	}
 	_, err = json.Marshal(invalidNested)
-	testutil.MustErrContains("marshal invalid alias nested map", err, "cannot marshal invalid value for enum Status")
+	testutil.MustErrContains("marshal invalid alias nested map", err, `cannot marshal invalid value "ghost" for enum Status`)
 }

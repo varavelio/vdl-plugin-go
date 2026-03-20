@@ -72,7 +72,7 @@ func main() {
 		"lookup": {"first": {"id": "1"}},
 		"nested": {"child": {}}
 	}`), &decoded)
-	testutil.MustErrContains("strict inline item", err, `field "label" is required`)
+	testutil.MustErrContains("strict inline item", err, `field item.label is required`)
 
 	err = json.Unmarshal([]byte(`{
 		"item": {"label": "alpha"},
@@ -80,7 +80,7 @@ func main() {
 		"lookup": {"first": {"id": "1"}},
 		"nested": {"child": {}}
 	}`), &decoded)
-	testutil.MustErrContains("strict inline items", err, `field "code" is required`)
+	testutil.MustErrContains("strict inline items", err, `field items[0].code is required`)
 
 	err = json.Unmarshal([]byte(`{
 		"item": {"label": "alpha"},
@@ -88,7 +88,7 @@ func main() {
 		"lookup": {"first": {}},
 		"nested": {"child": {}}
 	}`), &decoded)
-	testutil.MustErrContains("strict inline lookup", err, `field "id" is required`)
+	testutil.MustErrContains("strict inline lookup", err, `field lookup["first"].id is required`)
 
 	err = json.Unmarshal([]byte(`{
 		"item": {"label": "alpha"},
@@ -96,5 +96,5 @@ func main() {
 		"lookup": {"first": {"id": "1"}},
 		"nested": {}
 	}`), &decoded)
-	testutil.MustErrContains("strict inline nested", err, `field "child" is required`)
+	testutil.MustErrContains("strict inline nested", err, `field nested.child is required`)
 }

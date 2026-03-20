@@ -33,9 +33,9 @@ func main() {
 	testutil.MustEqual("StatusLookup value", decodedLookup, gen.StatusLookup{"primary": gen.StatusActive})
 
 	_, err = json.Marshal(gen.StatusGroup{gen.Status("ghost")})
-	testutil.MustErrContains("StatusGroup invalid marshal", err, "cannot marshal invalid value for enum Status")
+	testutil.MustErrContains("StatusGroup invalid marshal", err, `cannot marshal invalid value "ghost" for enum Status`)
 	err = json.Unmarshal([]byte(`["ghost"]`), &decodedStates)
-	testutil.MustErrContains("StatusGroup invalid unmarshal", err, "invalid value for enum Status")
+	testutil.MustErrContains("StatusGroup invalid unmarshal", err, `invalid value "ghost" for enum Status`)
 	err = json.Unmarshal([]byte(`{"bad":"ghost"}`), &decodedLookup)
-	testutil.MustErrContains("StatusLookup invalid unmarshal", err, "invalid value for enum Status")
+	testutil.MustErrContains("StatusLookup invalid unmarshal", err, `invalid value "ghost" for enum Status`)
 }

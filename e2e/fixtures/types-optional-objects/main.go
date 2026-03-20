@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fixture/gen"
 
 	"varavel.com/testutil"
@@ -42,4 +43,15 @@ func main() {
 
 	var nilInline *gen.HolderInline
 	testutil.MustEqual("nil inline GetTitleOr", nilInline.GetTitleOr("fallback"), "fallback")
+
+	var decoded gen.Holder
+	err := json.Unmarshal([]byte(`{
+		"child": {}
+	}`), &decoded)
+	testutil.MustErrContains("optional child path", err, `field child.name is required`)
+
+	err = json.Unmarshal([]byte(`{
+		"inline": {}
+	}`), &decoded)
+	testutil.MustErrContains("optional inline path", err, `field inline.title is required`)
 }
