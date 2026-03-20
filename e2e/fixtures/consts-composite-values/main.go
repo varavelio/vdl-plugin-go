@@ -48,7 +48,11 @@ func main() {
 			"id": "user-1",
 			"labels": {
 				"env": "prod",
-				"region": "us"
+				"region": "eu"
+			},
+			"nestedLabels": {
+				"env": "prod",
+				"region": "eu"
 			},
 			"versions": ["1.0.0", "1.1.0"]
 		}`,
@@ -58,11 +62,11 @@ func main() {
 	testutil.MustEqual("Versions type", reflect.TypeOf(gen.Versions).String(), "[]string")
 	testutil.MustEqual("Matrix type", reflect.TypeOf(gen.Matrix).String(), "[][]int64")
 	testutil.MustEqual("BuildInfo type", reflect.TypeOf(gen.BuildInfo).String(), "struct { Name string \"json:\\\"name\\\"\"; Tags []string \"json:\\\"tags\\\"\" }")
-	testutil.MustEqual("ExtendedProfile type", reflect.TypeOf(gen.ExtendedProfile).String(), "struct { Id string \"json:\\\"id\\\"\"; Versions []string \"json:\\\"versions\\\"\"; Labels struct { Env string \"json:\\\"env\\\"\"; Region string \"json:\\\"region\\\"\" } \"json:\\\"labels\\\"\" }")
+	testutil.MustEqual("ExtendedProfile type", reflect.TypeOf(gen.ExtendedProfile).String(), "struct { Id string \"json:\\\"id\\\"\"; Labels struct { Env string \"json:\\\"env\\\"\"; Region string \"json:\\\"region\\\"\" } \"json:\\\"labels\\\"\"; Versions []string \"json:\\\"versions\\\"\"; NestedLabels struct { Env string \"json:\\\"env\\\"\"; Region string \"json:\\\"region\\\"\" } \"json:\\\"nestedLabels\\\"\" }")
 	testutil.MustEqual("Versions length", len(gen.Versions), 2)
 	testutil.MustEqual("Matrix nested value", gen.Matrix[0][1], int64(2))
 	testutil.MustEqual("BuildInfo first tag", gen.BuildInfo.Tags[0], "go")
 	testutil.MustEqual("BaseProfile label env", gen.BaseProfile.Labels.Env, "prod")
-	testutil.MustEqual("spread overrides region", gen.ExtendedProfile.Labels.Region, "us")
+	testutil.MustEqual("spread overrides region", gen.ExtendedProfile.Labels.Region, "eu")
 	testutil.MustEqual("spread keeps id", gen.ExtendedProfile.Id, gen.BaseProfile.Id)
 }

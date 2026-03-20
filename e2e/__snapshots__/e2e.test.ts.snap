@@ -41,23 +41,34 @@ var BuildInfo = struct {
 // ExtendedProfile holds a generated VDL constant.
 var ExtendedProfile = struct {
 	Id string \`json:"id"\`
-	Versions []string \`json:"versions"\`
 	Labels struct {
 		Env string \`json:"env"\`
 		Region string \`json:"region"\`
 	} \`json:"labels"\`
+	Versions []string \`json:"versions"\`
+	NestedLabels struct {
+		Env string \`json:"env"\`
+		Region string \`json:"region"\`
+	} \`json:"nestedLabels"\`
 }{
 	Id: "user-1",
-	Versions: []string{
-		"1.0.0",
-		"1.1.0",
-	},
 	Labels: struct {
 		Env string \`json:"env"\`
 		Region string \`json:"region"\`
 	}{
 		Env: "prod",
-		Region: "us",
+		Region: "eu",
+	},
+	Versions: []string{
+		"1.0.0",
+		"1.1.0",
+	},
+	NestedLabels: struct {
+		Env string \`json:"env"\`
+		Region string \`json:"region"\`
+	}{
+		Env: "prod",
+		Region: "eu",
 	},
 }
 
@@ -323,6 +334,37 @@ var VDLMetadata = VDLSchemaMetadata{
 						},
 						Annotations: VDLAnnotationSet{},
 					},
+					"Labels": VDLFieldMetadata{
+						Name: "Labels",
+						JSONName: "labels",
+						Optional: false,
+						Type: VDLTypeRef{
+							Kind: "object",
+							Fields: map[string]VDLFieldMetadata{
+								"Env": VDLFieldMetadata{
+									Name: "Env",
+									JSONName: "env",
+									Optional: false,
+									Type: VDLTypeRef{
+										Kind: "primitive",
+										Name: "string",
+									},
+									Annotations: VDLAnnotationSet{},
+								},
+								"Region": VDLFieldMetadata{
+									Name: "Region",
+									JSONName: "region",
+									Optional: false,
+									Type: VDLTypeRef{
+										Kind: "primitive",
+										Name: "string",
+									},
+									Annotations: VDLAnnotationSet{},
+								},
+							},
+						},
+						Annotations: VDLAnnotationSet{},
+					},
 					"Versions": VDLFieldMetadata{
 						Name: "Versions",
 						JSONName: "versions",
@@ -337,9 +379,9 @@ var VDLMetadata = VDLSchemaMetadata{
 						},
 						Annotations: VDLAnnotationSet{},
 					},
-					"Labels": VDLFieldMetadata{
-						Name: "Labels",
-						JSONName: "labels",
+					"NestedLabels": VDLFieldMetadata{
+						Name: "NestedLabels",
+						JSONName: "nestedLabels",
 						Optional: false,
 						Type: VDLTypeRef{
 							Kind: "object",

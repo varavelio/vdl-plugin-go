@@ -22,8 +22,7 @@ const baseProfile = {
 
 const extendedProfile = {
   ...baseProfile
-  labels {
+  nestedLabels {
     ...labels
-    region "us"
   }
 }
