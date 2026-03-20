@@ -48,7 +48,7 @@ __export(index_exports, {
 });
 module.exports = __toCommonJS(index_exports);
 
-// node_modules/@varavel/vdl-plugin-sdk/dist/types-hJ-3ZrlX.js
+// node_modules/@varavel/vdl-plugin-sdk/dist/types-DU-ClSGG.js
 function hydrateAnnotation(input) {
   return {
     position: hydratePosition(input.position),
@@ -63,7 +63,6 @@ function hydrateConstantDef(input) {
     name: input.name,
     doc: input.doc ? input.doc : input.doc,
     annotations: input.annotations.map((el) => hydrateAnnotation(el)),
-    typeRef: hydrateTypeRef(input.typeRef),
     value: hydrateLiteralValue(input.value)
   };
 }
@@ -2116,7 +2115,8 @@ function renderAnonymousGoTypeExpression(typeRef, context, position, inlineTypeG
             context,
             field.position
           );
-          return `${toGoFieldName(field.name)} ${field.optional ? `*${fieldType}` : fieldType}`;
+          const jsonTag = field.optional ? `json:${JSON.stringify(`${toGoJsonName(field.name)},omitempty`)}` : `json:${JSON.stringify(toGoJsonName(field.name))}`;
+          return `${toGoFieldName(field.name)} ${field.optional ? `*${fieldType}` : fieldType} \`${jsonTag}\``;
         }
       );
       return `struct { ${parts.join("; ")} }`;
@@ -2129,6 +2129,52 @@ function renderAnonymousGoTypeExpression(typeRef, context, position, inlineTypeG
   }
 }
 __name(renderAnonymousGoTypeExpression, "renderAnonymousGoTypeExpression");
+function renderAnonymousGoTypeExpressionPretty(typeRef, context, position, inlineTypeGoName) {
+  var _a2;
+  switch (typeRef.kind) {
+    case "primitive":
+      return renderPrimitiveGoType(typeRef.primitiveName, position);
+    case "type":
+    case "enum":
+      return renderGoType(typeRef, context, void 0, position);
+    case "array":
+      return `${"[]".repeat((_a2 = typeRef.arrayDims) != null ? _a2 : 1)}${renderAnonymousGoTypeExpressionPretty(expectValue(typeRef.arrayType, "Encountered an array type reference without an element type.", position), context, position, inlineTypeGoName)}`;
+    case "map":
+      return `map[string]${renderAnonymousGoTypeExpressionPretty(expectValue(typeRef.mapType, "Encountered a map type reference without a value type.", position), context, position, inlineTypeGoName)}`;
+    case "object": {
+      if (inlineTypeGoName) {
+        return inlineTypeGoName;
+      }
+      const fields = getEffectiveObjectFields(typeRef.objectFields);
+      if (fields.length === 0) {
+        return "struct {}";
+      }
+      const lines = fields.map((field) => {
+        const fieldType = renderAnonymousGoTypeExpressionPretty(
+          field.typeRef,
+          context,
+          field.position
+        );
+        const jsonTag = field.optional ? `json:${JSON.stringify(`${toGoJsonName(field.name)},omitempty`)}` : `json:${JSON.stringify(toGoJsonName(field.name))}`;
+        const fieldDecl = `${toGoFieldName(field.name)} ${field.optional ? `*${fieldType}` : fieldType} \`${jsonTag}\``;
+        return indentMultiline(fieldDecl);
+      });
+      return `struct {
+${lines.join("\n")}
+}`;
+    }
+    default:
+      fail(
+        `Unsupported VDL type kind ${JSON.stringify(typeRef.kind)}.`,
+        position
+      );
+  }
+}
+__name(renderAnonymousGoTypeExpressionPretty, "renderAnonymousGoTypeExpressionPretty");
+function indentMultiline(value) {
+  return value.split("\n").map((line) => `	${line}`).join("\n");
+}
+__name(indentMultiline, "indentMultiline");
 
 // src/shared/literal-key.ts
 function getLiteralValueKey(value) {
@@ -2167,7 +2213,7 @@ function renderDirectEnumExpression(enumDescriptor, literal, position) {
   const member = enumDescriptor.memberByValue.get(getLiteralValueKey(literal));
   if (!member) {
     fail(
-      `Invalid literal for enum ${JSON.stringify(enumDescriptor.def.name)}. Expected one of its declared members.`,
+      `Invalid literal for ${JSON.stringify(enumDescriptor.def.name)} enum. Expected one of its declared members.`,
       position
     );
   }
@@ -2213,7 +2259,7 @@ __name(renderRawScalarLiteral, "renderRawScalarLiteral");
 function renderEnumScalarLiteral(enumDescriptor, literal, position) {
   if (!enumDescriptor.memberByValue.has(getLiteralValueKey(literal))) {
     fail(
-      `Invalid literal for enum ${JSON.stringify(enumDescriptor.def.name)}. Expected one of its declared members.`,
+      `Invalid literal for ${JSON.stringify(enumDescriptor.def.name)} enum. Expected one of its declared members.`,
       position
     );
   }
@@ -2291,7 +2337,7 @@ function getLastObjectEntries(entries) {
 __name(getLastObjectEntries, "getLastObjectEntries");
 
 // src/shared/go-literals/render.ts
-function renderTypedValueExpression(typeRef, literal, context, position, namedTypeGoName) {
+function renderTypedValueExpressionPretty(typeRef, literal, context, position, namedTypeGoName) {
   switch (typeRef.kind) {
     case "primitive":
       return renderRawScalarLiteral(
@@ -2308,19 +2354,13 @@ function renderTypedValueExpression(typeRef, literal, context, position, namedTy
     case "array":
     case "map":
     case "object":
-      return renderCompositeLiteral(
-        renderAnonymousGoTypeExpression(
-          typeRef,
-          context,
-          position,
-          namedTypeGoName
-        ),
+      return renderCompositeLiteralPretty({
         typeRef,
         literal,
         context,
         position,
         namedTypeGoName
-      );
+      });
     case "type": {
       const goType = renderGoType(typeRef, context, void 0, position);
       const resolved = resolveNonTypeRef(typeRef, context, position);
@@ -2334,14 +2374,14 @@ function renderTypedValueExpression(typeRef, literal, context, position, namedTy
         }
         return `${goType}(${renderRawScalarLiteral(literal, scalarTarget, position)})`;
       }
-      return renderCompositeLiteral(
-        goType,
-        resolved,
+      return renderCompositeLiteralPretty({
+        typeRef: resolved,
         literal,
         context,
         position,
-        goType
-      );
+        namedTypeGoName: goType,
+        typeExpression: goType
+      });
     }
     default:
       fail(
@@ -2350,98 +2390,105 @@ function renderTypedValueExpression(typeRef, literal, context, position, namedTy
       );
   }
 }
-__name(renderTypedValueExpression, "renderTypedValueExpression");
-function renderCompositeLiteral(typeExpression, typeRef, literal, context, position, namedTypeGoName) {
-  switch (typeRef.kind) {
+__name(renderTypedValueExpressionPretty, "renderTypedValueExpressionPretty");
+function renderCompositeLiteralPretty(options) {
+  var _a2;
+  const typeExpression = (_a2 = options.typeExpression) != null ? _a2 : renderAnonymousGoTypeExpressionPretty(
+    options.typeRef,
+    options.context,
+    options.position,
+    options.namedTypeGoName
+  );
+  switch (options.typeRef.kind) {
     case "array":
-      return renderArrayLiteral(
+      return renderArrayLiteralPretty({
         typeExpression,
-        typeRef,
-        literal,
-        context,
-        position,
-        namedTypeGoName
-      );
+        typeRef: options.typeRef,
+        literal: options.literal,
+        context: options.context,
+        position: options.position,
+        namedTypeGoName: options.namedTypeGoName
+      });
     case "map":
-      return renderMapLiteral(
+      return renderMapLiteralPretty({
         typeExpression,
-        typeRef,
-        literal,
-        context,
-        position,
-        namedTypeGoName
-      );
+        typeRef: options.typeRef,
+        literal: options.literal,
+        context: options.context,
+        position: options.position,
+        namedTypeGoName: options.namedTypeGoName
+      });
     case "object":
-      return renderObjectLiteral(
+      return renderObjectLiteralPretty({
         typeExpression,
-        typeRef,
-        literal,
-        context,
-        position,
-        namedTypeGoName
-      );
+        typeRef: options.typeRef,
+        literal: options.literal,
+        context: options.context,
+        position: options.position,
+        namedTypeGoName: options.namedTypeGoName
+      });
     default:
       fail(
         "Expected a composite VDL type while rendering a composite Go literal.",
-        position
+        options.position
       );
   }
 }
-__name(renderCompositeLiteral, "renderCompositeLiteral");
-function renderArrayLiteral(typeExpression, typeRef, literal, context, position, namedTypeGoName) {
+__name(renderCompositeLiteralPretty, "renderCompositeLiteralPretty");
+function renderArrayLiteralPretty(options) {
   var _a2, _b, _c;
-  if (literal.kind !== "array") {
-    fail("Expected an array literal for a VDL array type.", position);
+  if (options.literal.kind !== "array") {
+    fail("Expected an array literal for a VDL array type.", options.position);
   }
-  const elementType = ((_a2 = typeRef.arrayDims) != null ? _a2 : 1) === 1 ? expectValue(
-    typeRef.arrayType,
+  const elementType = ((_a2 = options.typeRef.arrayDims) != null ? _a2 : 1) === 1 ? expectValue(
+    options.typeRef.arrayType,
     "Encountered an invalid array type while rendering a literal.",
-    position
+    options.position
   ) : {
     kind: "array",
     arrayType: expectValue(
-      typeRef.arrayType,
+      options.typeRef.arrayType,
       "Encountered an invalid array type while rendering a literal.",
-      position
+      options.position
     ),
-    arrayDims: ((_b = typeRef.arrayDims) != null ? _b : 1) - 1
+    arrayDims: ((_b = options.typeRef.arrayDims) != null ? _b : 1) - 1
   };
-  const items = ((_c = literal.arrayItems) != null ? _c : []).map(
-    (item) => renderTypedValueExpression(
+  const items = ((_c = options.literal.arrayItems) != null ? _c : []).map(
+    (item) => renderTypedValueExpressionPretty(
       elementType,
       item,
-      context,
+      options.context,
       item.position,
-      namedTypeGoName
+      options.namedTypeGoName
     )
   );
-  return `${typeExpression}{${items.join(", ")}}`;
+  return renderBlockLiteral(options.typeExpression, items);
 }
-__name(renderArrayLiteral, "renderArrayLiteral");
-function renderMapLiteral(typeExpression, typeRef, literal, context, position, namedTypeGoName) {
+__name(renderArrayLiteralPretty, "renderArrayLiteralPretty");
+function renderMapLiteralPretty(options) {
   var _a2;
-  if (literal.kind !== "object") {
-    fail("Expected an object literal for a VDL map type.", position);
+  if (options.literal.kind !== "object") {
+    fail("Expected an object literal for a VDL map type.", options.position);
   }
   const valueType = expectValue(
-    typeRef.mapType,
+    options.typeRef.mapType,
     "Encountered an invalid map type while rendering a literal.",
-    position
+    options.position
   );
-  const entries = ((_a2 = literal.objectEntries) != null ? _a2 : []).map(
-    (entry) => `${JSON.stringify(entry.key)}: ${renderTypedValueExpression(valueType, entry.value, context, entry.position, namedTypeGoName)}`
+  const entries = ((_a2 = options.literal.objectEntries) != null ? _a2 : []).map(
+    (entry) => `${JSON.stringify(entry.key)}: ${renderTypedValueExpressionPretty(valueType, entry.value, options.context, entry.position, options.namedTypeGoName)}`
   );
-  return `${typeExpression}{${entries.join(", ")}}`;
+  return renderBlockLiteral(options.typeExpression, entries);
 }
-__name(renderMapLiteral, "renderMapLiteral");
-function renderObjectLiteral(typeExpression, typeRef, literal, context, position, namedTypeGoName) {
+__name(renderMapLiteralPretty, "renderMapLiteralPretty");
+function renderObjectLiteralPretty(options) {
   var _a2;
-  if (literal.kind !== "object") {
-    fail("Expected an object literal for a VDL object type.", position);
+  if (options.literal.kind !== "object") {
+    fail("Expected an object literal for a VDL object type.", options.position);
   }
-  const fields = getEffectiveObjectFields(typeRef.objectFields);
+  const fields = getEffectiveObjectFields(options.typeRef.objectFields);
   const entryByName = new Map(
-    ((_a2 = literal.objectEntries) != null ? _a2 : []).map((entry) => [entry.key, entry])
+    ((_a2 = options.literal.objectEntries) != null ? _a2 : []).map((entry) => [entry.key, entry])
   );
   const entries = [];
   for (const field of fields) {
@@ -2449,11 +2496,11 @@ function renderObjectLiteral(typeExpression, typeRef, literal, context, position
     if (!entry) {
       continue;
     }
-    const childTypeGoName = namedTypeGoName ? toInlineTypeName(namedTypeGoName, field.name) : void 0;
-    const renderedValue = renderTypedValueExpression(
+    const childTypeGoName = options.namedTypeGoName ? toInlineTypeName(options.namedTypeGoName, field.name) : void 0;
+    const renderedValue = renderTypedValueExpressionPretty(
       field.typeRef,
       entry.value,
-      context,
+      options.context,
       entry.position,
       childTypeGoName
     );
@@ -2461,10 +2508,10 @@ function renderObjectLiteral(typeExpression, typeRef, literal, context, position
       entries.push(`${toGoFieldName(field.name)}: ${renderedValue}`);
       continue;
     }
-    if (context.options.genPointerUtils === false) {
+    if (options.context.options.genPointerUtils === false) {
       const valueType = renderAnonymousGoTypeExpression(
         field.typeRef,
-        context,
+        options.context,
         entry.position,
         childTypeGoName
       );
@@ -2475,9 +2522,23 @@ function renderObjectLiteral(typeExpression, typeRef, literal, context, position
     }
     entries.push(`${toGoFieldName(field.name)}: Ptr(${renderedValue})`);
   }
-  return `${typeExpression}{${entries.join(", ")}}`;
+  return renderBlockLiteral(options.typeExpression, entries);
 }
-__name(renderObjectLiteral, "renderObjectLiteral");
+__name(renderObjectLiteralPretty, "renderObjectLiteralPretty");
+function renderBlockLiteral(typeExpression, entries) {
+  if (entries.length === 0) {
+    return `${typeExpression}{}`;
+  }
+  const body = entries.map((entry) => indentBlock(entry)).join(",\n");
+  return `${typeExpression}{
+${body},
+}`;
+}
+__name(renderBlockLiteral, "renderBlockLiteral");
+function indentBlock(value) {
+  return value.split("\n").map((line) => `	${line}`).join("\n");
+}
+__name(indentBlock, "indentBlock");
 
 // src/shared/render/go-file.ts
 function renderGoFile(options) {
@@ -2543,7 +2604,7 @@ function generateConstantsFile(context) {
   }
   const imports = new ImportSet();
   for (const constant of context.constantDescriptors) {
-    collectImportsForTypeRef(constant.def.typeRef, imports);
+    collectImportsForTypeRef(constant.typeRef, imports);
   }
   const g = newGenerator().withTabs();
   for (const constant of context.constantDescriptors) {
@@ -2555,12 +2616,16 @@ function generateConstantsFile(context) {
         fallback: `${constant.goName} holds a generated VDL constant.`
       })
     );
-    if (canEmitConst(constant.def.typeRef, context, constant.def.position)) {
-      renderConstDeclaration(g, constant.goName, constant.def, context);
+    if (canEmitConst(constant.typeRef, context, constant.def.position)) {
+      renderConstDeclaration(g, constant.goName, constant, context);
     } else {
-      g.line(
-        `var ${constant.goName} = ${renderTypedValueExpression(constant.def.typeRef, constant.def.value, context, constant.def.position)}`
+      const valueExpression = renderTypedValueExpressionPretty(
+        constant.typeRef,
+        constant.def.value,
+        context,
+        constant.def.position
       );
+      g.line(`var ${constant.goName} = ${valueExpression}`);
     }
     if (constant !== context.constantDescriptors[context.constantDescriptors.length - 1]) {
       g.break();
@@ -2579,12 +2644,12 @@ __name(generateConstantsFile, "generateConstantsFile");
 function renderConstDeclaration(g, goName, constant, context) {
   if (constant.typeRef.kind === "type") {
     g.line(
-      `const ${goName} ${renderGoType(constant.typeRef, context, void 0, constant.position)} = ${renderConstInitializer(constant.typeRef, constant.value, context, constant.position)}`
+      `const ${goName} ${renderGoType(constant.typeRef, context, void 0, constant.def.position)} = ${renderConstInitializer(constant.typeRef, constant.def.value, context, constant.def.position)}`
     );
     return;
   }
   g.line(
-    `const ${goName} = ${renderConstInitializer(constant.typeRef, constant.value, context, constant.position)}`
+    `const ${goName} = ${renderConstInitializer(constant.typeRef, constant.def.value, context, constant.def.position)}`
   );
 }
 __name(renderConstDeclaration, "renderConstDeclaration");
@@ -2708,8 +2773,14 @@ function renderEnumMarshalJSONMethod(g, enumDescriptor) {
   g.block(() => {
     g.line("if !e.IsValid() {");
     g.block(() => {
+      if (enumDescriptor.def.enumType === "string") {
+        g.line(
+          `return nil, fmt.Errorf(${JSON.stringify(`cannot marshal invalid value %q for ${enumDescriptor.goName} enum`)}, string(e))`
+        );
+        return;
+      }
       g.line(
-        `return nil, fmt.Errorf(${JSON.stringify(`cannot marshal invalid value for enum ${enumDescriptor.goName}`)})`
+        `return nil, fmt.Errorf(${JSON.stringify(`cannot marshal invalid value %d for ${enumDescriptor.goName} enum`)}, int(e))`
       );
     });
     g.line("}");
@@ -2741,7 +2812,7 @@ function renderEnumUnmarshalJSONMethod(g, enumDescriptor) {
       g.line("if !candidate.IsValid() {");
       g.block(() => {
         g.line(
-          `return fmt.Errorf(${JSON.stringify(`invalid value for enum ${enumDescriptor.goName}`)})`
+          `return fmt.Errorf(${JSON.stringify(`invalid value %q for ${enumDescriptor.goName} enum`)}, value)`
         );
       });
       g.line("}");
@@ -2759,7 +2830,7 @@ function renderEnumUnmarshalJSONMethod(g, enumDescriptor) {
     g.line("if !candidate.IsValid() {");
     g.block(() => {
       g.line(
-        `return fmt.Errorf(${JSON.stringify(`invalid value for enum ${enumDescriptor.goName}`)})`
+        `return fmt.Errorf(${JSON.stringify(`invalid value %d for ${enumDescriptor.goName} enum`)}, value)`
       );
     });
     g.line("}");
@@ -3191,7 +3262,7 @@ function generateMetadataFile(context) {
         g.block(() => {
           g.line(`Name: ${JSON.stringify(constant.goName)},`);
           writeAnnotationSetField(g, constant.def.annotations);
-          writeMetadataTypeField(g, constant.def.typeRef, context);
+          writeMetadataTypeField(g, constant.typeRef, context);
         });
         g.line("},");
       }
@@ -3282,14 +3353,14 @@ function renderNamedTypeSchemaSupport(g, descriptor, context) {
     return false;
   }
   if (descriptor.kind === "object") {
-    if (!descriptorHasRequiredFields(descriptor)) {
+    if (!namedTypeNeedsStrictObjectSupport(descriptor, context)) {
       return false;
     }
-    renderPreObjectType(g, descriptor);
+    renderPreObjectType(g, descriptor, context);
     g.break();
-    renderPreObjectValidateMethod(g, descriptor);
+    renderPreObjectValidateMethod(g, descriptor, context);
     g.break();
-    renderPreObjectTransformMethod(g, descriptor);
+    renderPreObjectTransformMethod(g, descriptor, context);
     g.break();
     renderObjectUnmarshalJSONMethod(g, descriptor);
     return true;
@@ -3312,7 +3383,7 @@ function renderNamedTypeSchemaSupport(g, descriptor, context) {
   return false;
 }
 __name(renderNamedTypeSchemaSupport, "renderNamedTypeSchemaSupport");
-function renderPreObjectType(g, descriptor) {
+function renderPreObjectType(g, descriptor, context) {
   const preTypeName = toPreTypeName(descriptor.goName);
   g.line(
     `// ${preTypeName} mirrors ${descriptor.goName} during strict JSON decoding.`
@@ -3321,46 +3392,87 @@ function renderPreObjectType(g, descriptor) {
   g.block(() => {
     for (const field of descriptor.fields) {
       const jsonTag = field.def.optional ? `json:${JSON.stringify(`${field.jsonName},omitempty`)}` : `json:${JSON.stringify(field.jsonName)}`;
-      g.line(`${field.goName} ${renderPreFieldGoType(field)} \`${jsonTag}\``);
+      g.line(
+        `${field.goName} ${renderPreFieldGoType(field, context)} \`${jsonTag}\``
+      );
     }
   });
   g.line("}");
 }
 __name(renderPreObjectType, "renderPreObjectType");
-function renderPreObjectValidateMethod(g, descriptor) {
+function renderPreObjectValidateMethod(g, descriptor, context) {
   const preTypeName = toPreTypeName(descriptor.goName);
   g.line(
-    `// validate reports whether all required JSON fields are present in ${preTypeName}.`
+    `// validate reports whether ${preTypeName} satisfies strict JSON requirements.`
   );
-  g.line(`func (p *${preTypeName}) validate() error {`);
+  g.line(`func (p *${preTypeName}) validate(parentPath string) error {`);
   g.block(() => {
     for (const field of descriptor.fields) {
-      if (field.def.optional) {
-        continue;
-      }
-      g.line(`if p.${field.goName} == nil {`);
-      g.block(() => {
-        g.line(
-          `return fmt.Errorf(${JSON.stringify("field %q is required")}, ${JSON.stringify(field.jsonName)})`
+      const needsNestedValidation = typeRefNeedsStrictTraversal(
+        field.def.typeRef,
+        context,
+        field.def.position
+      );
+      if (!field.def.optional || needsNestedValidation) {
+        const fieldPathVar = `vdlPath${field.goName}`;
+        renderFieldPathAssignment(
+          g,
+          fieldPathVar,
+          "parentPath",
+          field.jsonName
         );
-      });
-      g.line("}");
+        if (!field.def.optional) {
+          g.line(`if p.${field.goName} == nil {`);
+          g.block(() => {
+            g.line(
+              `return fmt.Errorf(${JSON.stringify("field %s is required")}, ${fieldPathVar})`
+            );
+          });
+          g.line("}");
+        }
+        if (needsNestedValidation) {
+          g.line(`if p.${field.goName} != nil {`);
+          g.block(() => {
+            renderValidationForType(g, {
+              context,
+              depth: 0,
+              pathExpression: fieldPathVar,
+              position: field.def.position,
+              sourceExpression: `p.${field.goName}`,
+              sourceIsPointer: true,
+              typeRef: field.def.typeRef
+            });
+          });
+          g.line("}");
+        }
+        if (field !== descriptor.fields[descriptor.fields.length - 1]) {
+          g.break();
+        }
+      }
     }
     g.line("return nil");
   });
   g.line("}");
 }
 __name(renderPreObjectValidateMethod, "renderPreObjectValidateMethod");
-function renderPreObjectTransformMethod(g, descriptor) {
+function renderPreObjectTransformMethod(g, descriptor, context) {
   const preTypeName = toPreTypeName(descriptor.goName);
   g.line(`// transform converts ${preTypeName} to ${descriptor.goName}.`);
   g.line(`func (p *${preTypeName}) transform() ${descriptor.goName} {`);
   g.block(() => {
+    for (const field of descriptor.fields) {
+      renderFieldTransform(g, field, context);
+      if (field !== descriptor.fields[descriptor.fields.length - 1]) {
+        g.break();
+      }
+    }
+    if (descriptor.fields.length > 0) {
+      g.break();
+    }
     g.line(`return ${descriptor.goName}{`);
     g.block(() => {
       for (const field of descriptor.fields) {
-        const valueExpression = field.def.optional ? `p.${field.goName}` : `*p.${field.goName}`;
-        g.line(`${field.goName}: ${valueExpression},`);
+        g.line(`${field.goName}: trans${field.goName},`);
       }
     });
     g.line("}");
@@ -3381,7 +3493,7 @@ function renderObjectUnmarshalJSONMethod(g, descriptor) {
       g.line("return err");
     });
     g.line("}");
-    g.line("if err := pre.validate(); err != nil {");
+    g.line('if err := pre.validate(""); err != nil {');
     g.block(() => {
       g.line("return err");
     });
@@ -3433,16 +3545,368 @@ function renderAliasUnmarshalJSONMethod(g, descriptor, context) {
   g.line("}");
 }
 __name(renderAliasUnmarshalJSONMethod, "renderAliasUnmarshalJSONMethod");
-function descriptorHasRequiredFields(descriptor) {
-  return descriptor.fields.some((field) => !field.def.optional);
+function namedTypeNeedsStrictObjectSupport(descriptor, context) {
+  return typeRefNeedsStrictTraversal(
+    descriptor.typeRef,
+    context,
+    descriptor.position
+  );
 }
-__name(descriptorHasRequiredFields, "descriptorHasRequiredFields");
+__name(namedTypeNeedsStrictObjectSupport, "namedTypeNeedsStrictObjectSupport");
+function typeRefNeedsStrictTraversal(typeRef, context, position, visited = /* @__PURE__ */ new Set()) {
+  switch (typeRef.kind) {
+    case "primitive":
+    case "enum":
+      return false;
+    case "array":
+      return typeRef.arrayType ? typeRefNeedsStrictTraversal(
+        typeRef.arrayType,
+        context,
+        position,
+        visited
+      ) : false;
+    case "map":
+      return typeRef.mapType ? typeRefNeedsStrictTraversal(
+        typeRef.mapType,
+        context,
+        position,
+        visited
+      ) : false;
+    case "object": {
+      const fields = getEffectiveObjectFields(typeRef.objectFields);
+      if (fields.some((field) => !field.optional)) {
+        return true;
+      }
+      return fields.some(
+        (field) => typeRefNeedsStrictTraversal(
+          field.typeRef,
+          context,
+          field.position,
+          visited
+        )
+      );
+    }
+    case "type": {
+      const typeName = expectValue(
+        typeRef.typeName,
+        "Encountered a named type reference without a type name.",
+        position
+      );
+      if (visited.has(typeName)) {
+        return false;
+      }
+      visited.add(typeName);
+      return typeRefNeedsStrictTraversal(
+        getReferencedTypeDef(typeName, context, position).typeRef,
+        context,
+        position,
+        visited
+      );
+    }
+    default:
+      return false;
+  }
+}
+__name(typeRefNeedsStrictTraversal, "typeRefNeedsStrictTraversal");
+function renderPreFieldGoType(field, context) {
+  return `*${renderPreTypeExpression(field.def.typeRef, context, field.def.position, field.inlineTypeGoName)}`;
+}
+__name(renderPreFieldGoType, "renderPreFieldGoType");
+function renderPreTypeExpression(typeRef, context, position, inlineTypeGoName) {
+  var _a2;
+  if (!typeRefNeedsStrictTraversal(typeRef, context, position)) {
+    return renderGoType(typeRef, context, inlineTypeGoName, position);
+  }
+  switch (typeRef.kind) {
+    case "primitive":
+    case "enum":
+      return renderGoType(typeRef, context, inlineTypeGoName, position);
+    case "array":
+      return `${"[]".repeat((_a2 = typeRef.arrayDims) != null ? _a2 : 1)}${renderPreTypeExpression(expectValue(typeRef.arrayType, "Encountered an array type reference without an element type.", position), context, position, inlineTypeGoName)}`;
+    case "map":
+      return `map[string]${renderPreTypeExpression(expectValue(typeRef.mapType, "Encountered a map type reference without a value type.", position), context, position, inlineTypeGoName)}`;
+    case "object":
+      return toPreTypeName(
+        expectValue(
+          inlineTypeGoName,
+          "Encountered an inline object without a generated Go type name.",
+          position
+        )
+      );
+    case "type": {
+      const typeName = expectValue(
+        typeRef.typeName,
+        "Encountered a named type reference without a type name.",
+        position
+      );
+      const typeDef = getReferencedTypeDef(typeName, context, position);
+      if (typeDef.typeRef.kind === "object") {
+        return toPreTypeName(getTypeGoName(typeName, context, position));
+      }
+      return renderPreTypeExpression(
+        typeDef.typeRef,
+        context,
+        typeDef.position,
+        inlineTypeGoName
+      );
+    }
+    default:
+      return renderGoType(typeRef, context, inlineTypeGoName, position);
+  }
+}
+__name(renderPreTypeExpression, "renderPreTypeExpression");
+function renderValidationForType(g, options) {
+  if (!typeRefNeedsStrictTraversal(
+    options.typeRef,
+    options.context,
+    options.position
+  )) {
+    return;
+  }
+  const resolved = options.typeRef.kind === "type" ? resolveNonTypeRef(options.typeRef, options.context, options.position) : options.typeRef;
+  switch (resolved.kind) {
+    case "object":
+      g.line(
+        `if err := ${options.sourceExpression}.validate(${options.pathExpression}); err != nil {`
+      );
+      g.block(() => {
+        g.line("return err");
+      });
+      g.line("}");
+      return;
+    case "array": {
+      const itemTypeRef = getArrayItemTypeRef(resolved, options.position);
+      const rangeSource = options.sourceIsPointer ? `*${options.sourceExpression}` : options.sourceExpression;
+      const indexName = `vdlIndex${String(options.depth)}`;
+      const itemName = `vdlItem${String(options.depth)}`;
+      const itemPathName = `vdlItemPath${String(options.depth)}`;
+      g.line(`for ${indexName}, ${itemName} := range ${rangeSource} {`);
+      g.block(() => {
+        renderIndexPathAssignment(
+          g,
+          itemPathName,
+          options.pathExpression,
+          indexName
+        );
+        renderValidationForType(g, __spreadProps(__spreadValues({}, options), {
+          depth: options.depth + 1,
+          pathExpression: itemPathName,
+          sourceExpression: itemName,
+          sourceIsPointer: false,
+          typeRef: itemTypeRef
+        }));
+      });
+      g.line("}");
+      return;
+    }
+    case "map": {
+      const rangeSource = options.sourceIsPointer ? `*${options.sourceExpression}` : options.sourceExpression;
+      const valueTypeRef = expectValue(
+        resolved.mapType,
+        "Encountered a map type reference without a value type.",
+        options.position
+      );
+      const keyName = `vdlKey${String(options.depth)}`;
+      const valueName = `vdlValue${String(options.depth)}`;
+      const valuePathName = `vdlValuePath${String(options.depth)}`;
+      g.line(`for ${keyName}, ${valueName} := range ${rangeSource} {`);
+      g.block(() => {
+        renderMapKeyPathAssignment(
+          g,
+          valuePathName,
+          options.pathExpression,
+          keyName
+        );
+        renderValidationForType(g, __spreadProps(__spreadValues({}, options), {
+          depth: options.depth + 1,
+          pathExpression: valuePathName,
+          sourceExpression: valueName,
+          sourceIsPointer: false,
+          typeRef: valueTypeRef
+        }));
+      });
+      g.line("}");
+      return;
+    }
+    default:
+      return;
+  }
+}
+__name(renderValidationForType, "renderValidationForType");
+function renderFieldTransform(g, field, context) {
+  const tempName = `trans${field.goName}`;
+  const needsStrictTransform = typeRefNeedsStrictTraversal(
+    field.def.typeRef,
+    context,
+    field.def.position
+  );
+  g.line(`var ${tempName} ${field.goType}`);
+  if (field.def.optional) {
+    if (!needsStrictTransform) {
+      g.line(`${tempName} = p.${field.goName}`);
+      return;
+    }
+    const valueName = `value${field.goName}`;
+    const valueType = renderGoType(
+      field.def.typeRef,
+      context,
+      field.inlineTypeGoName,
+      field.def.position
+    );
+    g.line(`if p.${field.goName} != nil {`);
+    g.block(() => {
+      g.line(`var ${valueName} ${valueType}`);
+      renderTransformIntoValue(g, {
+        context,
+        depth: 0,
+        destinationExpression: valueName,
+        destinationType: valueType,
+        inlineTypeGoName: field.inlineTypeGoName,
+        position: field.def.position,
+        sourceExpression: `p.${field.goName}`,
+        sourceIsPointer: true,
+        typeRef: field.def.typeRef
+      });
+      g.line(`${tempName} = &${valueName}`);
+    });
+    g.line("}");
+    return;
+  }
+  renderTransformIntoValue(g, {
+    context,
+    depth: 0,
+    destinationExpression: tempName,
+    destinationType: field.goType,
+    inlineTypeGoName: field.inlineTypeGoName,
+    position: field.def.position,
+    sourceExpression: `p.${field.goName}`,
+    sourceIsPointer: true,
+    typeRef: field.def.typeRef
+  });
+}
+__name(renderFieldTransform, "renderFieldTransform");
+function renderTransformIntoValue(g, options) {
+  if (!typeRefNeedsStrictTraversal(
+    options.typeRef,
+    options.context,
+    options.position
+  )) {
+    const valueExpression = options.sourceIsPointer ? `*${options.sourceExpression}` : options.sourceExpression;
+    g.line(`${options.destinationExpression} = ${valueExpression}`);
+    return;
+  }
+  const resolved = options.typeRef.kind === "type" ? resolveNonTypeRef(options.typeRef, options.context, options.position) : options.typeRef;
+  switch (resolved.kind) {
+    case "object":
+      g.line(
+        `${options.destinationExpression} = ${options.destinationType}(${options.sourceExpression}.transform())`
+      );
+      return;
+    case "array":
+      renderArrayTransformIntoValue(g, __spreadProps(__spreadValues({}, options), {
+        typeRef: resolved
+      }));
+      return;
+    case "map":
+      renderMapTransformIntoValue(g, __spreadProps(__spreadValues({}, options), {
+        typeRef: resolved
+      }));
+      return;
+    default:
+      return;
+  }
+}
+__name(renderTransformIntoValue, "renderTransformIntoValue");
+function renderArrayTransformIntoValue(g, options) {
+  const itemTypeRef = getArrayItemTypeRef(options.typeRef, options.position);
+  const rangeSource = options.sourceIsPointer ? `*${options.sourceExpression}` : options.sourceExpression;
+  const itemDestinationType = renderGoType(
+    itemTypeRef,
+    options.context,
+    options.inlineTypeGoName,
+    options.position
+  );
+  const indexName = `vdlIndex${String(options.depth)}`;
+  const itemName = `vdlItem${String(options.depth)}`;
+  const transformedName = `vdlTransformed${String(options.depth)}`;
+  g.line(
+    `${options.destinationExpression} = make(${options.destinationType}, len(${rangeSource}))`
+  );
+  g.line(`for ${indexName}, ${itemName} := range ${rangeSource} {`);
+  g.block(() => {
+    if (!typeRefNeedsStrictTraversal(
+      itemTypeRef,
+      options.context,
+      options.position
+    )) {
+      g.line(`${options.destinationExpression}[${indexName}] = ${itemName}`);
+      return;
+    }
+    g.line(`var ${transformedName} ${itemDestinationType}`);
+    renderTransformIntoValue(g, __spreadProps(__spreadValues({}, options), {
+      depth: options.depth + 1,
+      destinationExpression: transformedName,
+      destinationType: itemDestinationType,
+      sourceExpression: itemName,
+      sourceIsPointer: false,
+      typeRef: itemTypeRef
+    }));
+    g.line(
+      `${options.destinationExpression}[${indexName}] = ${transformedName}`
+    );
+  });
+  g.line("}");
+}
+__name(renderArrayTransformIntoValue, "renderArrayTransformIntoValue");
+function renderMapTransformIntoValue(g, options) {
+  const rangeSource = options.sourceIsPointer ? `*${options.sourceExpression}` : options.sourceExpression;
+  const valueTypeRef = expectValue(
+    options.typeRef.mapType,
+    "Encountered a map type reference without a value type.",
+    options.position
+  );
+  const valueDestinationType = renderGoType(
+    valueTypeRef,
+    options.context,
+    options.inlineTypeGoName,
+    options.position
+  );
+  const keyName = `vdlKey${String(options.depth)}`;
+  const valueName = `vdlValue${String(options.depth)}`;
+  const transformedName = `vdlTransformed${String(options.depth)}`;
+  g.line(
+    `${options.destinationExpression} = make(${options.destinationType}, len(${rangeSource}))`
+  );
+  g.line(`for ${keyName}, ${valueName} := range ${rangeSource} {`);
+  g.block(() => {
+    if (!typeRefNeedsStrictTraversal(
+      valueTypeRef,
+      options.context,
+      options.position
+    )) {
+      g.line(`${options.destinationExpression}[${keyName}] = ${valueName}`);
+      return;
+    }
+    g.line(`var ${transformedName} ${valueDestinationType}`);
+    renderTransformIntoValue(g, __spreadProps(__spreadValues({}, options), {
+      depth: options.depth + 1,
+      destinationExpression: transformedName,
+      destinationType: valueDestinationType,
+      sourceExpression: valueName,
+      sourceIsPointer: false,
+      typeRef: valueTypeRef
+    }));
+    g.line(`${options.destinationExpression}[${keyName}] = ${transformedName}`);
+  });
+  g.line("}");
+}
+__name(renderMapTransformIntoValue, "renderMapTransformIntoValue");
 function resolveStrictAliasBehavior(typeRef, context, position, visited = /* @__PURE__ */ new Set()) {
   switch (typeRef.kind) {
     case "enum":
       return "enum";
     case "object":
-      return typeRefHasRequiredFields(typeRef) ? "object" : void 0;
+      return typeRefNeedsStrictTraversal(typeRef, context, position) ? "object" : void 0;
     case "type": {
       const typeName = expectValue(
         typeRef.typeName,
@@ -3453,9 +3917,8 @@ function resolveStrictAliasBehavior(typeRef, context, position, visited = /* @__
         return void 0;
       }
       visited.add(typeName);
-      const referencedType = getReferencedTypeRef(typeName, context, position);
       return resolveStrictAliasBehavior(
-        referencedType,
+        getReferencedTypeDef(typeName, context, position).typeRef,
         context,
         position,
         visited
@@ -3470,32 +3933,66 @@ function resolveStrictAliasBehavior(typeRef, context, position, visited = /* @__
   }
 }
 __name(resolveStrictAliasBehavior, "resolveStrictAliasBehavior");
-function getReferencedTypeRef(typeName, context, position) {
-  const typeDef = expectValue(
+function getReferencedTypeDef(typeName, context, position) {
+  return expectValue(
     context.typeDefsByVdlName.get(typeName),
     `Unknown VDL type reference ${JSON.stringify(typeName)}.`,
     position
   );
-  return typeDef.typeRef;
 }
-__name(getReferencedTypeRef, "getReferencedTypeRef");
-function typeRefHasRequiredFields(typeRef) {
-  if (typeRef.kind !== "object") {
-    return false;
-  }
-  return getEffectiveObjectFields(typeRef.objectFields).some(
-    (field) => !field.optional
+__name(getReferencedTypeDef, "getReferencedTypeDef");
+function getTypeGoName(typeName, context, position) {
+  return expectValue(
+    context.typeGoNamesByVdlName.get(typeName),
+    `Unknown VDL type reference ${JSON.stringify(typeName)}.`,
+    position
   );
 }
-__name(typeRefHasRequiredFields, "typeRefHasRequiredFields");
-function renderPreFieldGoType(field) {
-  return field.def.optional ? field.goType : `*${field.goType}`;
+__name(getTypeGoName, "getTypeGoName");
+function getArrayItemTypeRef(typeRef, position) {
+  var _a2, _b;
+  return ((_a2 = typeRef.arrayDims) != null ? _a2 : 1) === 1 ? expectValue(
+    typeRef.arrayType,
+    "Encountered an array type reference without an element type.",
+    position
+  ) : {
+    kind: "array",
+    arrayDims: ((_b = typeRef.arrayDims) != null ? _b : 1) - 1,
+    arrayType: expectValue(
+      typeRef.arrayType,
+      "Encountered an array type reference without an element type.",
+      position
+    )
+  };
 }
-__name(renderPreFieldGoType, "renderPreFieldGoType");
+__name(getArrayItemTypeRef, "getArrayItemTypeRef");
 function toPreTypeName(goName) {
   return `pre${goName}`;
 }
 __name(toPreTypeName, "toPreTypeName");
+function renderFieldPathAssignment(g, variableName, parentExpression, fieldName) {
+  g.line(`${variableName} := ${JSON.stringify(fieldName)}`);
+  g.line(`if ${parentExpression} != "" {`);
+  g.block(() => {
+    g.line(
+      `${variableName} = ${parentExpression} + ${JSON.stringify(`.${fieldName}`)}`
+    );
+  });
+  g.line("}");
+}
+__name(renderFieldPathAssignment, "renderFieldPathAssignment");
+function renderIndexPathAssignment(g, variableName, parentExpression, indexName) {
+  g.line(
+    `${variableName} := fmt.Sprintf(${JSON.stringify("%s[%d]")}, ${parentExpression}, ${indexName})`
+  );
+}
+__name(renderIndexPathAssignment, "renderIndexPathAssignment");
+function renderMapKeyPathAssignment(g, variableName, parentExpression, keyName) {
+  g.line(
+    `${variableName} := fmt.Sprintf(${JSON.stringify("%s[%q]")}, ${parentExpression}, ${keyName})`
+  );
+}
+__name(renderMapKeyPathAssignment, "renderMapKeyPathAssignment");
 
 // src/stages/emit/files/types-named-types.ts
 function renderNamedType(g, descriptor, context) {
@@ -3653,10 +4150,42 @@ __name(generateFiles, "generateFiles");
 // src/stages/model/constants.ts
 function populateConstantDescriptors(context, packageScopeSymbols) {
   const errors = [];
+  const inferredTypeDefs = context.schema.types.filter(
+    (typeDef) => typeDef.name.startsWith("$Const") && typeDef.name.length > 6
+  );
+  const inferredTypeByConstName = new Map(
+    inferredTypeDefs.map((typeDef) => [typeDef.name.slice(6), typeDef.typeRef])
+  );
   for (const constantDef of context.schema.constants) {
+    const inferredType = inferredTypeByConstName.get(constantDef.name);
+    let typeRef = inferredType;
+    let inferenceError;
+    if (!typeRef) {
+      const inference = inferTypeRefFromLiteral(
+        constantDef.value,
+        constantDef.position
+      );
+      typeRef = inference.typeRef;
+      inferenceError = inference.error;
+    }
+    if (inferenceError) {
+      errors.push({
+        message: `Could not infer type for constant ${JSON.stringify(constantDef.name)}: ${inferenceError}`,
+        position: constantDef.position
+      });
+      continue;
+    }
+    if (!typeRef) {
+      errors.push({
+        message: `Could not infer type for constant ${JSON.stringify(constantDef.name)}.`,
+        position: constantDef.position
+      });
+      continue;
+    }
     const descriptor = {
       def: constantDef,
-      goName: toGoConstName(constantDef.name)
+      goName: toGoConstName(constantDef.name),
+      typeRef
     };
     context.constantDescriptors.push(descriptor);
     const symbolError = packageScopeSymbols.reserve(
@@ -3671,6 +4200,156 @@ function populateConstantDescriptors(context, packageScopeSymbols) {
   return errors;
 }
 __name(populateConstantDescriptors, "populateConstantDescriptors");
+function inferTypeRefFromLiteral(literal, _position) {
+  var _a2, _b;
+  switch (literal.kind) {
+    case "string":
+      return { typeRef: { kind: "primitive", primitiveName: "string" } };
+    case "int":
+      return { typeRef: { kind: "primitive", primitiveName: "int" } };
+    case "float":
+      return { typeRef: { kind: "primitive", primitiveName: "float" } };
+    case "bool":
+      return { typeRef: { kind: "primitive", primitiveName: "bool" } };
+    case "array": {
+      const items = (_a2 = literal.arrayItems) != null ? _a2 : [];
+      if (items.length === 0) {
+        return {
+          error: "array literals cannot be empty when no declared constant type is available"
+        };
+      }
+      const firstItem = items[0];
+      if (!firstItem) {
+        return { error: "encountered an undefined array item literal" };
+      }
+      const elementInference = inferTypeRefFromLiteral(
+        firstItem,
+        firstItem.position
+      );
+      const elementType = elementInference.typeRef;
+      const elementError = elementInference.error;
+      if (elementError) {
+        return { error: elementError };
+      }
+      if (!elementType) {
+        return { error: "could not infer array element type" };
+      }
+      for (let index = 1; index < items.length; index += 1) {
+        const item = items[index];
+        if (!item) {
+          return { error: "encountered an undefined array item literal" };
+        }
+        const candidateInference = inferTypeRefFromLiteral(item, item.position);
+        const candidate = candidateInference.typeRef;
+        const candidateError = candidateInference.error;
+        if (candidateError) {
+          return { error: candidateError };
+        }
+        if (!candidate) {
+          return { error: "could not infer array item type" };
+        }
+        if (!areTypeRefsEquivalent(elementType, candidate)) {
+          return {
+            error: `array literal item at index ${String(index)} does not match inferred element type`
+          };
+        }
+      }
+      return {
+        typeRef: { kind: "array", arrayDims: 1, arrayType: elementType }
+      };
+    }
+    case "object": {
+      const entries = (_b = literal.objectEntries) != null ? _b : [];
+      const fields = [];
+      for (const entry of getEffectiveObjectEntries(entries)) {
+        const fieldInference = inferTypeRefFromLiteral(
+          entry.value,
+          entry.position
+        );
+        const fieldType = fieldInference.typeRef;
+        const fieldError = fieldInference.error;
+        if (fieldError) {
+          return { error: fieldError };
+        }
+        if (!fieldType) {
+          return {
+            error: `could not infer object field type for ${JSON.stringify(entry.key)}`
+          };
+        }
+        fields.push({
+          position: entry.position,
+          name: entry.key,
+          optional: false,
+          annotations: [],
+          typeRef: fieldType
+        });
+      }
+      return { typeRef: { kind: "object", objectFields: fields } };
+    }
+    default:
+      return { error: "unsupported literal kind" };
+  }
+}
+__name(inferTypeRefFromLiteral, "inferTypeRefFromLiteral");
+function getEffectiveObjectEntries(entries) {
+  const fields = entries.map((entry) => ({
+    position: entry.position,
+    name: entry.key,
+    optional: false,
+    annotations: [],
+    typeRef: { kind: "primitive", primitiveName: "string" }
+  }));
+  const effectiveFields = getEffectiveObjectFields(fields);
+  const indexByName = new Map(
+    entries.map((entry, index) => [entry.key, index])
+  );
+  return effectiveFields.map(
+    (field) => entries[indexByName.get(field.name)]
+  );
+}
+__name(getEffectiveObjectEntries, "getEffectiveObjectEntries");
+function areTypeRefsEquivalent(left, right) {
+  var _a2, _b;
+  if (left.kind !== right.kind) {
+    return false;
+  }
+  switch (left.kind) {
+    case "primitive":
+      return left.primitiveName === right.primitiveName;
+    case "type":
+      return left.typeName === right.typeName;
+    case "enum":
+      return left.enumName === right.enumName && left.enumType === right.enumType;
+    case "array":
+      return ((_a2 = left.arrayDims) != null ? _a2 : 1) === ((_b = right.arrayDims) != null ? _b : 1) && areTypeRefsEquivalent(
+        left.arrayType,
+        right.arrayType
+      );
+    case "map":
+      return areTypeRefsEquivalent(
+        left.mapType,
+        right.mapType
+      );
+    case "object": {
+      const leftFields = getEffectiveObjectFields(left.objectFields);
+      const rightFields = getEffectiveObjectFields(right.objectFields);
+      if (leftFields.length !== rightFields.length) {
+        return false;
+      }
+      for (let index = 0; index < leftFields.length; index += 1) {
+        const leftField = leftFields[index];
+        const rightField = rightFields[index];
+        if (leftField.name !== rightField.name || leftField.optional !== rightField.optional || !areTypeRefsEquivalent(leftField.typeRef, rightField.typeRef)) {
+          return false;
+        }
+      }
+      return true;
+    }
+    default:
+      return false;
+  }
+}
+__name(areTypeRefsEquivalent, "areTypeRefsEquivalent");
 
 // src/stages/model/enums.ts
 function populateEnumDescriptors(context, packageScopeSymbols) {
@@ -3802,12 +4481,11 @@ __name(buildFieldDescriptors, "buildFieldDescriptors");
 // src/stages/model/named-types.ts
 function populateNamedTypes(context, packageScopeSymbols) {
   const errors = [];
-  const namedTypesByGoName = /* @__PURE__ */ new Map();
   for (const typeDef of context.schema.types) {
     appendNamedTypeDescriptor(
       context,
       buildTopLevelTypeDescriptor(typeDef, context, errors),
-      namedTypesByGoName,
+      context.namedTypesByGoName,
       packageScopeSymbols,
       errors
     );
@@ -3991,6 +4669,7 @@ function createGeneratorContext(options) {
     typeGoNamesByVdlName: indexes.typeGoNamesByVdlName,
     enumGoNamesByVdlName: indexes.enumGoNamesByVdlName,
     namedTypes: [],
+    namedTypesByGoName: /* @__PURE__ */ new Map(),
     enumDescriptors: [],
     enumDescriptorsByVdlName: /* @__PURE__ */ new Map(),
     constantDescriptors: []
