@@ -64,7 +64,7 @@ export function generateMetadataFile(
         g.block(() => {
           g.line(`Name: ${JSON.stringify(constant.goName)},`);
           writeAnnotationSetField(g, constant.def.annotations);
-          writeMetadataTypeField(g, constant.def.typeRef, context);
+          writeMetadataTypeField(g, constant.typeRef, context);
         });
         g.line("},");
       }

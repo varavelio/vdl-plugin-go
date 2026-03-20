@@ -25,6 +25,7 @@ describe("generateMetadataFile", () => {
           ),
         ],
         types: [
+          irb.typeDef("$ConstapiVersion", irb.primitiveType("string")),
           irb.typeDef(
             "Product",
             irb.objectType([
@@ -50,14 +51,9 @@ describe("generateMetadataFile", () => {
           ),
         ],
         constants: [
-          irb.constantDef(
-            "apiVersion",
-            irb.primitiveType("string"),
-            irb.stringLiteral("1.0.0"),
-            {
-              annotations: [irb.annotation("exposed")],
-            },
-          ),
+          irb.constantDef("apiVersion", irb.stringLiteral("1.0.0"), {
+            annotations: [irb.annotation("exposed")],
+          }),
         ],
       }),
       generatorOptions: {

@@ -26,7 +26,7 @@ export function generateConstantsFile(
   const imports = new ImportSet();
 
   for (const constant of context.constantDescriptors) {
-    collectImportsForTypeRef(constant.def.typeRef, imports);
+    collectImportsForTypeRef(constant.typeRef, imports);
   }
 
   const g = newGenerator().withTabs();
@@ -41,11 +41,11 @@ export function generateConstantsFile(
       }),
     );
 
-    if (canEmitConst(constant.def.typeRef, context, constant.def.position)) {
-      renderConstDeclaration(g, constant.goName, constant.def, context);
+    if (canEmitConst(constant.typeRef, context, constant.def.position)) {
+      renderConstDeclaration(g, constant.goName, constant, context);
     } else {
       g.line(
-        `var ${constant.goName} = ${renderTypedValueExpression(constant.def.typeRef, constant.def.value, context, constant.def.position)}`,
+        `var ${constant.goName} = ${renderTypedValueExpression(constant.typeRef, constant.def.value, context, constant.def.position)}`,
       );
     }
 
@@ -70,17 +70,17 @@ export function generateConstantsFile(
 function renderConstDeclaration(
   g: ReturnType<typeof newGenerator>,
   goName: string,
-  constant: GeneratorContext["constantDescriptors"][number]["def"],
+  constant: GeneratorContext["constantDescriptors"][number],
   context: GeneratorContext,
 ): void {
   if (constant.typeRef.kind === "type") {
     g.line(
-      `const ${goName} ${renderGoType(constant.typeRef, context, undefined, constant.position)} = ${renderConstInitializer(constant.typeRef, constant.value, context, constant.position)}`,
+      `const ${goName} ${renderGoType(constant.typeRef, context, undefined, constant.def.position)} = ${renderConstInitializer(constant.typeRef, constant.def.value, context, constant.def.position)}`,
     );
     return;
   }
 
   g.line(
-    `const ${goName} = ${renderConstInitializer(constant.typeRef, constant.value, context, constant.position)}`,
+    `const ${goName} = ${renderConstInitializer(constant.typeRef, constant.def.value, context, constant.def.position)}`,
   );
 }

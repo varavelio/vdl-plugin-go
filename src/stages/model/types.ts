@@ -62,6 +62,7 @@ export interface EnumDescriptor {
 export interface ConstantDescriptor {
   def: ConstantDef;
   goName: string;
+  typeRef: TypeRef;
 }
 
 export interface GeneratorContext {

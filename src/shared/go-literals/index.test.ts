@@ -175,13 +175,7 @@ function buildContext() {
           ]),
         ),
       ],
-      constants: [
-        irb.constantDef(
-          "apiVersion",
-          irb.primitiveType("string"),
-          irb.stringLiteral("1.0.0"),
-        ),
-      ],
+      constants: [irb.constantDef("apiVersion", irb.stringLiteral("1.0.0"))],
     }),
     generatorOptions: {
       packageName: "vdl",

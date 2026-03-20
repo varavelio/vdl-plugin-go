@@ -17,13 +17,7 @@ describe("generateConstantsFile", () => {
     });
     const disabled = createGeneratorContext({
       schema: irb.schema({
-        constants: [
-          irb.constantDef(
-            "apiVersion",
-            irb.primitiveType("string"),
-            irb.stringLiteral("1.0.0"),
-          ),
-        ],
+        constants: [irb.constantDef("apiVersion", irb.stringLiteral("1.0.0"))],
       }),
       generatorOptions: {
         packageName: "vdl",
@@ -49,32 +43,23 @@ describe("generateConstantsFile", () => {
           ]),
         ],
         types: [
+          irb.typeDef("$ConstserviceName", irb.primitiveType("string")),
+          irb.typeDef("$ConstdefaultStatus", irb.enumType("Status", "string")),
+          irb.typeDef("$ConstdefaultTags", irb.namedType("Tags")),
+          irb.typeDef("$ConstdefaultConfig", irb.primitiveType("string")),
           irb.typeDef("Tags", irb.arrayType(irb.primitiveType("string"))),
         ],
         constants: [
-          irb.constantDef(
-            "serviceName",
-            irb.primitiveType("string"),
-            irb.stringLiteral("billing"),
-          ),
-          irb.constantDef(
-            "defaultStatus",
-            irb.enumType("Status", "string"),
-            irb.stringLiteral("active"),
-          ),
+          irb.constantDef("serviceName", irb.stringLiteral("billing")),
+          irb.constantDef("defaultStatus", irb.stringLiteral("active")),
           irb.constantDef(
             "defaultTags",
-            irb.namedType("Tags"),
             irb.arrayLiteral([
               irb.stringLiteral("featured"),
               irb.stringLiteral("popular"),
             ]),
           ),
-          irb.constantDef(
-            "defaultConfig",
-            irb.primitiveType("string"),
-            irb.stringLiteral("noop"),
-          ),
+          irb.constantDef("defaultConfig", irb.stringLiteral("noop")),
         ],
       }),
       generatorOptions: {

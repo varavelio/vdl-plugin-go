@@ -55,6 +55,15 @@ describe("generate", () => {
               ],
             }),
             irb.typeDef("Labels", irb.mapType(irb.primitiveType("string"))),
+            irb.typeDef("$ConstAPI_VERSION", irb.primitiveType("string")),
+            irb.typeDef("$ConstDefaultUserID", irb.namedType("UserID")),
+            irb.typeDef(
+              "$ConstDefaultStatus",
+              irb.enumType("OrderStatus", "string"),
+            ),
+            irb.typeDef("$ConstDefaultLabels", irb.namedType("Labels")),
+            irb.typeDef("$ConstDefaultProduct", irb.namedType("Product")),
+            irb.typeDef("$ConstDefaultIDs", irb.namedType("UserIDs")),
             irb.typeDef(
               "Product",
               irb.objectType([
@@ -91,32 +100,18 @@ describe("generate", () => {
             irb.typeDef("UserIDs", irb.arrayType(irb.namedType("UserID"))),
           ],
           constants: [
-            irb.constantDef(
-              "API_VERSION",
-              irb.primitiveType("string"),
-              irb.stringLiteral("1.0.0"),
-            ),
-            irb.constantDef(
-              "DefaultUserID",
-              irb.namedType("UserID"),
-              irb.stringLiteral("user-1"),
-            ),
-            irb.constantDef(
-              "DefaultStatus",
-              irb.enumType("OrderStatus", "string"),
-              irb.stringLiteral("pending"),
-              {
-                annotations: [
-                  irb.annotation(
-                    "deprecated",
-                    irb.stringLiteral("Do not use this default."),
-                  ),
-                ],
-              },
-            ),
+            irb.constantDef("API_VERSION", irb.stringLiteral("1.0.0")),
+            irb.constantDef("DefaultUserID", irb.stringLiteral("user-1")),
+            irb.constantDef("DefaultStatus", irb.stringLiteral("pending"), {
+              annotations: [
+                irb.annotation(
+                  "deprecated",
+                  irb.stringLiteral("Do not use this default."),
+                ),
+              ],
+            }),
             irb.constantDef(
               "DefaultLabels",
-              irb.namedType("Labels"),
               irb.objectLiteral({
                 env: irb.stringLiteral("prod"),
                 region: irb.stringLiteral("eu"),
@@ -124,7 +119,6 @@ describe("generate", () => {
             ),
             irb.constantDef(
               "DefaultProduct",
-              irb.namedType("Product"),
               irb.objectLiteral({
                 id: irb.stringLiteral("user-1"),
                 description: irb.stringLiteral("Primary product"),
@@ -146,7 +140,6 @@ describe("generate", () => {
             ),
             irb.constantDef(
               "DefaultIDs",
-              irb.namedType("UserIDs"),
               irb.arrayLiteral([
                 irb.stringLiteral("user-1"),
                 irb.stringLiteral("user-2"),
@@ -293,7 +286,7 @@ describe("generate", () => {
         },
         ir: irb.schema({
           constants: [
-            irb.constantDef("ANSWER", irb.primitiveType("int"), {
+            irb.constantDef("ANSWER", {
               kind: "int",
               position: { file: "schema.vdl", line: 1, column: 1 },
               intValue: 42,
@@ -345,13 +338,13 @@ describe("generate", () => {
           constants: [
             irb.constantDef(
               "DefaultPayload",
-              irb.namedType("Payload"),
               irb.objectLiteral({
                 description: irb.stringLiteral("hello"),
               }),
             ),
           ],
           types: [
+            irb.typeDef("$ConstDefaultPayload", irb.namedType("Payload")),
             irb.typeDef(
               "Payload",
               irb.objectType([
@@ -439,13 +432,8 @@ describe("generate", () => {
     const result = generate(
       irb.pluginInput({
         ir: irb.schema({
-          constants: [
-            irb.constantDef(
-              "Ptr",
-              irb.primitiveType("string"),
-              irb.stringLiteral("oops"),
-            ),
-          ],
+          types: [irb.typeDef("$ConstPtr", irb.primitiveType("string"))],
+          constants: [irb.constantDef("Ptr", irb.stringLiteral("oops"))],
         }),
       }),
     );
