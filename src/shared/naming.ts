@@ -39,19 +39,19 @@ export function isValidGoPackageName(value: string): boolean {
 }
 
 export function toGoTypeName(value: string): string {
-  return escapeGoIdentifier(toGoPascalIdentifier(value));
+  return escapeGoIdentifier(strings.pascalCase(value));
 }
 
 export function toGoConstName(value: string): string {
-  return escapeGoIdentifier(toGoPascalIdentifier(value));
+  return escapeGoIdentifier(strings.pascalCase(value));
 }
 
 export function toGoFieldName(value: string): string {
-  return escapeGoIdentifier(toGoPascalIdentifier(value));
+  return escapeGoIdentifier(strings.pascalCase(value));
 }
 
 export function toGoEnumMemberName(value: string): string {
-  return escapeGoIdentifier(toGoPascalIdentifier(value));
+  return escapeGoIdentifier(strings.pascalCase(value));
 }
 
 export function toInlineTypeName(
@@ -63,8 +63,4 @@ export function toInlineTypeName(
 
 function escapeGoIdentifier(value: string): string {
   return isGoKeyword(value) ? `${value}_` : value;
-}
-
-function toGoPascalIdentifier(value: string): string {
-  return strings.pascalCase(value) ?? "X";
 }
