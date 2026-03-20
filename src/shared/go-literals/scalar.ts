@@ -66,7 +66,7 @@ export function renderDirectEnumExpression(
 
   if (!member) {
     fail(
-      `Invalid literal for enum ${JSON.stringify(enumDescriptor.def.name)}. Expected one of its declared members.`,
+      `Invalid literal for ${JSON.stringify(enumDescriptor.def.name)} enum. Expected one of its declared members.`,
       position,
     );
   }
@@ -126,7 +126,7 @@ function renderEnumScalarLiteral(
 ): string {
   if (!enumDescriptor.memberByValue.has(getLiteralValueKey(literal))) {
     fail(
-      `Invalid literal for enum ${JSON.stringify(enumDescriptor.def.name)}. Expected one of its declared members.`,
+      `Invalid literal for ${JSON.stringify(enumDescriptor.def.name)} enum. Expected one of its declared members.`,
       position,
     );
   }

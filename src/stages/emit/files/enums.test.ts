@@ -72,14 +72,12 @@ describe("generateEnumsFile", () => {
       "func (e Priority) MarshalJSON() ([]byte, error) {",
     );
     expect(file?.content).toContain(
-      "cannot marshal invalid value %d for enum Priority; valid values: 1",
+      "cannot marshal invalid value %d for Priority enum",
     );
     expect(file?.content).toContain(
       "func (e *Priority) UnmarshalJSON(data []byte) error {",
     );
-    expect(file?.content).toContain(
-      "invalid value %d for enum Priority; valid values: 1",
-    );
+    expect(file?.content).toContain("invalid value %d for Priority enum");
   });
 
   it("omits enum JSON methods when strict mode is disabled", () => {

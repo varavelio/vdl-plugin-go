@@ -140,8 +140,6 @@ function renderEnumMarshalJSONMethod(
   g: ReturnType<typeof newGenerator>,
   enumDescriptor: EnumDescriptor,
 ): void {
-  const validValues = renderEnumValidValues(enumDescriptor);
-
   g.line(
     `// MarshalJSON encodes ${enumDescriptor.goName} and rejects values outside the declared enum set.`,
   );
@@ -151,13 +149,13 @@ function renderEnumMarshalJSONMethod(
     g.block(() => {
       if (enumDescriptor.def.enumType === "string") {
         g.line(
-          `return nil, fmt.Errorf(${JSON.stringify(`cannot marshal invalid value %q for enum ${enumDescriptor.goName}; valid values: ${validValues}`)}, string(e))`,
+          `return nil, fmt.Errorf(${JSON.stringify(`cannot marshal invalid value %q for ${enumDescriptor.goName} enum`)}, string(e))`,
         );
         return;
       }
 
       g.line(
-        `return nil, fmt.Errorf(${JSON.stringify(`cannot marshal invalid value %d for enum ${enumDescriptor.goName}; valid values: ${validValues}`)}, int(e))`,
+        `return nil, fmt.Errorf(${JSON.stringify(`cannot marshal invalid value %d for ${enumDescriptor.goName} enum`)}, int(e))`,
       );
     });
     g.line("}");
@@ -176,8 +174,6 @@ function renderEnumUnmarshalJSONMethod(
   g: ReturnType<typeof newGenerator>,
   enumDescriptor: EnumDescriptor,
 ): void {
-  const validValues = renderEnumValidValues(enumDescriptor);
-
   g.line(
     `// UnmarshalJSON decodes ${enumDescriptor.goName} and rejects values outside the declared enum set.`,
   );
@@ -196,7 +192,7 @@ function renderEnumUnmarshalJSONMethod(
       g.line("if !candidate.IsValid() {");
       g.block(() => {
         g.line(
-          `return fmt.Errorf(${JSON.stringify(`invalid value %q for enum ${enumDescriptor.goName}; valid values: ${validValues}`)}, value)`,
+          `return fmt.Errorf(${JSON.stringify(`invalid value %q for ${enumDescriptor.goName} enum`)}, value)`,
         );
       });
       g.line("}");
@@ -215,7 +211,7 @@ function renderEnumUnmarshalJSONMethod(
     g.line("if !candidate.IsValid() {");
     g.block(() => {
       g.line(
-        `return fmt.Errorf(${JSON.stringify(`invalid value %d for enum ${enumDescriptor.goName}; valid values: ${validValues}`)}, value)`,
+        `return fmt.Errorf(${JSON.stringify(`invalid value %d for ${enumDescriptor.goName} enum`)}, value)`,
       );
     });
     g.line("}");
@@ -223,10 +219,4 @@ function renderEnumUnmarshalJSONMethod(
     g.line("return nil");
   });
   g.line("}");
-}
-
-function renderEnumValidValues(enumDescriptor: EnumDescriptor): string {
-  return enumDescriptor.members
-    .map((member) => renderEnumMemberLiteral(enumDescriptor, member))
-    .join(", ");
 }
