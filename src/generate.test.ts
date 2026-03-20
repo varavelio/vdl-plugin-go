@@ -192,13 +192,13 @@ describe("generate", () => {
     expect(constants).toContain('const DefaultUserId UserId = "user-1"');
     expect(constants).toContain("const DefaultStatus = OrderStatusPending");
     expect(constants).toContain(
-      'var DefaultLabels = Labels{"env": "prod", "region": "eu"}',
+      'var DefaultLabels = Labels{\n\t"env": "prod",\n\t"region": "eu",\n}',
     );
     expect(constants).toContain(
-      'var DefaultProduct = Product{Id: UserId("user-1"), Description: Ptr("Primary product"), Status: OrderStatusPending, Address: ProductAddress{City: "Madrid"}}',
+      'var DefaultProduct = Product{\n\tId: UserId("user-1"),\n\tDescription: Ptr("Primary product"),\n\tStatus: OrderStatusPending,\n\tAddress: ProductAddress{\n\t\tCity: "Madrid",\n\t},\n}',
     );
     expect(constants).toContain(
-      'var DefaultIDs = UserIDs{UserId("user-1"), UserId("user-2")}',
+      'var DefaultIDs = UserIDs{\n\tUserId("user-1"),\n\tUserId("user-2"),\n}',
     );
 
     const metadata = fileContent(result, "metadata.go");

@@ -6,7 +6,7 @@ import {
 import {
   canEmitConst,
   renderConstInitializer,
-  renderTypedValueExpression,
+  renderTypedValueExpressionPretty,
 } from "../../../shared/go-literals";
 import {
   collectImportsForTypeRef,
@@ -44,9 +44,14 @@ export function generateConstantsFile(
     if (canEmitConst(constant.typeRef, context, constant.def.position)) {
       renderConstDeclaration(g, constant.goName, constant, context);
     } else {
-      g.line(
-        `var ${constant.goName} = ${renderTypedValueExpression(constant.typeRef, constant.def.value, context, constant.def.position)}`,
+      const valueExpression = renderTypedValueExpressionPretty(
+        constant.typeRef,
+        constant.def.value,
+        context,
+        constant.def.position,
       );
+
+      g.line(`var ${constant.goName} = ${valueExpression}`);
     }
 
     if (

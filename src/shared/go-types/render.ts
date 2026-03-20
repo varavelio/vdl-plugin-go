@@ -125,3 +125,61 @@ export function renderAnonymousGoTypeExpression(
       );
   }
 }
+
+export function renderAnonymousGoTypeExpressionPretty(
+  typeRef: TypeRef,
+  context: GeneratorContext,
+  position?: Position,
+  inlineTypeGoName?: string,
+): string {
+  switch (typeRef.kind) {
+    case "primitive":
+      return renderPrimitiveGoType(typeRef.primitiveName, position);
+    case "type":
+    case "enum":
+      return renderGoType(typeRef, context, undefined, position);
+    case "array":
+      return `${"[]".repeat(typeRef.arrayDims ?? 1)}${renderAnonymousGoTypeExpressionPretty(expectValue(typeRef.arrayType, "Encountered an array type reference without an element type.", position), context, position, inlineTypeGoName)}`;
+    case "map":
+      return `map[string]${renderAnonymousGoTypeExpressionPretty(expectValue(typeRef.mapType, "Encountered a map type reference without a value type.", position), context, position, inlineTypeGoName)}`;
+    case "object": {
+      if (inlineTypeGoName) {
+        return inlineTypeGoName;
+      }
+
+      const fields = getEffectiveObjectFields(typeRef.objectFields);
+
+      if (fields.length === 0) {
+        return "struct {}";
+      }
+
+      const lines = fields.map((field) => {
+        const fieldType = renderAnonymousGoTypeExpressionPretty(
+          field.typeRef,
+          context,
+          field.position,
+        );
+        const jsonTag = field.optional
+          ? `json:${JSON.stringify(`${toGoJsonName(field.name)},omitempty`)}`
+          : `json:${JSON.stringify(toGoJsonName(field.name))}`;
+        const fieldDecl = `${toGoFieldName(field.name)} ${field.optional ? `*${fieldType}` : fieldType} \`${jsonTag}\``;
+
+        return indentMultiline(fieldDecl);
+      });
+
+      return `struct {\n${lines.join("\n")}\n}`;
+    }
+    default:
+      fail(
+        `Unsupported VDL type kind ${JSON.stringify(typeRef.kind)}.`,
+        position,
+      );
+  }
+}
+
+function indentMultiline(value: string): string {
+  return value
+    .split("\n")
+    .map((line) => `\t${line}`)
+    .join("\n");
+}

@@ -76,7 +76,7 @@ describe("generateConstantsFile", () => {
     expect(file?.content).toContain('const ServiceName = "billing"');
     expect(file?.content).toContain("const DefaultStatus = StatusActive");
     expect(file?.content).toContain(
-      'var DefaultTags = Tags{"featured", "popular"}',
+      'var DefaultTags = Tags{\n\t"featured",\n\t"popular",\n}',
     );
     expect(file?.content).toContain('const DefaultConfig = "noop"');
   });
