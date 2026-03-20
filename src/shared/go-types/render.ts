@@ -1,7 +1,7 @@
 import type { Position, PrimitiveType, TypeRef } from "@varavel/vdl-plugin-sdk";
 import type { GeneratorContext } from "../../stages/model/types";
 import { expectValue, fail } from "../errors";
-import { toGoFieldName } from "../naming";
+import { toGoFieldName, toGoJsonName } from "../naming";
 import { getEffectiveObjectFields } from "../object-fields";
 
 export function renderPrimitiveGoType(
@@ -108,8 +108,11 @@ export function renderAnonymousGoTypeExpression(
             context,
             field.position,
           );
+          const jsonTag = field.optional
+            ? `json:${JSON.stringify(`${toGoJsonName(field.name)},omitempty`)}`
+            : `json:${JSON.stringify(toGoJsonName(field.name))}`;
 
-          return `${toGoFieldName(field.name)} ${field.optional ? `*${fieldType}` : fieldType}`;
+          return `${toGoFieldName(field.name)} ${field.optional ? `*${fieldType}` : fieldType} \`${jsonTag}\``;
         },
       );
 

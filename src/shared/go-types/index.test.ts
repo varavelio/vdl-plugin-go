@@ -82,7 +82,9 @@ describe("type-ref", () => {
         expectContext(result.context),
         undefined,
       ),
-    ).toBe("struct { City string; Primary *bool }");
+    ).toBe(
+      'struct { City string `json:"city"`; Primary *bool `json:"primary,omitempty"` }',
+    );
     expect(
       renderAnonymousGoTypeExpression(
         object,

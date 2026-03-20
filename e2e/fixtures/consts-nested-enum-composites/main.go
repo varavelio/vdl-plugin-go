@@ -11,21 +11,21 @@ func main() {
 		"Defaults json",
 		gen.Defaults,
 		`{
-			"Tiers": ["free", "pro"],
-			"ByRegion": {
-				"Us": "pro",
-				"Eu": "enterprise"
+			"tiers": ["free", "pro"],
+			"byRegion": {
+				"us": "pro",
+				"eu": "enterprise"
 			},
-			"Bundles": [
+			"bundles": [
 				{
-					"Name": "starter",
-					"Features": ["sync", "export"],
-					"Tier": "free"
+					"name": "starter",
+					"features": ["sync", "export"],
+					"tier": "free"
 				},
 				{
-					"Name": "growth",
-					"Features": ["sync", "export", "audit"],
-					"Tier": "pro"
+					"name": "growth",
+					"features": ["sync", "export", "audit"],
+					"tier": "pro"
 				}
 			]
 		}`,
