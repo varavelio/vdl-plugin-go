@@ -23,6 +23,9 @@ export function expectCondition(
   misc.invariant(condition, new GenerationError(message, position));
 }
 
+/**
+ * expect a value to be non-null and non-undefined.
+ */
 export function expectValue<T>(
   value: T | null | undefined,
   message: string,
