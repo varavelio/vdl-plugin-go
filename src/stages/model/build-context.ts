@@ -19,6 +19,7 @@ export function createGeneratorContext(options: {
     typeGoNamesByVdlName: indexes.typeGoNamesByVdlName,
     enumGoNamesByVdlName: indexes.enumGoNamesByVdlName,
     namedTypes: [],
+    namedTypesByGoName: new Map(),
     enumDescriptors: [],
     enumDescriptorsByVdlName: new Map(),
     constantDescriptors: [],

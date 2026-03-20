@@ -15,13 +15,12 @@ export function populateNamedTypes(
   packageScopeSymbols: PackageScopeSymbolTable,
 ): PluginOutputError[] {
   const errors: PluginOutputError[] = [];
-  const namedTypesByGoName = new Map<string, NamedTypeDescriptor>();
 
   for (const typeDef of context.schema.types) {
     appendNamedTypeDescriptor(
       context,
       buildTopLevelTypeDescriptor(typeDef, context, errors),
-      namedTypesByGoName,
+      context.namedTypesByGoName,
       packageScopeSymbols,
       errors,
     );

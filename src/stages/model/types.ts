@@ -72,6 +72,7 @@ export interface GeneratorContext {
   typeGoNamesByVdlName: Map<string, string>;
   enumGoNamesByVdlName: Map<string, string>;
   namedTypes: NamedTypeDescriptor[];
+  namedTypesByGoName: Map<string, NamedTypeDescriptor>;
   enumDescriptors: EnumDescriptor[];
   enumDescriptorsByVdlName: Map<string, EnumDescriptor>;
   constantDescriptors: ConstantDescriptor[];

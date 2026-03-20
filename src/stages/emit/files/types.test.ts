@@ -102,12 +102,24 @@ describe("generateTypesFile", () => {
 
     expect(file?.content).toContain("type prePayload struct {");
     expect(file?.content).toContain('Status *Status `json:"status"`');
+    expect(file?.content).toContain('Items *[]prePayloadItems `json:"items"`');
+    expect(file?.content).not.toContain("func vdlJoinFieldPath(");
+    expect(file?.content).not.toContain("func vdlJoinIndexPath(");
+    expect(file?.content).not.toContain("func vdlJoinMapKeyPath(");
     expect(file?.content).toContain(
       "func (x *Payload) UnmarshalJSON(data []byte) error {",
     );
-    expect(file?.content).toContain("func (p *prePayload) validate() error {");
     expect(file?.content).toContain(
-      'return fmt.Errorf("field %q is required", "items")',
+      "func (p *prePayload) validate(parentPath string) error {",
+    );
+    expect(file?.content).toContain(
+      'return fmt.Errorf("field %s is required", vdlPathItems)',
+    );
+    expect(file?.content).toContain(
+      "if err := vdlItem0.validate(vdlItemPath0); err != nil {",
+    );
+    expect(file?.content).toContain(
+      "vdlTransformed0 = PayloadItems(vdlItem0.transform())",
     );
     expect(file?.content).not.toContain(
       "func (x Payload) ValidateSchema() error {",
