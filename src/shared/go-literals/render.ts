@@ -8,7 +8,6 @@ import {
   resolveNonTypeRef,
 } from "../go-types";
 import { toGoFieldName, toInlineTypeName } from "../naming";
-import { getEffectiveObjectFields } from "../object-fields";
 import {
   renderDirectEnumExpression,
   renderRawScalarLiteral,
@@ -274,7 +273,7 @@ function renderObjectLiteral(
     fail("Expected an object literal for a VDL object type.", position);
   }
 
-  const fields = getEffectiveObjectFields(typeRef.objectFields);
+  const fields = typeRef.objectFields ?? [];
   const entryByName = new Map(
     (literal.objectEntries ?? []).map((entry) => [entry.key, entry]),
   );
@@ -456,7 +455,7 @@ function renderObjectLiteralPretty(options: {
     fail("Expected an object literal for a VDL object type.", options.position);
   }
 
-  const fields = getEffectiveObjectFields(options.typeRef.objectFields);
+  const fields = options.typeRef.objectFields ?? [];
   const entryByName = new Map(
     (options.literal.objectEntries ?? []).map((entry) => [entry.key, entry]),
   );

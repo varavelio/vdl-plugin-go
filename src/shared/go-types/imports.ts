@@ -1,5 +1,4 @@
 import type { TypeRef } from "@varavel/vdl-plugin-sdk";
-import { getEffectiveObjectFields } from "../object-fields";
 import type { ImportSet } from "../render/imports";
 
 export function collectImportsForTypeRef(
@@ -23,7 +22,7 @@ export function collectImportsForTypeRef(
       }
       return;
     case "object":
-      for (const field of getEffectiveObjectFields(typeRef.objectFields)) {
+      for (const field of typeRef.objectFields ?? []) {
         collectImportsForTypeRef(field.typeRef, imports);
       }
       return;

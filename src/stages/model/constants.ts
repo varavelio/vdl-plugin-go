@@ -6,7 +6,6 @@ import type {
   TypeRef,
 } from "@varavel/vdl-plugin-sdk";
 import { toGoConstName } from "../../shared/naming";
-import { getEffectiveObjectFields } from "../../shared/object-fields";
 import type { PackageScopeSymbolTable } from "./symbols";
 import type { ConstantDescriptor, GeneratorContext } from "./types";
 
@@ -196,7 +195,7 @@ function getEffectiveObjectEntries(
     annotations: [],
     typeRef: { kind: "primitive", primitiveName: "string" } as TypeRef,
   }));
-  const effectiveFields = getEffectiveObjectFields(fields);
+  const effectiveFields = fields ?? [];
   const indexByName = new Map(
     entries.map((entry, index) => [entry.key, index]),
   );
@@ -237,8 +236,8 @@ function areTypeRefsEquivalent(left: TypeRef, right: TypeRef): boolean {
         right.mapType as TypeRef,
       );
     case "object": {
-      const leftFields = getEffectiveObjectFields(left.objectFields);
-      const rightFields = getEffectiveObjectFields(right.objectFields);
+      const leftFields = left.objectFields ?? [];
+      const rightFields = right.objectFields ?? [];
 
       if (leftFields.length !== rightFields.length) {
         return false;

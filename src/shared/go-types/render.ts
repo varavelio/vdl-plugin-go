@@ -2,7 +2,6 @@ import type { Position, PrimitiveType, TypeRef } from "@varavel/vdl-plugin-sdk";
 import type { GeneratorContext } from "../../stages/model/types";
 import { expectValue, fail } from "../errors";
 import { toGoFieldName } from "../naming";
-import { getEffectiveObjectFields } from "../object-fields";
 
 export function renderPrimitiveGoType(
   primitiveName: PrimitiveType | undefined,
@@ -101,20 +100,18 @@ export function renderAnonymousGoTypeExpression(
         return inlineTypeGoName;
       }
 
-      const parts = getEffectiveObjectFields(typeRef.objectFields).map(
-        (field) => {
-          const fieldType = renderAnonymousGoTypeExpression(
-            field.typeRef,
-            context,
-            field.position,
-          );
-          const jsonTag = field.optional
-            ? `json:${JSON.stringify(`${field.name},omitempty`)}`
-            : `json:${JSON.stringify(field.name)}`;
+      const parts = (typeRef.objectFields ?? []).map((field) => {
+        const fieldType = renderAnonymousGoTypeExpression(
+          field.typeRef,
+          context,
+          field.position,
+        );
+        const jsonTag = field.optional
+          ? `json:${JSON.stringify(`${field.name},omitempty`)}`
+          : `json:${JSON.stringify(field.name)}`;
 
-          return `${toGoFieldName(field.name)} ${field.optional ? `*${fieldType}` : fieldType} \`${jsonTag}\``;
-        },
-      );
+        return `${toGoFieldName(field.name)} ${field.optional ? `*${fieldType}` : fieldType} \`${jsonTag}\``;
+      });
 
       return `struct { ${parts.join("; ")} }`;
     }
@@ -147,7 +144,7 @@ export function renderAnonymousGoTypeExpressionPretty(
         return inlineTypeGoName;
       }
 
-      const fields = getEffectiveObjectFields(typeRef.objectFields);
+      const fields = typeRef.objectFields ?? [];
 
       if (fields.length === 0) {
         return "struct {}";

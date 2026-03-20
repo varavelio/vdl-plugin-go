@@ -2,7 +2,6 @@ import type { newGenerator } from "@varavel/gen";
 import type { TypeRef } from "@varavel/vdl-plugin-sdk";
 import { expectValue, fail } from "../../../shared/errors";
 import { toGoFieldName } from "../../../shared/naming";
-import { getEffectiveObjectFields } from "../../../shared/object-fields";
 import type { GeneratorContext } from "../../model/types";
 import { writeAnnotationSetField } from "./metadata-annotations";
 
@@ -100,7 +99,7 @@ function writeMetadataTypeRefBody(
       return;
     }
     case "object": {
-      const fields = getEffectiveObjectFields(typeRef.objectFields);
+      const fields = typeRef.objectFields ?? [];
 
       if (fields.length === 0) {
         g.line("Fields: nil,");

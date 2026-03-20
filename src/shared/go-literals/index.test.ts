@@ -63,40 +63,6 @@ describe("literal-renderer", () => {
     );
   });
 
-  it("uses the last object field occurrence for spread-resolved shapes", () => {
-    const context = buildContext();
-    const duplicateObjectType = irb.objectType([
-      irb.field("value", irb.primitiveType("string")),
-      irb.field("value", irb.primitiveType("string"), { optional: true }),
-    ]);
-    const duplicateLiteral = {
-      position: { file: "schema.vdl", line: 1, column: 1 },
-      kind: "object" as const,
-      objectEntries: [
-        {
-          position: { file: "schema.vdl", line: 1, column: 2 },
-          key: "value",
-          value: irb.stringLiteral("first"),
-        },
-        {
-          position: { file: "schema.vdl", line: 1, column: 3 },
-          key: "value",
-          value: irb.stringLiteral("second"),
-        },
-      ],
-    };
-
-    expect(
-      renderTypedValueExpression(
-        duplicateObjectType,
-        duplicateLiteral,
-        context,
-        undefined,
-        "Wrapped",
-      ),
-    ).toBe('Wrapped{Value: Ptr("second")}');
-  });
-
   it("renders metadata values for nested arrays and objects", () => {
     expect(
       renderMetadataValueExpression(
