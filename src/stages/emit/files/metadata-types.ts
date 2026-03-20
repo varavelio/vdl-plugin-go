@@ -1,7 +1,7 @@
 import type { newGenerator } from "@varavel/gen";
 import type { TypeRef } from "@varavel/vdl-plugin-sdk";
 import { expectValue, fail } from "../../../shared/errors";
-import { toGoFieldName, toGoJsonName } from "../../../shared/naming";
+import { toGoFieldName } from "../../../shared/naming";
 import { getEffectiveObjectFields } from "../../../shared/object-fields";
 import type { GeneratorContext } from "../../model/types";
 import { writeAnnotationSetField } from "./metadata-annotations";
@@ -131,7 +131,7 @@ function writeMetadataFieldEntry(
   g.line(`${JSON.stringify(goName)}: VDLFieldMetadata{`);
   g.block(() => {
     g.line(`Name: ${JSON.stringify(goName)},`);
-    g.line(`JSONName: ${JSON.stringify(toGoJsonName(field.name))},`);
+    g.line(`JSONName: ${JSON.stringify(field.name)},`);
     g.line(`Optional: ${String(field.optional)},`);
     writeMetadataTypeField(g, field.typeRef, context);
     writeAnnotationSetField(g, field.annotations);

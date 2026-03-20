@@ -1,10 +1,6 @@
 import type { Field, PluginOutputError } from "@varavel/vdl-plugin-sdk";
 import { renderGoType } from "../../shared/go-types";
-import {
-  toGoFieldName,
-  toGoJsonName,
-  toInlineTypeName,
-} from "../../shared/naming";
+import { toGoFieldName, toInlineTypeName } from "../../shared/naming";
 import type { FieldDescriptor, GeneratorContext } from "./types";
 
 export function buildFieldDescriptors(options: {
@@ -40,7 +36,7 @@ export function buildFieldDescriptors(options: {
     descriptors.push({
       def: field,
       goName,
-      jsonName: toGoJsonName(field.name),
+      jsonName: field.name,
       goType: field.optional ? `*${goType}` : goType,
       inlineTypeGoName,
     });

@@ -1,7 +1,7 @@
 import type { Position, PrimitiveType, TypeRef } from "@varavel/vdl-plugin-sdk";
 import type { GeneratorContext } from "../../stages/model/types";
 import { expectValue, fail } from "../errors";
-import { toGoFieldName, toGoJsonName } from "../naming";
+import { toGoFieldName } from "../naming";
 import { getEffectiveObjectFields } from "../object-fields";
 
 export function renderPrimitiveGoType(
@@ -109,8 +109,8 @@ export function renderAnonymousGoTypeExpression(
             field.position,
           );
           const jsonTag = field.optional
-            ? `json:${JSON.stringify(`${toGoJsonName(field.name)},omitempty`)}`
-            : `json:${JSON.stringify(toGoJsonName(field.name))}`;
+            ? `json:${JSON.stringify(`${field.name},omitempty`)}`
+            : `json:${JSON.stringify(field.name)}`;
 
           return `${toGoFieldName(field.name)} ${field.optional ? `*${fieldType}` : fieldType} \`${jsonTag}\``;
         },
@@ -160,8 +160,8 @@ export function renderAnonymousGoTypeExpressionPretty(
           field.position,
         );
         const jsonTag = field.optional
-          ? `json:${JSON.stringify(`${toGoJsonName(field.name)},omitempty`)}`
-          : `json:${JSON.stringify(toGoJsonName(field.name))}`;
+          ? `json:${JSON.stringify(`${field.name},omitempty`)}`
+          : `json:${JSON.stringify(field.name)}`;
         const fieldDecl = `${toGoFieldName(field.name)} ${field.optional ? `*${fieldType}` : fieldType} \`${jsonTag}\``;
 
         return indentMultiline(fieldDecl);

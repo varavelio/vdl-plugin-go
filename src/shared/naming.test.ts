@@ -5,7 +5,6 @@ import {
   toGoConstName,
   toGoEnumMemberName,
   toGoFieldName,
-  toGoJsonName,
   toGoTypeName,
 } from "./naming";
 
@@ -18,10 +17,7 @@ describe("naming", () => {
     expect(toGoTypeName("user_profile")).toBe("UserProfile");
   });
 
-  it("preserves original JSON names and validates package names", () => {
-    expect(toGoJsonName("package")).toBe("package");
-    expect(toGoJsonName("map")).toBe("map");
-    expect(toGoJsonName("snake_case")).toBe("snake_case");
+  it("validates package names", () => {
     expect(isValidGoPackageName("vdl")).toBe(true);
     expect(isValidGoPackageName("generated_api")).toBe(true);
     expect(isValidGoPackageName("Generated")).toBe(false);

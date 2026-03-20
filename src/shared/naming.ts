@@ -54,10 +54,6 @@ export function toGoEnumMemberName(value: string): string {
   return escapeGoIdentifier(toGoPascalIdentifier(value));
 }
 
-export function toGoJsonName(value: string): string {
-  return value;
-}
-
 export function toInlineTypeName(
   parentTypeName: string,
   fieldName: string,
@@ -70,11 +66,5 @@ function escapeGoIdentifier(value: string): string {
 }
 
 function toGoPascalIdentifier(value: string): string {
-  const candidate = strings.pascalCase(value);
-
-  if (candidate.length === 0) {
-    return "X";
-  }
-
-  return /^[A-Za-z_]/.test(candidate) ? candidate : `X${candidate}`;
+  return strings.pascalCase(value) ?? "X";
 }
