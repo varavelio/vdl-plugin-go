@@ -1,0 +1,8 @@
+type DeepArrays {
+  d3 int[][][]
+  obj3 User[][][]
+}
+
+type User {
+  id string
+}

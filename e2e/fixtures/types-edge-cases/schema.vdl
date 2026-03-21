@@ -1,0 +1,22 @@
+// Go keywords as names
+type Select {
+  func string
+  type string
+  interface int
+}
+
+const default = {
+  func "f"
+  type "t"
+  interface 1
+}
+
+enum Case {
+  Default
+  Switch
+}
+
+// Very long names
+type ThisIsAVeryLongTypeNameToTestIfTheGeneratorHandlesItGracefullyWithoutAnyIssues {
+  andAVeryLongFieldNameAsWell string
+}

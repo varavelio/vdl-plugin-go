@@ -1,0 +1,15 @@
+enum StandardRoles {
+  User
+  Editor
+}
+
+enum AdminRoles {
+  Admin
+  SuperAdmin
+}
+
+enum AllRoles {
+  ...StandardRoles
+  ...AdminRoles
+  Guest = "guest"
+}

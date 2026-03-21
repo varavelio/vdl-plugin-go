@@ -1,0 +1,12 @@
+type MapTypes {
+  strMap map[string]
+  intMap map[int]
+  boolMap map[bool]
+  floatMap map[float]
+  dateMap map[datetime]
+  objMap map[User]
+}
+
+type User {
+  id string
+}

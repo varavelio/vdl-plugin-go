@@ -1,0 +1,14 @@
+type Base {
+  id string
+}
+
+type Timestamps {
+  createdAt datetime
+  updatedAt datetime
+}
+
+type User {
+  ...Base
+  ...Timestamps
+  email string
+}

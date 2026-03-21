@@ -1,0 +1,6 @@
+include "./shared.vdl"
+
+type Profile {
+  user SharedUser
+  bio string
+}

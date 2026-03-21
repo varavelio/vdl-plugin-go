@@ -1,0 +1,8 @@
+type RecursiveMap {
+  nested map[map[string]]
+  objMap map[map[User]]
+}
+
+type User {
+  id string
+}

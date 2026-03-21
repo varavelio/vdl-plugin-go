@@ -1,0 +1,15 @@
+@tag("v1")
+@meta({ owner "platform" })
+type User {
+  @id
+  id string
+}
+
+@config
+const timeout = 30
+
+@status
+enum OrderStatus {
+  @default
+  Pending
+}

@@ -1,0 +1,9 @@
+const baseConfig = {
+  timeout 30
+  retries 3
+}
+
+const appConfig = {
+  ...baseConfig
+  debug true
+}
