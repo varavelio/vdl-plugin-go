@@ -9,6 +9,18 @@ import { toGoConstName } from "../../shared/naming";
 import type { PackageScopeSymbolTable } from "./symbols";
 import type { ConstantDescriptor, GeneratorContext } from "./types";
 
+/**
+ * Populates the context with descriptors for all constant definitions in the schema.
+ *
+ * This function resolves the type of each constant, either by looking up
+ * synthetic "inferred" type definitions from the VDL IR or by performing
+ * manual type inference from the literal value itself. It also ensures that
+ * generated constant names are unique and tracked in the symbol table.
+ *
+ * @param context - The generator context to populate.
+ * @param packageScopeSymbols - The symbol table for collision detection.
+ * @returns A list of validation errors encountered during processing.
+ */
 export function populateConstantDescriptors(
   context: GeneratorContext,
   packageScopeSymbols: PackageScopeSymbolTable,
@@ -73,6 +85,12 @@ export function populateConstantDescriptors(
   return errors;
 }
 
+/**
+ * Infer the VDL TypeRef from a literal value.
+ *
+ * This is used for constants that don't have an explicit type declared in VDL.
+ * It recursively determines the type for primitives, arrays, and objects.
+ */
 function inferTypeRefFromLiteral(
   literal: LiteralValue,
   _position: Position,
@@ -185,6 +203,9 @@ function inferTypeRefFromLiteral(
   }
 }
 
+/**
+ * Filters object literal entries to implement "last-key-wins" semantics.
+ */
 function getEffectiveObjectEntries(
   entries: NonNullable<LiteralValue["objectEntries"]>,
 ): NonNullable<LiteralValue["objectEntries"]> {
@@ -208,6 +229,9 @@ function getEffectiveObjectEntries(
   );
 }
 
+/**
+ * Checks if two TypeRef structures are semantically equivalent.
+ */
 function areTypeRefsEquivalent(left: TypeRef, right: TypeRef): boolean {
   if (left.kind !== right.kind) {
     return false;

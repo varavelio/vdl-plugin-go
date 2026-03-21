@@ -21,6 +21,16 @@ interface ReservedSymbol {
   position?: Position;
 }
 
+/**
+ * Tracking of reserved Go package-scope identifiers to prevent collisions.
+ *
+ * This table ensures that generated type, enum, or constant names do not
+ * clash with:
+ *
+ * 1. Each other.
+ * 2. Generated metadata symbols (e.g., VDLMetadata).
+ * 3. Pointer utility helpers (e.g., Ptr, Val).
+ */
 export class PackageScopeSymbolTable {
   readonly #symbols = new Map<string, ReservedSymbol>();
 
@@ -32,6 +42,14 @@ export class PackageScopeSymbolTable {
     }
   }
 
+  /**
+   * Attempts to reserve a Go identifier in the package scope.
+   *
+   * @param name - The Go identifier to reserve.
+   * @param origin - A description of why the symbol is being reserved (for error reporting).
+   * @param position - The VDL source position related to the symbol.
+   * @returns An error if the symbol is already reserved, otherwise undefined.
+   */
   reserve(
     name: string,
     origin: string,

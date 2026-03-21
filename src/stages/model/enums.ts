@@ -8,6 +8,17 @@ import type {
   GeneratorContext,
 } from "./types";
 
+/**
+ * Populates the context with descriptors for all enum definitions in the schema.
+ *
+ * This function handles the generation of Go enum types, their member constants,
+ * and the list of all members. It also ensures that all generated identifiers
+ * (enum type, members, and the member list) are unique and tracked in the symbol table.
+ *
+ * @param context - The generator context to populate.
+ * @param packageScopeSymbols - The symbol table for collision detection.
+ * @returns A list of validation errors encountered during processing.
+ */
 export function populateEnumDescriptors(
   context: GeneratorContext,
   packageScopeSymbols: PackageScopeSymbolTable,
@@ -55,6 +66,12 @@ export function populateEnumDescriptors(
   return errors;
 }
 
+/**
+ * Builds a descriptor for a single VDL enum definition.
+ *
+ * It maps each enum member to a unique Go constant name (usually prefixed
+ * with the enum's Go type name) and computes a stable hash key for value lookups.
+ */
 function buildEnumDescriptor(
   enumDef: EnumDef,
   context: GeneratorContext,

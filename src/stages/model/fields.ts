@@ -3,6 +3,16 @@ import { renderGoType } from "../../shared/go-types";
 import { toGoFieldName, toInlineTypeName } from "../../shared/naming";
 import type { FieldDescriptor, GeneratorContext } from "./types";
 
+/**
+ * Builds field descriptors for a Go struct, handling name collisions and type rendering.
+ *
+ * This function processes each field of an object to derive its Go name,
+ * JSON tag name, and Go type expression. It also ensures that multiple VDL fields
+ * don't map to the same exported Go field name after case normalization.
+ *
+ * @param options - The fields to process, the parent type name, and the generator context.
+ * @returns A list of field descriptors and any encountered validation errors.
+ */
 export function buildFieldDescriptors(options: {
   parentGoName: string;
   fields: Field[];

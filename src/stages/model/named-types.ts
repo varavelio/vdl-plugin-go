@@ -10,6 +10,17 @@ import { buildFieldDescriptors } from "./fields";
 import type { PackageScopeSymbolTable } from "./symbols";
 import type { GeneratorContext, NamedTypeDescriptor } from "./types";
 
+/**
+ * Populates the context with descriptors for all named types, including inline ones.
+ *
+ * This function iterates over top-level type definitions in the schema and
+ * recursively discovers inline object types defined within fields, arrays, or maps.
+ * It ensures all types have unique Go names and are tracked in the symbol table.
+ *
+ * @param context - The generator context to populate.
+ * @param packageScopeSymbols - The symbol table for collision detection.
+ * @returns A list of validation errors encountered during processing.
+ */
 export function populateNamedTypes(
   context: GeneratorContext,
   packageScopeSymbols: PackageScopeSymbolTable,
@@ -29,6 +40,9 @@ export function populateNamedTypes(
   return errors;
 }
 
+/**
+ * Creates a descriptor for a top-level VDL type definition.
+ */
 function buildTopLevelTypeDescriptor(
   typeDef: TypeDef,
   context: GeneratorContext,
@@ -57,6 +71,12 @@ function buildTopLevelTypeDescriptor(
   };
 }
 
+/**
+ * Creates a descriptor for an inline object type.
+ *
+ * Inline types are derived from fields that define an object structure directly
+ * rather than referencing a named type.
+ */
 function buildInlineTypeDescriptor(options: {
   parentGoName: string;
   path: string;
@@ -89,6 +109,11 @@ function buildInlineTypeDescriptor(options: {
   };
 }
 
+/**
+ * Adds a named type descriptor to the context and reserves its Go name.
+ *
+ * It also triggers recursive discovery of inline types within the type's fields.
+ */
 function appendNamedTypeDescriptor(
   context: GeneratorContext,
   descriptor: NamedTypeDescriptor,
@@ -133,6 +158,11 @@ function appendNamedTypeDescriptor(
   }
 }
 
+/**
+ * Recursively scans a TypeRef to discover and append inline object types.
+ *
+ * This handles nested objects within arrays, maps, and other objects.
+ */
 function appendInlineTypesFromTypeRef(options: {
   context: GeneratorContext;
   parentGoName: string;
