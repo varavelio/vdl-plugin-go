@@ -1,4 +1,5 @@
 import { newGenerator } from "@varavel/gen";
+import { strings } from "@varavel/vdl-plugin-sdk/utils";
 import type { ImportSet } from "./imports";
 
 /**
@@ -36,5 +37,5 @@ export function renderGoFile(options: {
     g.break();
   }
 
-  return g.toString();
+  return strings.limitBlankLines(g.toString(), 1);
 }
