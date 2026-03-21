@@ -68,10 +68,13 @@ export function buildDocCommentLines(options: {
  *
  * Each line will be prefixed with "// " and trimmed.
  *
+ * If no lines are provided, this function does nothing.
+ *
  * @param g - The Go code generator.
  * @param lines - An array of documentation lines to write.
  */
 export function writeDocComment(g: Generator, lines: string[]): void {
+  if (lines.length === 0) return;
   for (const line of lines) {
     g.line(`// ${line}`.trim());
   }
