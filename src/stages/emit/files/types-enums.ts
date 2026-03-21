@@ -5,6 +5,25 @@ import {
 } from "../../../shared/comments";
 import type { EnumDescriptor } from "../../model/types";
 
+/**
+ * Renders a Go enum definition including its type, constants, and utility methods.
+ *
+ * Each enum generates:
+ * 1. A named Go type (string or int underlying type).
+ * 2. Constants for each enum member, prefixed with the enum name to avoid collisions.
+ * 3. A `<Name>List` slice containing all valid members for discovery/iteration.
+ * 4. A `String()` method for a standard string representation.
+ * 5. An `IsValid()` method to check if a value is a defined member of the enum.
+ * 6. (Optional) `MarshalJSON` and `UnmarshalJSON` methods for strict validation
+ *    if enabled by options.
+ *
+ * This function uses a centralized rendering approach to ensure consistency
+ * across all generated enums.
+ *
+ * @param g - The Go code generator for writing the output.
+ * @param enumDescriptor - The model descriptor containing enum metadata and members.
+ * @param strict - Whether to include strict JSON validation (default: true).
+ */
 export function renderEnum(
   g: ReturnType<typeof newGenerator>,
   enumDescriptor: EnumDescriptor,

@@ -17,6 +17,23 @@ import { renderGoFile } from "../../../shared/render/go-file";
 import { ImportSet } from "../../../shared/render/imports";
 import type { GeneratorContext } from "../../model/types";
 
+/**
+ * Emits the `constants.go` file containing all VDL top-level constants.
+ *
+ * This emitter handles the mapping of VDL constants to Go declarations.
+ * In Go, only scalar types (strings, numbers, booleans) and enums can be
+ * declared as true `const` symbols.
+ *
+ * For composite VDL types (arrays, maps, and objects), Go does not support
+ * constant expressions. For these, the emitter generates `var` declarations
+ * initialized with composite literals instead. This allows the VDL-defined
+ * constant values to be reachable at runtime while respecting Go's language rules.
+ *
+ * Constants can be disabled via the `genConsts` plugin option.
+ *
+ * @param context - The generator context containing all constant descriptors and options.
+ * @returns The generated `constants.go` file or undefined if no constants are present or if they are disabled.
+ */
 export function generateConstantsFile(
   context: GeneratorContext,
 ): PluginOutputFile | undefined {

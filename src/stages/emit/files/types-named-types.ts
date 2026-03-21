@@ -11,6 +11,23 @@ import type {
 } from "../../model/types";
 import { renderNamedTypeSchemaSupport } from "./types-schema";
 
+/**
+ * Renders a Go named type declaration (struct or alias) and its supporting methods.
+ *
+ * For VDL objects, it generates:
+ * 1. The Go `struct` definition with field-level JSON tags.
+ * 2. Strict JSON support methods (unmarshaling and validation) if enabled.
+ * 3. Safe, nil-tolerant getter methods (`Get<Field>` and `Get<Field>Or`) for all
+ *    struct fields, allowing users to safely access nested values.
+ *
+ * For VDL aliases, it generates a standard Go `type <Name> <BaseType>` declaration.
+ * If the alias wraps a type that needs strict validation (like an enum), the
+ * necessary support methods are delegated and rendered.
+ *
+ * @param g - The Go code generator for writing the output.
+ * @param descriptor - The descriptor for the specific named type to render.
+ * @param context - The global generator context containing options and global indexes.
+ */
 export function renderNamedType(
   g: ReturnType<typeof newGenerator>,
   descriptor: NamedTypeDescriptor,

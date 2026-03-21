@@ -7,6 +7,20 @@ import { generateMetadataFile } from "./files/metadata";
 import { generatePointersFile } from "./files/pointers";
 import { generateTypesFile } from "./files/types";
 
+/**
+ * Orchestrates the emission of all Go source files for the VDL plugin.
+ *
+ * This function calls individual file emitters in a fixed order and collects
+ * their output. The order is intentional to maintain consistency in the
+ * generated Go package and ensures that dependencies between generated files
+ * are stable.
+ *
+ * Files are only generated if the corresponding schema definitions exist or if
+ * the generator options (like `genMeta` or `genPointerUtils`) enable them.
+ *
+ * @param context - The prepared generator context containing all descriptors and options.
+ * @returns An array of generated Go files for the plugin output.
+ */
 export function generateFiles(context: GeneratorContext): PluginOutputFile[] {
   return arrays.compact([
     generateEnumsFile(context),

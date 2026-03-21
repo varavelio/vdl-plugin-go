@@ -8,6 +8,38 @@ import type {
   NamedTypeDescriptor,
 } from "../../model/types";
 
+/**
+ * Renders Go code to support strict JSON decoding and validation for named types.
+ *
+ * This function implements the core of the `strict` mode logic. When enabled,
+ * it transforms the standard Go JSON decoding process into a multi-stage
+ * pipeline to ensure data integrity and catch missing required fields.
+ *
+ * For VDL Objects (Structs):
+ * 1. Shadow Struct (`pre<Type>`): An unexported struct that mirrors the target
+ *    type but uses pointers for ALL fields. This allows Go's `json.Unmarshal`
+ *    to distinguish between a missing field (nil) and a field explicitly set
+ *    to its zero value (e.g., empty string or 0).
+ * 2. Validation (`validate` method): Recursively checks that all non-optional
+ *    fields are present (non-nil) and delegates validation to nested objects,
+ *    arrays, and maps. It builds a human-readable path (e.g., `users[0].address.city`)
+ *    for detailed error reporting.
+ * 3. Transformation (`transform` method): Converts the validated shadow struct
+ *    back into the final generated Go struct, dereferencing pointers or
+ *    propagating nested transformations where necessary.
+ * 4. Orchestration (`UnmarshalJSON` method): Implements the standard Go
+ *    `json.Unmarshaler` interface to tie the stages together.
+ *
+ * For Enums and Aliases:
+ * Generates custom `MarshalJSON` and `UnmarshalJSON` methods to ensure that
+ * values remain within the valid set defined in the VDL schema, preventing
+ * illegal state transitions during serialization.
+ *
+ * @param g - The Go code generator for writing the output.
+ * @param descriptor - The descriptor for the specific named type being rendered.
+ * @param context - The global generator context containing options and type definitions.
+ * @returns True if any strict JSON support code was rendered, false otherwise.
+ */
 export function renderNamedTypeSchemaSupport(
   g: ReturnType<typeof newGenerator>,
   descriptor: NamedTypeDescriptor,

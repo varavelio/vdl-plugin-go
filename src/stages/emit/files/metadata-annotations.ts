@@ -3,6 +3,20 @@ import type { Annotation } from "@varavel/vdl-plugin-sdk";
 import { arrays, objects } from "@varavel/vdl-plugin-sdk/utils";
 import { renderMetadataValueExpression } from "../../../shared/go-literals";
 
+/**
+ * Renders a `VDLAnnotationSet` literal for use in Go runtime metadata.
+ *
+ * This function converts VDL annotations into a dual-representation Go structure:
+ * 1. `List`: Preserves the exact declaration order of all annotations on a symbol.
+ * 2. `ByName`: Provides a fast map lookup for the latest value of an annotation,
+ *    following the "last-wins" semantics of the VDL language.
+ *
+ * Annotation values are rendered into standard Go literal expressions of type `any`
+ * (e.g., `string`, `int64`, or composite literals for objects/arrays).
+ *
+ * @param g - The Go code generator for writing the output.
+ * @param annotations - The list of VDL annotations (name and argument) to render.
+ */
 export function writeAnnotationSetField(
   g: ReturnType<typeof newGenerator>,
   annotations: Annotation[],

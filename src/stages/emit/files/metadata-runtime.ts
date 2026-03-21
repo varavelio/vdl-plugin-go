@@ -1,5 +1,24 @@
 import type { newGenerator } from "@varavel/gen";
 
+/**
+ * Renders the Go support types used by the VDL runtime metadata system.
+ *
+ * These types define the data structures that allow Go code to inspect VDL
+ * definitions at runtime. The emitted code includes:
+ *
+ * 1. Annotation Structures: `VDLAnnotation` and `VDLAnnotationSet` for reflecting
+ *    on VDL annotations, supporting both ordered iteration and keyed lookup.
+ * 2. Type Reflectors: `VDLTypeRef` provides a recursive tree structure that
+ *    can describe any VDL type (primitive, named, array, map, or object).
+ * 3. Symbol Descriptors: Specialized structs for `Types`, `Enums`, and `Constants`
+ *    that capture name, type, and annotation metadata.
+ * 4. Schema Root: `VDLSchemaMetadata` as the top-level container for all
+ *    descriptors in the generated package.
+ * 5. Helper Methods: Standard Go methods (like `GetType`, `GetField`, `Has`) are
+ *    rendered to provide a clean, idiomatic API for metadata consumers.
+ *
+ * @param g - The Go code generator for writing the output.
+ */
 export function renderMetadataSupportTypes(
   g: ReturnType<typeof newGenerator>,
 ): void {

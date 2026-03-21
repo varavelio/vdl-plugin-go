@@ -5,6 +5,19 @@ import { ImportSet } from "../../../shared/render/imports";
 import type { GeneratorContext } from "../../model/types";
 import { renderEnum } from "./types-enums";
 
+/**
+ * Emits the `enums.go` file containing all VDL enum definitions.
+ *
+ * Each enum includes its Go type declaration, constant members, a slice of all
+ * members, and utility methods like `String()` and `IsValid()`. If `strict` mode
+ * is enabled, it also generates custom `MarshalJSON` and `UnmarshalJSON` methods
+ * to ensure that only valid enum members are accepted during JSON decoding.
+ *
+ * The file is only generated if one or more enums are present in the VDL IR.
+ *
+ * @param context - The generator context containing enum descriptors and options.
+ * @returns The generated `enums.go` file or undefined if no enums are present.
+ */
 export function generateEnumsFile(
   context: GeneratorContext,
 ): PluginOutputFile | undefined {

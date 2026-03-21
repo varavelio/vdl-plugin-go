@@ -7,6 +7,26 @@ import { writeAnnotationSetField } from "./metadata-annotations";
 import { renderMetadataSupportTypes } from "./metadata-runtime";
 import { writeMetadataTypeField } from "./metadata-types";
 
+/**
+ * Emits the `metadata.go` file containing runtime metadata for the VDL schema.
+ *
+ * This file provides a reflection-like capability for Go code to inspect the
+ * VDL schema at runtime. It includes:
+ *
+ * 1. Runtime Support Types: Internal Go types (`VDLSchemaMetadata`, `VDLTypeMetadata`,
+ *    `VDLTypeRef`, etc.) that define the structure of the metadata.
+ * 2. VDLMetadata Global: A singleton `VDLMetadata` variable that provides a
+ *    registry of all named types, enums, and constants defined in the VDL.
+ * 3. Annotation Support: Full access to VDL annotations on types, fields, and
+ *    enum members, which can be retrieved by name or listed in order.
+ * 4. Type Descriptors: Recursive type descriptors that describe the shape of
+ *    generated Go types (primitives, arrays, maps, and nested objects).
+ *
+ * Metadata generation is enabled by default but can be disabled via the `genMeta` option.
+ *
+ * @param context - The generator context containing all indexed descriptors and options.
+ * @returns The generated `metadata.go` file or undefined if metadata generation is disabled.
+ */
 export function generateMetadataFile(
   context: GeneratorContext,
 ): PluginOutputFile | undefined {

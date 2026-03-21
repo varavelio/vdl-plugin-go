@@ -5,6 +5,25 @@ import { toGoFieldName } from "../../../shared/naming";
 import type { GeneratorContext } from "../../model/types";
 import { writeAnnotationSetField } from "./metadata-annotations";
 
+/**
+ * Renders a `VDLTypeRef` literal for use in Go runtime metadata.
+ *
+ * This function recursively describes the shape of a VDL type to enable
+ * runtime inspection. It captures:
+ * 1. `Kind`: The classification of the type (primitive, array, map, object, etc.).
+ * 2. `Name`: The resolved Go name for the type, if applicable.
+ * 3. Recursive Elements: For arrays and maps, it describes the shape of the
+ *    underlying element or value type.
+ * 4. Object Fields: For objects (structs), it generates a map of field
+ *    metadata including name, JSON tag, optionality, and annotations.
+ *
+ * This allows the metadata system to represent even complex, deeply nested,
+ * or anonymous/inline types defined in the VDL schema.
+ *
+ * @param g - The Go code generator for writing the output.
+ * @param typeRef - The VDL IR type reference to describe.
+ * @param context - The global generator context containing indexed name lookups.
+ */
 export function writeMetadataTypeField(
   g: ReturnType<typeof newGenerator>,
   typeRef: TypeRef,
