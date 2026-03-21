@@ -30,13 +30,7 @@ export function generateEnumsFile(
 
   for (const enumDescriptor of context.enumDescriptors) {
     renderEnum(g, enumDescriptor, context.options.strict);
-
-    if (
-      enumDescriptor !==
-      context.enumDescriptors[context.enumDescriptors.length - 1]
-    ) {
-      g.break();
-    }
+    g.break();
   }
 
   const body = g.toString();
