@@ -3,7 +3,7 @@ import type { PluginOutputFile } from "@varavel/vdl-plugin-sdk";
 import { renderGoFile } from "../../../shared/render/go-file";
 import { ImportSet } from "../../../shared/render/imports";
 import type { GeneratorContext } from "../../model/types";
-import { renderEnum } from "./types-enums";
+import { renderEnum } from "./enums-render";
 
 /**
  * Emits the `enums.go` file containing all VDL enum definitions.

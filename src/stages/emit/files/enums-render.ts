@@ -48,14 +48,13 @@ export function renderEnum(
   g.line("const (");
   g.block(() => {
     for (const member of enumDescriptor.members) {
-      const commentLines = buildDocCommentLines({
-        doc: member.def.doc,
-        annotations: member.def.annotations,
-      });
-
-      if (commentLines.length > 0) {
-        writeDocComment(g, commentLines);
-      }
+      writeDocComment(
+        g,
+        buildDocCommentLines({
+          doc: member.def.doc,
+          annotations: member.def.annotations,
+        }),
+      );
 
       g.line(
         `${member.constName} ${enumDescriptor.goName} = ${renderEnumMemberLiteral(enumDescriptor, member)}`,
