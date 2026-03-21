@@ -4,12 +4,12 @@ import {
   writeDocComment,
 } from "../../../shared/comments";
 import {
-  canEmitConst,
   renderConstInitializer,
   renderTypedValueExpressionPretty,
 } from "../../../shared/go-literals";
 import {
   collectImportsForTypeRef,
+  isConstEligibleType,
   renderGoType,
 } from "../../../shared/go-types";
 import { renderGoFile } from "../../../shared/render/go-file";
@@ -41,7 +41,7 @@ export function generateConstantsFile(
       }),
     );
 
-    if (canEmitConst(constant.typeRef, context, constant.def.position)) {
+    if (isConstEligibleType(constant.typeRef, context, constant.def.position)) {
       renderConstDeclaration(g, constant.goName, constant, context);
     } else {
       const valueExpression = renderTypedValueExpressionPretty(
