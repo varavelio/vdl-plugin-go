@@ -176,8 +176,14 @@ function definePlugin(handler) {
 }
 __name(definePlugin, "definePlugin");
 
-// node_modules/@varavel/vdl-plugin-sdk/dist/chunk-pbuEa-1d.js
+// node_modules/@varavel/vdl-plugin-sdk/dist/chunk-YKewjYmz.js
+var __create = Object.create;
 var __defProp2 = Object.defineProperty;
+var __getOwnPropDesc2 = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames2 = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp2 = Object.prototype.hasOwnProperty;
+var __commonJSMin = /* @__PURE__ */ __name((cb, mod) => () => (mod || cb((mod = { exports: {} }).exports, mod), mod.exports), "__commonJSMin");
 var __exportAll = /* @__PURE__ */ __name((all, no_symbols) => {
   let target = {};
   for (var name in all) __defProp2(target, name, {
@@ -187,6 +193,24 @@ var __exportAll = /* @__PURE__ */ __name((all, no_symbols) => {
   if (!no_symbols) __defProp2(target, Symbol.toStringTag, { value: "Module" });
   return target;
 }, "__exportAll");
+var __copyProps2 = /* @__PURE__ */ __name((to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") for (var keys = __getOwnPropNames2(from), i = 0, n = keys.length, key; i < n; i++) {
+    key = keys[i];
+    if (!__hasOwnProp2.call(to, key) && key !== except) __defProp2(to, key, {
+      get: ((k2) => from[k2]).bind(null, key),
+      enumerable: !(desc = __getOwnPropDesc2(from, key)) || desc.enumerable
+    });
+  }
+  return to;
+}, "__copyProps");
+var __toESM = /* @__PURE__ */ __name((mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps2(isNodeMode || !mod || !mod.__esModule ? __defProp2(target, "default", {
+  value: mod,
+  enumerable: true
+}) : target, mod)), "__toESM");
+var __require = /* @__PURE__ */ ((x) => typeof require !== "undefined" ? require : typeof Proxy !== "undefined" ? new Proxy(x, { get: /* @__PURE__ */ __name((a, b) => (typeof require !== "undefined" ? require : a)[b], "get") }) : x)(function(x) {
+  if (typeof require !== "undefined") return require.apply(this, arguments);
+  throw Error('Calling `require` for "' + x + "\" in an environment that doesn't expose the `require` function. See https://rolldown.rs/in-depth/bundling-cjs#require-external-modules for more details.");
+});
 
 // node_modules/@varavel/vdl-plugin-sdk/dist/objectSpread2-eK8xUo8N.js
 function _typeof(o) {
@@ -198,15 +222,15 @@ function _typeof(o) {
   }, _typeof(o);
 }
 __name(_typeof, "_typeof");
-function toPrimitive(t, r) {
+function toPrimitive(t, r2) {
   if ("object" != _typeof(t) || !t) return t;
   var e = t[Symbol.toPrimitive];
   if (void 0 !== e) {
-    var i = e.call(t, r || "default");
+    var i = e.call(t, r2 || "default");
     if ("object" != _typeof(i)) return i;
     throw new TypeError("@@toPrimitive must return a primitive value.");
   }
-  return ("string" === r ? String : Number)(t);
+  return ("string" === r2 ? String : Number)(t);
 }
 __name(toPrimitive, "toPrimitive");
 function toPropertyKey(t) {
@@ -214,33 +238,33 @@ function toPropertyKey(t) {
   return "symbol" == _typeof(i) ? i : i + "";
 }
 __name(toPropertyKey, "toPropertyKey");
-function _defineProperty(e, r, t) {
-  return (r = toPropertyKey(r)) in e ? Object.defineProperty(e, r, {
+function _defineProperty(e, r2, t) {
+  return (r2 = toPropertyKey(r2)) in e ? Object.defineProperty(e, r2, {
     value: t,
     enumerable: true,
     configurable: true,
     writable: true
-  }) : e[r] = t, e;
+  }) : e[r2] = t, e;
 }
 __name(_defineProperty, "_defineProperty");
-function ownKeys(e, r) {
+function ownKeys(e, r2) {
   var t = Object.keys(e);
   if (Object.getOwnPropertySymbols) {
     var o = Object.getOwnPropertySymbols(e);
-    r && (o = o.filter(function(r2) {
-      return Object.getOwnPropertyDescriptor(e, r2).enumerable;
+    r2 && (o = o.filter(function(r3) {
+      return Object.getOwnPropertyDescriptor(e, r3).enumerable;
     })), t.push.apply(t, o);
   }
   return t;
 }
 __name(ownKeys, "ownKeys");
 function _objectSpread2(e) {
-  for (var r = 1; r < arguments.length; r++) {
-    var t = null != arguments[r] ? arguments[r] : {};
-    r % 2 ? ownKeys(Object(t), true).forEach(function(r2) {
-      _defineProperty(e, r2, t[r2]);
-    }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function(r2) {
-      Object.defineProperty(e, r2, Object.getOwnPropertyDescriptor(t, r2));
+  for (var r2 = 1; r2 < arguments.length; r2++) {
+    var t = null != arguments[r2] ? arguments[r2] : {};
+    r2 % 2 ? ownKeys(Object(t), true).forEach(function(r3) {
+      _defineProperty(e, r3, t[r3]);
+    }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function(r3) {
+      Object.defineProperty(e, r3, Object.getOwnPropertyDescriptor(t, r3));
     });
   }
   return e;
@@ -770,6 +794,293 @@ var arrays_exports = /* @__PURE__ */ __exportAll({
   zipObject: /* @__PURE__ */ __name(() => zipObject, "zipObject"),
   zipWith: /* @__PURE__ */ __name(() => zipWith, "zipWith")
 });
+function _checkPrivateRedeclaration(e, t) {
+  if (t.has(e)) throw new TypeError("Cannot initialize the same private elements twice on an object");
+}
+__name(_checkPrivateRedeclaration, "_checkPrivateRedeclaration");
+function _classPrivateFieldInitSpec(e, t, a) {
+  _checkPrivateRedeclaration(e, t), t.set(e, a);
+}
+__name(_classPrivateFieldInitSpec, "_classPrivateFieldInitSpec");
+function _assertClassBrand(e, t, n) {
+  if ("function" == typeof e ? e === t : e.has(t)) return arguments.length < 3 ? t : n;
+  throw new TypeError("Private element is not present on this object");
+}
+__name(_assertClassBrand, "_assertClassBrand");
+function _classPrivateFieldGet2(s, a) {
+  return s.get(_assertClassBrand(s, a));
+}
+__name(_classPrivateFieldGet2, "_classPrivateFieldGet2");
+function serialize(o) {
+  return typeof o == "string" ? `'${o}'` : new c().serialize(o);
+}
+__name(serialize, "serialize");
+var c = /* @__PURE__ */ (function() {
+  var _t = /* @__PURE__ */ new WeakMap();
+  const _o = class _o {
+    constructor() {
+      _classPrivateFieldInitSpec(this, _t, /* @__PURE__ */ new Map());
+    }
+    compare(t, r2) {
+      const e = typeof t, n = typeof r2;
+      return e === "string" && n === "string" ? t.localeCompare(r2) : e === "number" && n === "number" ? t - r2 : String.prototype.localeCompare.call(this.serialize(t, true), this.serialize(r2, true));
+    }
+    serialize(t, r2) {
+      if (t === null) return "null";
+      switch (typeof t) {
+        case "string":
+          return r2 ? t : `'${t}'`;
+        case "bigint":
+          return `${t}n`;
+        case "object":
+          return this.$object(t);
+        case "function":
+          return this.$function(t);
+      }
+      return String(t);
+    }
+    serializeObject(t) {
+      const r2 = Object.prototype.toString.call(t);
+      if (r2 !== "[object Object]") return this.serializeBuiltInType(r2.length < 10 ? `unknown:${r2}` : r2.slice(8, -1), t);
+      const e = t.constructor, n = e === Object || e === void 0 ? "" : e.name;
+      if (n !== "" && globalThis[n] === e) return this.serializeBuiltInType(n, t);
+      if (typeof t.toJSON == "function") {
+        const i = t.toJSON();
+        return n + (i !== null && typeof i == "object" ? this.$object(i) : `(${this.serialize(i)})`);
+      }
+      return this.serializeObjectEntries(n, Object.entries(t));
+    }
+    serializeBuiltInType(t, r2) {
+      const e = this["$" + t];
+      if (e) return e.call(this, r2);
+      if (typeof (r2 === null || r2 === void 0 ? void 0 : r2.entries) == "function") return this.serializeObjectEntries(t, r2.entries());
+      throw new Error(`Cannot serialize ${t}`);
+    }
+    serializeObjectEntries(t, r2) {
+      const e = Array.from(r2).sort((i, a) => this.compare(i[0], a[0]));
+      let n = `${t}{`;
+      for (let i = 0; i < e.length; i++) {
+        const [a, l2] = e[i];
+        n += `${this.serialize(a, true)}:${this.serialize(l2)}`, i < e.length - 1 && (n += ",");
+      }
+      return n + "}";
+    }
+    $object(t) {
+      let r2 = _classPrivateFieldGet2(_t, this).get(t);
+      return r2 === void 0 && (_classPrivateFieldGet2(_t, this).set(t, `#${_classPrivateFieldGet2(_t, this).size}`), r2 = this.serializeObject(t), _classPrivateFieldGet2(_t, this).set(t, r2)), r2;
+    }
+    $function(t) {
+      const r2 = Function.prototype.toString.call(t);
+      return r2.slice(-15) === "[native code] }" ? `${t.name || ""}()[native]` : `${t.name}(${t.length})${r2.replace(/\s*\n\s*/g, "")}`;
+    }
+    $Array(t) {
+      let r2 = "[";
+      for (let e = 0; e < t.length; e++) r2 += this.serialize(t[e]), e < t.length - 1 && (r2 += ",");
+      return r2 + "]";
+    }
+    $Date(t) {
+      try {
+        return `Date(${t.toISOString()})`;
+      } catch (_unused) {
+        return "Date(null)";
+      }
+    }
+    $ArrayBuffer(t) {
+      return `ArrayBuffer[${new Uint8Array(t).join(",")}]`;
+    }
+    $Set(t) {
+      return `Set${this.$Array(Array.from(t).sort((r2, e) => this.compare(r2, e)))}`;
+    }
+    $Map(t) {
+      return this.serializeObjectEntries("Map", t.entries());
+    }
+  };
+  __name(_o, "o");
+  let o = _o;
+  for (const s of [
+    "Error",
+    "RegExp",
+    "URL"
+  ]) o.prototype["$" + s] = function(t) {
+    return `${s}(${t})`;
+  };
+  for (const s of [
+    "Int8Array",
+    "Uint8Array",
+    "Uint8ClampedArray",
+    "Int16Array",
+    "Uint16Array",
+    "Int32Array",
+    "Uint32Array",
+    "Float32Array",
+    "Float64Array"
+  ]) o.prototype["$" + s] = function(t) {
+    return `${s}[${t.join(",")}]`;
+  };
+  for (const s of ["BigInt64Array", "BigUint64Array"]) o.prototype["$" + s] = function(t) {
+    return `${s}[${t.join("n,")}${t.length > 0 ? "n" : ""}]`;
+  };
+  return o;
+})();
+var z = [
+  1779033703,
+  -1150833019,
+  1013904242,
+  -1521486534,
+  1359893119,
+  -1694144372,
+  528734635,
+  1541459225
+];
+var R = [
+  1116352408,
+  1899447441,
+  -1245643825,
+  -373957723,
+  961987163,
+  1508970993,
+  -1841331548,
+  -1424204075,
+  -670586216,
+  310598401,
+  607225278,
+  1426881987,
+  1925078388,
+  -2132889090,
+  -1680079193,
+  -1046744716,
+  -459576895,
+  -272742522,
+  264347078,
+  604807628,
+  770255983,
+  1249150122,
+  1555081692,
+  1996064986,
+  -1740746414,
+  -1473132947,
+  -1341970488,
+  -1084653625,
+  -958395405,
+  -710438585,
+  113926993,
+  338241895,
+  666307205,
+  773529912,
+  1294757372,
+  1396182291,
+  1695183700,
+  1986661051,
+  -2117940946,
+  -1838011259,
+  -1564481375,
+  -1474664885,
+  -1035236496,
+  -949202525,
+  -778901479,
+  -694614492,
+  -200395387,
+  275423344,
+  430227734,
+  506948616,
+  659060556,
+  883997877,
+  958139571,
+  1322822218,
+  1537002063,
+  1747873779,
+  1955562222,
+  2024104815,
+  -2067236844,
+  -1933114872,
+  -1866530822,
+  -1538233109,
+  -1090935817,
+  -965641998
+];
+var S = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+var r = [];
+var _a;
+var k = (_a = class {
+  constructor() {
+    this._data = new l();
+    this._hash = new l([...z]);
+    this._nDataBytes = 0;
+    this._minBufferSize = 0;
+  }
+  finalize(e) {
+    e && this._append(e);
+    const s = this._nDataBytes * 8, t = this._data.sigBytes * 8;
+    return this._data.words[t >>> 5] |= 128 << 24 - t % 32, this._data.words[(t + 64 >>> 9 << 4) + 14] = Math.floor(s / 4294967296), this._data.words[(t + 64 >>> 9 << 4) + 15] = s, this._data.sigBytes = this._data.words.length * 4, this._process(), this._hash;
+  }
+  _doProcessBlock(e, s) {
+    const t = this._hash.words;
+    let i = t[0], o = t[1], a = t[2], c2 = t[3], h = t[4], g = t[5], f = t[6], y = t[7];
+    for (let n = 0; n < 64; n++) {
+      if (n < 16) r[n] = e[s + n] | 0;
+      else {
+        const d = r[n - 15], j = (d << 25 | d >>> 7) ^ (d << 14 | d >>> 18) ^ d >>> 3, B = r[n - 2], x = (B << 15 | B >>> 17) ^ (B << 13 | B >>> 19) ^ B >>> 10;
+        r[n] = j + r[n - 7] + x + r[n - 16];
+      }
+      const m = h & g ^ ~h & f, p = i & o ^ i & a ^ o & a, u = (i << 30 | i >>> 2) ^ (i << 19 | i >>> 13) ^ (i << 10 | i >>> 22), b = (h << 26 | h >>> 6) ^ (h << 21 | h >>> 11) ^ (h << 7 | h >>> 25), w = y + b + m + R[n] + r[n], M = u + p;
+      y = f, f = g, g = h, h = c2 + w | 0, c2 = a, a = o, o = i, i = w + M | 0;
+    }
+    t[0] = t[0] + i | 0, t[1] = t[1] + o | 0, t[2] = t[2] + a | 0, t[3] = t[3] + c2 | 0, t[4] = t[4] + h | 0, t[5] = t[5] + g | 0, t[6] = t[6] + f | 0, t[7] = t[7] + y | 0;
+  }
+  _append(e) {
+    typeof e == "string" && (e = l.fromUtf8(e)), this._data.concat(e), this._nDataBytes += e.sigBytes;
+  }
+  _process(e) {
+    let s, t = this._data.sigBytes / 64;
+    e ? t = Math.ceil(t) : t = Math.max((t | 0) - this._minBufferSize, 0);
+    const i = t * 16, o = Math.min(i * 4, this._data.sigBytes);
+    if (i) {
+      for (let a = 0; a < i; a += 16) this._doProcessBlock(this._data.words, a);
+      s = this._data.words.splice(0, i), this._data.sigBytes -= o;
+    }
+    return new l(s, o);
+  }
+}, __name(_a, "k"), _a);
+var _a2;
+var l = (_a2 = class {
+  constructor(e, s) {
+    e = this.words = e || [], this.sigBytes = s === void 0 ? e.length * 4 : s;
+  }
+  static fromUtf8(e) {
+    const s = unescape(encodeURIComponent(e)), t = s.length, i = [];
+    for (let o = 0; o < t; o++) i[o >>> 2] |= (s.charCodeAt(o) & 255) << 24 - o % 4 * 8;
+    return new _a2(i, t);
+  }
+  toBase64() {
+    const e = [];
+    for (let s = 0; s < this.sigBytes; s += 3) {
+      const t = this.words[s >>> 2] >>> 24 - s % 4 * 8 & 255, i = this.words[s + 1 >>> 2] >>> 24 - (s + 1) % 4 * 8 & 255, o = this.words[s + 2 >>> 2] >>> 24 - (s + 2) % 4 * 8 & 255, a = t << 16 | i << 8 | o;
+      for (let c2 = 0; c2 < 4 && s * 8 + c2 * 6 < this.sigBytes * 8; c2++) e.push(S.charAt(a >>> 6 * (3 - c2) & 63));
+    }
+    return e.join("");
+  }
+  concat(e) {
+    if (this.words[this.sigBytes >>> 2] &= 4294967295 << 32 - this.sigBytes % 4 * 8, this.words.length = Math.ceil(this.sigBytes / 4), this.sigBytes % 4) for (let s = 0; s < e.sigBytes; s++) {
+      const t = e.words[s >>> 2] >>> 24 - s % 4 * 8 & 255;
+      this.words[this.sigBytes + s >>> 2] |= t << 24 - (this.sigBytes + s) % 4 * 8;
+    }
+    else for (let s = 0; s < e.sigBytes; s += 4) this.words[this.sigBytes + s >>> 2] = e.words[s >>> 2];
+    this.sigBytes += e.sigBytes;
+  }
+}, __name(_a2, "l"), _a2);
+function digest(_) {
+  return new k().finalize(_).toBase64();
+}
+__name(digest, "digest");
+function hash$1(input) {
+  return digest(serialize(input));
+}
+__name(hash$1, "hash$1");
+var crypto_exports = /* @__PURE__ */ __exportAll({ hash: /* @__PURE__ */ __name(() => hash, "hash") });
+function hash(input) {
+  return hash$1(input);
+}
+__name(hash, "hash");
 function partial$1(func, ...partialArgs) {
   return partialImpl(func, placeholderSymbol$1, ...partialArgs);
 }
@@ -1515,8 +1826,8 @@ function createDedent(options) {
     }
     const lines = result.split("\n");
     let mindent = null;
-    for (const l of lines) {
-      const m = l.match(/^(\s+)\S+/);
+    for (const l2 of lines) {
+      const m = l2.match(/^(\s+)\S+/);
       if (m) {
         const indent = m[1].length;
         if (!mindent) mindent = indent;
@@ -1525,7 +1836,7 @@ function createDedent(options) {
     }
     if (mindent !== null) {
       const m = mindent;
-      result = lines.map((l) => l[0] === " " || l[0] === "	" ? l.slice(m) : l).join("\n");
+      result = lines.map((l2) => l2[0] === " " || l2[0] === "	" ? l2.slice(m) : l2).join("\n");
     }
     if (trimWhitespace) result = result.trim();
     if (escapeSpecialCharacters) result = result.replace(/\\n/g, "\n").replace(/\\t/g, "	").replace(/\\r/g, "\r").replace(/\\v/g, "\v").replace(/\\b/g, "\b").replace(/\\f/g, "\f").replace(/\\0/g, "\0").replace(/\\x([\da-fA-F]{2})/g, (_, h) => String.fromCharCode(parseInt(h, 16))).replace(/\\u\{([\da-fA-F]{1,6})\}/g, (_, h) => String.fromCodePoint(parseInt(h, 16))).replace(/\\u([\da-fA-F]{4})/g, (_, h) => String.fromCharCode(parseInt(h, 16)));
@@ -1554,10 +1865,31 @@ function dedent(input) {
   return dedent$1(input);
 }
 __name(dedent, "dedent");
+function ensurePrefix(str, prefix) {
+  if (str.startsWith(prefix)) return str;
+  return prefix + str;
+}
+__name(ensurePrefix, "ensurePrefix");
+function ensureSuffix(str, suffix) {
+  if (str.endsWith(suffix)) return str;
+  return str + suffix;
+}
+__name(ensureSuffix, "ensureSuffix");
 function kebabCase(str, upperCase2 = false) {
   return words(str).map((part) => upperCase2 ? part.toUpperCase() : part.toLowerCase()).join("-");
 }
 __name(kebabCase, "kebabCase");
+var cache = /* @__PURE__ */ new Map();
+function limitBlankLines(str, maxConsecutive = 0) {
+  const limit = Math.max(0, maxConsecutive);
+  let regex = cache.get(limit);
+  if (!regex) {
+    regex = new RegExp(`(\\r?\\n\\s*){${limit + 2},}`, "g");
+    cache.set(limit, regex);
+  }
+  return str.replace(regex, "\n".repeat(limit + 1));
+}
+__name(limitBlankLines, "limitBlankLines");
 function lowerCase(str) {
   return words(str).map((part) => part.toLowerCase()).join(" ");
 }
@@ -1617,6 +1949,321 @@ function padRight(str, length, chars) {
   return padding.length === 0 ? str : `${str}${padding}`;
 }
 __name(padRight, "padRight");
+var import_pluralize = /* @__PURE__ */ __toESM((/* @__PURE__ */ __commonJSMin(((exports, module2) => {
+  (function(root, pluralize2) {
+    if (typeof __require === "function" && typeof exports === "object" && typeof module2 === "object") module2.exports = pluralize2();
+    else if (typeof define === "function" && define.amd) define(function() {
+      return pluralize2();
+    });
+    else root.pluralize = pluralize2();
+  })(exports, function() {
+    var pluralRules = [];
+    var singularRules = [];
+    var uncountables = {};
+    var irregularPlurals = {};
+    var irregularSingles = {};
+    function sanitizeRule(rule) {
+      if (typeof rule === "string") return new RegExp("^" + rule + "$", "i");
+      return rule;
+    }
+    __name(sanitizeRule, "sanitizeRule");
+    function restoreCase(word, token) {
+      if (word === token) return token;
+      if (word === word.toLowerCase()) return token.toLowerCase();
+      if (word === word.toUpperCase()) return token.toUpperCase();
+      if (word[0] === word[0].toUpperCase()) return token.charAt(0).toUpperCase() + token.substr(1).toLowerCase();
+      return token.toLowerCase();
+    }
+    __name(restoreCase, "restoreCase");
+    function interpolate(str, args) {
+      return str.replace(/\$(\d{1,2})/g, function(match, index) {
+        return args[index] || "";
+      });
+    }
+    __name(interpolate, "interpolate");
+    function replace(word, rule) {
+      return word.replace(rule[0], function(match, index) {
+        var result = interpolate(rule[1], arguments);
+        if (match === "") return restoreCase(word[index - 1], result);
+        return restoreCase(match, result);
+      });
+    }
+    __name(replace, "replace");
+    function sanitizeWord(token, word, rules) {
+      if (!token.length || uncountables.hasOwnProperty(token)) return word;
+      var len = rules.length;
+      while (len--) {
+        var rule = rules[len];
+        if (rule[0].test(word)) return replace(word, rule);
+      }
+      return word;
+    }
+    __name(sanitizeWord, "sanitizeWord");
+    function replaceWord(replaceMap, keepMap, rules) {
+      return function(word) {
+        var token = word.toLowerCase();
+        if (keepMap.hasOwnProperty(token)) return restoreCase(word, token);
+        if (replaceMap.hasOwnProperty(token)) return restoreCase(word, replaceMap[token]);
+        return sanitizeWord(token, word, rules);
+      };
+    }
+    __name(replaceWord, "replaceWord");
+    function checkWord(replaceMap, keepMap, rules, bool) {
+      return function(word) {
+        var token = word.toLowerCase();
+        if (keepMap.hasOwnProperty(token)) return true;
+        if (replaceMap.hasOwnProperty(token)) return false;
+        return sanitizeWord(token, token, rules) === token;
+      };
+    }
+    __name(checkWord, "checkWord");
+    function pluralize2(word, count, inclusive) {
+      var pluralized = count === 1 ? pluralize2.singular(word) : pluralize2.plural(word);
+      return (inclusive ? count + " " : "") + pluralized;
+    }
+    __name(pluralize2, "pluralize");
+    pluralize2.plural = replaceWord(irregularSingles, irregularPlurals, pluralRules);
+    pluralize2.isPlural = checkWord(irregularSingles, irregularPlurals, pluralRules);
+    pluralize2.singular = replaceWord(irregularPlurals, irregularSingles, singularRules);
+    pluralize2.isSingular = checkWord(irregularPlurals, irregularSingles, singularRules);
+    pluralize2.addPluralRule = function(rule, replacement) {
+      pluralRules.push([sanitizeRule(rule), replacement]);
+    };
+    pluralize2.addSingularRule = function(rule, replacement) {
+      singularRules.push([sanitizeRule(rule), replacement]);
+    };
+    pluralize2.addUncountableRule = function(word) {
+      if (typeof word === "string") {
+        uncountables[word.toLowerCase()] = true;
+        return;
+      }
+      pluralize2.addPluralRule(word, "$0");
+      pluralize2.addSingularRule(word, "$0");
+    };
+    pluralize2.addIrregularRule = function(single, plural) {
+      plural = plural.toLowerCase();
+      single = single.toLowerCase();
+      irregularSingles[single] = plural;
+      irregularPlurals[plural] = single;
+    };
+    [
+      ["I", "we"],
+      ["me", "us"],
+      ["he", "they"],
+      ["she", "they"],
+      ["them", "them"],
+      ["myself", "ourselves"],
+      ["yourself", "yourselves"],
+      ["itself", "themselves"],
+      ["herself", "themselves"],
+      ["himself", "themselves"],
+      ["themself", "themselves"],
+      ["is", "are"],
+      ["was", "were"],
+      ["has", "have"],
+      ["this", "these"],
+      ["that", "those"],
+      ["echo", "echoes"],
+      ["dingo", "dingoes"],
+      ["volcano", "volcanoes"],
+      ["tornado", "tornadoes"],
+      ["torpedo", "torpedoes"],
+      ["genus", "genera"],
+      ["viscus", "viscera"],
+      ["stigma", "stigmata"],
+      ["stoma", "stomata"],
+      ["dogma", "dogmata"],
+      ["lemma", "lemmata"],
+      ["schema", "schemata"],
+      ["anathema", "anathemata"],
+      ["ox", "oxen"],
+      ["axe", "axes"],
+      ["die", "dice"],
+      ["yes", "yeses"],
+      ["foot", "feet"],
+      ["eave", "eaves"],
+      ["goose", "geese"],
+      ["tooth", "teeth"],
+      ["quiz", "quizzes"],
+      ["human", "humans"],
+      ["proof", "proofs"],
+      ["carve", "carves"],
+      ["valve", "valves"],
+      ["looey", "looies"],
+      ["thief", "thieves"],
+      ["groove", "grooves"],
+      ["pickaxe", "pickaxes"],
+      ["passerby", "passersby"]
+    ].forEach(function(rule) {
+      return pluralize2.addIrregularRule(rule[0], rule[1]);
+    });
+    [
+      [/s?$/i, "s"],
+      [/[^\u0000-\u007F]$/i, "$0"],
+      [/([^aeiou]ese)$/i, "$1"],
+      [/(ax|test)is$/i, "$1es"],
+      [/(alias|[^aou]us|t[lm]as|gas|ris)$/i, "$1es"],
+      [/(e[mn]u)s?$/i, "$1s"],
+      [/([^l]ias|[aeiou]las|[ejzr]as|[iu]am)$/i, "$1"],
+      [/(alumn|syllab|vir|radi|nucle|fung|cact|stimul|termin|bacill|foc|uter|loc|strat)(?:us|i)$/i, "$1i"],
+      [/(alumn|alg|vertebr)(?:a|ae)$/i, "$1ae"],
+      [/(seraph|cherub)(?:im)?$/i, "$1im"],
+      [/(her|at|gr)o$/i, "$1oes"],
+      [/(agend|addend|millenni|dat|extrem|bacteri|desiderat|strat|candelabr|errat|ov|symposi|curricul|automat|quor)(?:a|um)$/i, "$1a"],
+      [/(apheli|hyperbat|periheli|asyndet|noumen|phenomen|criteri|organ|prolegomen|hedr|automat)(?:a|on)$/i, "$1a"],
+      [/sis$/i, "ses"],
+      [/(?:(kni|wi|li)fe|(ar|l|ea|eo|oa|hoo)f)$/i, "$1$2ves"],
+      [/([^aeiouy]|qu)y$/i, "$1ies"],
+      [/([^ch][ieo][ln])ey$/i, "$1ies"],
+      [/(x|ch|ss|sh|zz)$/i, "$1es"],
+      [/(matr|cod|mur|sil|vert|ind|append)(?:ix|ex)$/i, "$1ices"],
+      [/\b((?:tit)?m|l)(?:ice|ouse)$/i, "$1ice"],
+      [/(pe)(?:rson|ople)$/i, "$1ople"],
+      [/(child)(?:ren)?$/i, "$1ren"],
+      [/eaux$/i, "$0"],
+      [/m[ae]n$/i, "men"],
+      ["thou", "you"]
+    ].forEach(function(rule) {
+      return pluralize2.addPluralRule(rule[0], rule[1]);
+    });
+    [
+      [/s$/i, ""],
+      [/(ss)$/i, "$1"],
+      [/(wi|kni|(?:after|half|high|low|mid|non|night|[^\w]|^)li)ves$/i, "$1fe"],
+      [/(ar|(?:wo|[ae])l|[eo][ao])ves$/i, "$1f"],
+      [/ies$/i, "y"],
+      [/\b([pl]|zomb|(?:neck|cross)?t|coll|faer|food|gen|goon|group|lass|talk|goal|cut)ies$/i, "$1ie"],
+      [/\b(mon|smil)ies$/i, "$1ey"],
+      [/\b((?:tit)?m|l)ice$/i, "$1ouse"],
+      [/(seraph|cherub)im$/i, "$1"],
+      [/(x|ch|ss|sh|zz|tto|go|cho|alias|[^aou]us|t[lm]as|gas|(?:her|at|gr)o|[aeiou]ris)(?:es)?$/i, "$1"],
+      [/(analy|diagno|parenthe|progno|synop|the|empha|cri|ne)(?:sis|ses)$/i, "$1sis"],
+      [/(movie|twelve|abuse|e[mn]u)s$/i, "$1"],
+      [/(test)(?:is|es)$/i, "$1is"],
+      [/(alumn|syllab|vir|radi|nucle|fung|cact|stimul|termin|bacill|foc|uter|loc|strat)(?:us|i)$/i, "$1us"],
+      [/(agend|addend|millenni|dat|extrem|bacteri|desiderat|strat|candelabr|errat|ov|symposi|curricul|quor)a$/i, "$1um"],
+      [/(apheli|hyperbat|periheli|asyndet|noumen|phenomen|criteri|organ|prolegomen|hedr|automat)a$/i, "$1on"],
+      [/(alumn|alg|vertebr)ae$/i, "$1a"],
+      [/(cod|mur|sil|vert|ind)ices$/i, "$1ex"],
+      [/(matr|append)ices$/i, "$1ix"],
+      [/(pe)(rson|ople)$/i, "$1rson"],
+      [/(child)ren$/i, "$1"],
+      [/(eau)x?$/i, "$1"],
+      [/men$/i, "man"]
+    ].forEach(function(rule) {
+      return pluralize2.addSingularRule(rule[0], rule[1]);
+    });
+    [
+      "adulthood",
+      "advice",
+      "agenda",
+      "aid",
+      "aircraft",
+      "alcohol",
+      "ammo",
+      "analytics",
+      "anime",
+      "athletics",
+      "audio",
+      "bison",
+      "blood",
+      "bream",
+      "buffalo",
+      "butter",
+      "carp",
+      "cash",
+      "chassis",
+      "chess",
+      "clothing",
+      "cod",
+      "commerce",
+      "cooperation",
+      "corps",
+      "debris",
+      "diabetes",
+      "digestion",
+      "elk",
+      "energy",
+      "equipment",
+      "excretion",
+      "expertise",
+      "firmware",
+      "flounder",
+      "fun",
+      "gallows",
+      "garbage",
+      "graffiti",
+      "hardware",
+      "headquarters",
+      "health",
+      "herpes",
+      "highjinks",
+      "homework",
+      "housework",
+      "information",
+      "jeans",
+      "justice",
+      "kudos",
+      "labour",
+      "literature",
+      "machinery",
+      "mackerel",
+      "mail",
+      "media",
+      "mews",
+      "moose",
+      "music",
+      "mud",
+      "manga",
+      "news",
+      "only",
+      "personnel",
+      "pike",
+      "plankton",
+      "pliers",
+      "police",
+      "pollution",
+      "premises",
+      "rain",
+      "research",
+      "rice",
+      "salmon",
+      "scissors",
+      "series",
+      "sewage",
+      "shambles",
+      "shrimp",
+      "software",
+      "species",
+      "staff",
+      "swine",
+      "tennis",
+      "traffic",
+      "transportation",
+      "trout",
+      "tuna",
+      "wealth",
+      "welfare",
+      "whiting",
+      "wildebeest",
+      "wildlife",
+      "you",
+      /pok[eé]mon$/i,
+      /[^aeiou]ese$/i,
+      /deer$/i,
+      /fish$/i,
+      /measles$/i,
+      /o[iu]s$/i,
+      /pox$/i,
+      /sheep$/i
+    ].forEach(pluralize2.addUncountableRule);
+    return pluralize2;
+  });
+})))(), 1);
+function pluralize(word, count, inclusive) {
+  return (0, import_pluralize.default)(word, count, inclusive);
+}
+__name(pluralize, "pluralize");
 function snakeCase(str, upperCase2 = false) {
   return words(str).map((part) => upperCase2 ? part.toUpperCase() : part.toLowerCase()).join("_");
 }
@@ -1666,12 +2313,16 @@ __name(upperCase, "upperCase");
 var strings_exports = /* @__PURE__ */ __exportAll({
   camelCase: /* @__PURE__ */ __name(() => camelCase, "camelCase"),
   dedent: /* @__PURE__ */ __name(() => dedent, "dedent"),
+  ensurePrefix: /* @__PURE__ */ __name(() => ensurePrefix, "ensurePrefix"),
+  ensureSuffix: /* @__PURE__ */ __name(() => ensureSuffix, "ensureSuffix"),
   kebabCase: /* @__PURE__ */ __name(() => kebabCase, "kebabCase"),
+  limitBlankLines: /* @__PURE__ */ __name(() => limitBlankLines, "limitBlankLines"),
   lowerCase: /* @__PURE__ */ __name(() => lowerCase, "lowerCase"),
   pad: /* @__PURE__ */ __name(() => pad, "pad"),
   padLeft: /* @__PURE__ */ __name(() => padLeft, "padLeft"),
   padRight: /* @__PURE__ */ __name(() => padRight, "padRight"),
   pascalCase: /* @__PURE__ */ __name(() => pascalCase, "pascalCase"),
+  pluralize: /* @__PURE__ */ __name(() => pluralize, "pluralize"),
   snakeCase: /* @__PURE__ */ __name(() => snakeCase, "snakeCase"),
   trim: /* @__PURE__ */ __name(() => trim, "trim"),
   trimEnd: /* @__PURE__ */ __name(() => trimEnd, "trimEnd"),
@@ -1722,8 +2373,8 @@ function toPluginOutputError(error) {
 __name(toPluginOutputError, "toPluginOutputError");
 
 // node_modules/@varavel/gen/dist/index.js
-var _a;
-var Generator = (_a = class {
+var _a3;
+var Generator = (_a3 = class {
   constructor() {
     this.chunks = [];
     this.indentLevel = 0;
@@ -1831,7 +2482,7 @@ var Generator = (_a = class {
   toString() {
     return this.chunks.join("");
   }
-}, __name(_a, "Generator"), _a);
+}, __name(_a3, "Generator"), _a3);
 function newGenerator() {
   return new Generator();
 }
@@ -1855,16 +2506,16 @@ function getDeprecatedMessage(annotations) {
 }
 __name(getDeprecatedMessage, "getDeprecatedMessage");
 function buildDocCommentLines(options) {
-  var _a2, _b, _c;
-  const lines = (_c = (_b = (_a2 = options.doc) != null ? _a2 : options.fallback) == null ? void 0 : _b.split("\n")) != null ? _c : [];
+  var _a4, _b, _c;
+  const lines = (_c = (_b = (_a4 = options.doc) != null ? _a4 : options.fallback) == null ? void 0 : _b.split("\n")) != null ? _c : [];
   const deprecatedMessage = getDeprecatedMessage(options.annotations);
-  if (!deprecatedMessage) {
-    return lines;
-  }
-  return lines.length === 0 ? [`Deprecated: ${deprecatedMessage}`] : [...lines, "", `Deprecated: ${deprecatedMessage}`];
+  if (!deprecatedMessage) return lines;
+  if (lines.length === 0) return [`Deprecated: ${deprecatedMessage}`];
+  return [...lines, "", `Deprecated: ${deprecatedMessage}`];
 }
 __name(buildDocCommentLines, "buildDocCommentLines");
 function writeDocComment(g, lines) {
+  if (lines.length === 0) return;
   for (const line of lines) {
     g.line(`// ${line}`.trim());
   }
@@ -1907,49 +2558,6 @@ function isConstEligibleType(typeRef, context, position) {
 }
 __name(isConstEligibleType, "isConstEligibleType");
 
-// src/shared/object-fields.ts
-function getEffectiveObjectFields(fields = []) {
-  const lastIndexByName = new Map(
-    fields.map((field, index) => [field.name, index])
-  );
-  return fields.filter(
-    (field, index) => lastIndexByName.get(field.name) === index
-  );
-}
-__name(getEffectiveObjectFields, "getEffectiveObjectFields");
-
-// src/shared/go-types/imports.ts
-function collectImportsForTypeRef(typeRef, imports) {
-  switch (typeRef.kind) {
-    case "primitive":
-      if (typeRef.primitiveName === "datetime") {
-        imports.add("time");
-      }
-      return;
-    case "array":
-      if (typeRef.arrayType) {
-        collectImportsForTypeRef(typeRef.arrayType, imports);
-      }
-      return;
-    case "map":
-      if (typeRef.mapType) {
-        collectImportsForTypeRef(typeRef.mapType, imports);
-      }
-      return;
-    case "object":
-      for (const field of getEffectiveObjectFields(typeRef.objectFields)) {
-        collectImportsForTypeRef(field.typeRef, imports);
-      }
-      return;
-    case "type":
-    case "enum":
-      return;
-    default:
-      return;
-  }
-}
-__name(collectImportsForTypeRef, "collectImportsForTypeRef");
-
 // src/shared/naming.ts
 var GO_KEYWORDS = /* @__PURE__ */ new Set([
   "break",
@@ -1988,25 +2596,21 @@ function isValidGoPackageName(value) {
 }
 __name(isValidGoPackageName, "isValidGoPackageName");
 function toGoTypeName(value) {
-  return escapeGoIdentifier(toGoPascalIdentifier(value));
+  return escapeGoIdentifier(strings_exports.pascalCase(value));
 }
 __name(toGoTypeName, "toGoTypeName");
 function toGoConstName(value) {
-  return escapeGoIdentifier(toGoPascalIdentifier(value));
+  return escapeGoIdentifier(strings_exports.pascalCase(value));
 }
 __name(toGoConstName, "toGoConstName");
 function toGoFieldName(value) {
-  return escapeGoIdentifier(toGoPascalIdentifier(value));
+  return escapeGoIdentifier(strings_exports.pascalCase(value));
 }
 __name(toGoFieldName, "toGoFieldName");
 function toGoEnumMemberName(value) {
-  return escapeGoIdentifier(toGoPascalIdentifier(value));
+  return escapeGoIdentifier(strings_exports.pascalCase(value));
 }
 __name(toGoEnumMemberName, "toGoEnumMemberName");
-function toGoJsonName(value) {
-  return value;
-}
-__name(toGoJsonName, "toGoJsonName");
 function toInlineTypeName(parentTypeName, fieldName) {
   return `${parentTypeName}${toGoFieldName(fieldName)}`;
 }
@@ -2015,14 +2619,6 @@ function escapeGoIdentifier(value) {
   return isGoKeyword(value) ? `${value}_` : value;
 }
 __name(escapeGoIdentifier, "escapeGoIdentifier");
-function toGoPascalIdentifier(value) {
-  const candidate = strings_exports.pascalCase(value);
-  if (candidate.length === 0) {
-    return "X";
-  }
-  return /^[A-Za-z_]/.test(candidate) ? candidate : `X${candidate}`;
-}
-__name(toGoPascalIdentifier, "toGoPascalIdentifier");
 
 // src/shared/go-types/render.ts
 function renderPrimitiveGoType(primitiveName, position) {
@@ -2046,7 +2642,7 @@ function renderPrimitiveGoType(primitiveName, position) {
 }
 __name(renderPrimitiveGoType, "renderPrimitiveGoType");
 function renderGoType(typeRef, context, inlineTypeGoName, position) {
-  var _a2;
+  var _a4;
   switch (typeRef.kind) {
     case "primitive":
       return renderPrimitiveGoType(typeRef.primitiveName, position);
@@ -2075,7 +2671,7 @@ function renderGoType(typeRef, context, inlineTypeGoName, position) {
       );
     }
     case "array":
-      return `${"[]".repeat((_a2 = typeRef.arrayDims) != null ? _a2 : 1)}${renderGoType(expectValue(typeRef.arrayType, "Encountered an array type reference without an element type.", position), context, inlineTypeGoName, position)}`;
+      return `${"[]".repeat((_a4 = typeRef.arrayDims) != null ? _a4 : 1)}${renderGoType(expectValue(typeRef.arrayType, "Encountered an array type reference without an element type.", position), context, inlineTypeGoName, position)}`;
     case "map":
       return `map[string]${renderGoType(expectValue(typeRef.mapType, "Encountered a map type reference without a value type.", position), context, inlineTypeGoName, position)}`;
     case "object":
@@ -2093,7 +2689,7 @@ function renderGoType(typeRef, context, inlineTypeGoName, position) {
 }
 __name(renderGoType, "renderGoType");
 function renderAnonymousGoTypeExpression(typeRef, context, position, inlineTypeGoName) {
-  var _a2;
+  var _a4, _b;
   switch (typeRef.kind) {
     case "primitive":
       return renderPrimitiveGoType(typeRef.primitiveName, position);
@@ -2101,24 +2697,22 @@ function renderAnonymousGoTypeExpression(typeRef, context, position, inlineTypeG
     case "enum":
       return renderGoType(typeRef, context, void 0, position);
     case "array":
-      return `${"[]".repeat((_a2 = typeRef.arrayDims) != null ? _a2 : 1)}${renderAnonymousGoTypeExpression(expectValue(typeRef.arrayType, "Encountered an array type reference without an element type.", position), context, position, inlineTypeGoName)}`;
+      return `${"[]".repeat((_a4 = typeRef.arrayDims) != null ? _a4 : 1)}${renderAnonymousGoTypeExpression(expectValue(typeRef.arrayType, "Encountered an array type reference without an element type.", position), context, position, inlineTypeGoName)}`;
     case "map":
       return `map[string]${renderAnonymousGoTypeExpression(expectValue(typeRef.mapType, "Encountered a map type reference without a value type.", position), context, position, inlineTypeGoName)}`;
     case "object": {
       if (inlineTypeGoName) {
         return inlineTypeGoName;
       }
-      const parts = getEffectiveObjectFields(typeRef.objectFields).map(
-        (field) => {
-          const fieldType = renderAnonymousGoTypeExpression(
-            field.typeRef,
-            context,
-            field.position
-          );
-          const jsonTag = field.optional ? `json:${JSON.stringify(`${toGoJsonName(field.name)},omitempty`)}` : `json:${JSON.stringify(toGoJsonName(field.name))}`;
-          return `${toGoFieldName(field.name)} ${field.optional ? `*${fieldType}` : fieldType} \`${jsonTag}\``;
-        }
-      );
+      const parts = ((_b = typeRef.objectFields) != null ? _b : []).map((field) => {
+        const fieldType = renderAnonymousGoTypeExpression(
+          field.typeRef,
+          context,
+          field.position
+        );
+        const jsonTag = field.optional ? `json:${JSON.stringify(`${field.name},omitempty`)}` : `json:${JSON.stringify(field.name)}`;
+        return `${toGoFieldName(field.name)} ${field.optional ? `*${fieldType}` : fieldType} \`${jsonTag}\``;
+      });
       return `struct { ${parts.join("; ")} }`;
     }
     default:
@@ -2130,7 +2724,7 @@ function renderAnonymousGoTypeExpression(typeRef, context, position, inlineTypeG
 }
 __name(renderAnonymousGoTypeExpression, "renderAnonymousGoTypeExpression");
 function renderAnonymousGoTypeExpressionPretty(typeRef, context, position, inlineTypeGoName) {
-  var _a2;
+  var _a4, _b;
   switch (typeRef.kind) {
     case "primitive":
       return renderPrimitiveGoType(typeRef.primitiveName, position);
@@ -2138,14 +2732,14 @@ function renderAnonymousGoTypeExpressionPretty(typeRef, context, position, inlin
     case "enum":
       return renderGoType(typeRef, context, void 0, position);
     case "array":
-      return `${"[]".repeat((_a2 = typeRef.arrayDims) != null ? _a2 : 1)}${renderAnonymousGoTypeExpressionPretty(expectValue(typeRef.arrayType, "Encountered an array type reference without an element type.", position), context, position, inlineTypeGoName)}`;
+      return `${"[]".repeat((_a4 = typeRef.arrayDims) != null ? _a4 : 1)}${renderAnonymousGoTypeExpressionPretty(expectValue(typeRef.arrayType, "Encountered an array type reference without an element type.", position), context, position, inlineTypeGoName)}`;
     case "map":
       return `map[string]${renderAnonymousGoTypeExpressionPretty(expectValue(typeRef.mapType, "Encountered a map type reference without a value type.", position), context, position, inlineTypeGoName)}`;
     case "object": {
       if (inlineTypeGoName) {
         return inlineTypeGoName;
       }
-      const fields = getEffectiveObjectFields(typeRef.objectFields);
+      const fields = (_b = typeRef.objectFields) != null ? _b : [];
       if (fields.length === 0) {
         return "struct {}";
       }
@@ -2155,7 +2749,7 @@ function renderAnonymousGoTypeExpressionPretty(typeRef, context, position, inlin
           context,
           field.position
         );
-        const jsonTag = field.optional ? `json:${JSON.stringify(`${toGoJsonName(field.name)},omitempty`)}` : `json:${JSON.stringify(toGoJsonName(field.name))}`;
+        const jsonTag = field.optional ? `json:${JSON.stringify(`${field.name},omitempty`)}` : `json:${JSON.stringify(field.name)}`;
         const fieldDecl = `${toGoFieldName(field.name)} ${field.optional ? `*${fieldType}` : fieldType} \`${jsonTag}\``;
         return indentMultiline(fieldDecl);
       });
@@ -2175,12 +2769,6 @@ function indentMultiline(value) {
   return value.split("\n").map((line) => `	${line}`).join("\n");
 }
 __name(indentMultiline, "indentMultiline");
-
-// src/shared/literal-key.ts
-function getLiteralValueKey(value) {
-  return `${value.kind}:${JSON.stringify(ir_exports.unwrapLiteral(value))}`;
-}
-__name(getLiteralValueKey, "getLiteralValueKey");
 
 // src/shared/go-literals/scalar.ts
 function resolveScalarTarget(typeRef, context, position) {
@@ -2210,7 +2798,7 @@ function resolveDirectEnumDescriptor(typeRef, context, position) {
 }
 __name(resolveDirectEnumDescriptor, "resolveDirectEnumDescriptor");
 function renderDirectEnumExpression(enumDescriptor, literal, position) {
-  const member = enumDescriptor.memberByValue.get(getLiteralValueKey(literal));
+  const member = enumDescriptor.memberByValue.get(crypto_exports.hash(literal));
   if (!member) {
     fail(
       `Invalid literal for ${JSON.stringify(enumDescriptor.def.name)} enum. Expected one of its declared members.`,
@@ -2257,7 +2845,7 @@ function renderRawScalarLiteral(literal, target, position) {
 }
 __name(renderRawScalarLiteral, "renderRawScalarLiteral");
 function renderEnumScalarLiteral(enumDescriptor, literal, position) {
-  if (!enumDescriptor.memberByValue.has(getLiteralValueKey(literal))) {
+  if (!enumDescriptor.memberByValue.has(crypto_exports.hash(literal))) {
     fail(
       `Invalid literal for ${JSON.stringify(enumDescriptor.def.name)} enum. Expected one of its declared members.`,
       position
@@ -2277,10 +2865,6 @@ function renderEnumScalarLiteral(enumDescriptor, literal, position) {
 __name(renderEnumScalarLiteral, "renderEnumScalarLiteral");
 
 // src/shared/go-literals/const.ts
-function canEmitConst(typeRef, context, position) {
-  return isConstEligibleType(typeRef, context, position);
-}
-__name(canEmitConst, "canEmitConst");
 function renderConstInitializer(typeRef, literal, context, position) {
   const scalarTarget = resolveScalarTarget(typeRef, context, position);
   if (!scalarTarget) {
@@ -2303,7 +2887,7 @@ __name(renderConstInitializer, "renderConstInitializer");
 
 // src/shared/go-literals/metadata.ts
 function renderMetadataValueExpression(value) {
-  var _a2, _b;
+  var _a4, _b;
   if (!value) {
     return "nil";
   }
@@ -2317,7 +2901,7 @@ function renderMetadataValueExpression(value) {
     case "bool":
       return String(value.boolValue);
     case "array":
-      return `[]any{${((_a2 = value.arrayItems) != null ? _a2 : []).map((item) => renderMetadataValueExpression(item)).join(", ")}}`;
+      return `[]any{${((_a4 = value.arrayItems) != null ? _a4 : []).map((item) => renderMetadataValueExpression(item)).join(", ")}}`;
     case "object":
       return `map[string]any{${getLastObjectEntries((_b = value.objectEntries) != null ? _b : []).map(
         (entry) => `${JSON.stringify(entry.key)}: ${renderMetadataValueExpression(entry.value)}`
@@ -2392,8 +2976,8 @@ function renderTypedValueExpressionPretty(typeRef, literal, context, position, n
 }
 __name(renderTypedValueExpressionPretty, "renderTypedValueExpressionPretty");
 function renderCompositeLiteralPretty(options) {
-  var _a2;
-  const typeExpression = (_a2 = options.typeExpression) != null ? _a2 : renderAnonymousGoTypeExpressionPretty(
+  var _a4;
+  const typeExpression = (_a4 = options.typeExpression) != null ? _a4 : renderAnonymousGoTypeExpressionPretty(
     options.typeRef,
     options.context,
     options.position,
@@ -2436,11 +3020,11 @@ function renderCompositeLiteralPretty(options) {
 }
 __name(renderCompositeLiteralPretty, "renderCompositeLiteralPretty");
 function renderArrayLiteralPretty(options) {
-  var _a2, _b, _c;
+  var _a4, _b, _c;
   if (options.literal.kind !== "array") {
     fail("Expected an array literal for a VDL array type.", options.position);
   }
-  const elementType = ((_a2 = options.typeRef.arrayDims) != null ? _a2 : 1) === 1 ? expectValue(
+  const elementType = ((_a4 = options.typeRef.arrayDims) != null ? _a4 : 1) === 1 ? expectValue(
     options.typeRef.arrayType,
     "Encountered an invalid array type while rendering a literal.",
     options.position
@@ -2466,7 +3050,7 @@ function renderArrayLiteralPretty(options) {
 }
 __name(renderArrayLiteralPretty, "renderArrayLiteralPretty");
 function renderMapLiteralPretty(options) {
-  var _a2;
+  var _a4;
   if (options.literal.kind !== "object") {
     fail("Expected an object literal for a VDL map type.", options.position);
   }
@@ -2475,20 +3059,20 @@ function renderMapLiteralPretty(options) {
     "Encountered an invalid map type while rendering a literal.",
     options.position
   );
-  const entries = ((_a2 = options.literal.objectEntries) != null ? _a2 : []).map(
+  const entries = ((_a4 = options.literal.objectEntries) != null ? _a4 : []).map(
     (entry) => `${JSON.stringify(entry.key)}: ${renderTypedValueExpressionPretty(valueType, entry.value, options.context, entry.position, options.namedTypeGoName)}`
   );
   return renderBlockLiteral(options.typeExpression, entries);
 }
 __name(renderMapLiteralPretty, "renderMapLiteralPretty");
 function renderObjectLiteralPretty(options) {
-  var _a2;
+  var _a4, _b;
   if (options.literal.kind !== "object") {
     fail("Expected an object literal for a VDL object type.", options.position);
   }
-  const fields = getEffectiveObjectFields(options.typeRef.objectFields);
+  const fields = (_a4 = options.typeRef.objectFields) != null ? _a4 : [];
   const entryByName = new Map(
-    ((_a2 = options.literal.objectEntries) != null ? _a2 : []).map((entry) => [entry.key, entry])
+    ((_b = options.literal.objectEntries) != null ? _b : []).map((entry) => [entry.key, entry])
   );
   const entries = [];
   for (const field of fields) {
@@ -2542,9 +3126,9 @@ __name(indentBlock, "indentBlock");
 
 // src/shared/render/go-file.ts
 function renderGoFile(options) {
-  var _a2, _b;
+  var _a4, _b;
   const g = newGenerator().withTabs();
-  const imports = (_b = (_a2 = options.imports) == null ? void 0 : _a2.toArray()) != null ? _b : [];
+  const imports = (_b = (_a4 = options.imports) == null ? void 0 : _a4.toArray()) != null ? _b : [];
   const body = options.body.trim();
   g.line(`package ${options.packageName}`);
   if (imports.length > 0 && options.imports) {
@@ -2556,7 +3140,7 @@ function renderGoFile(options) {
     g.raw(body);
     g.break();
   }
-  return g.toString();
+  return strings_exports.limitBlankLines(g.toString(), 1);
 }
 __name(renderGoFile, "renderGoFile");
 
@@ -2566,19 +3150,41 @@ var _ImportSet = class _ImportSet {
   constructor() {
     __privateAdd(this, _paths, /* @__PURE__ */ new Set());
   }
+  /**
+   * Adds an import path to the set.
+   *
+   * @param path - The import path to add.
+   */
   add(path) {
     if (path) {
       __privateGet(this, _paths).add(path);
     }
   }
+  /**
+   * Merges another ImportSet into this one.
+   *
+   * @param other - The set to merge from.
+   */
   merge(other) {
     for (const path of other.toArray()) {
       this.add(path);
     }
   }
+  /**
+   * Returns the import paths sorted alphabetically.
+   *
+   * @returns An array of sorted import path strings.
+   */
   toArray() {
     return [...__privateGet(this, _paths)].sort((left, right) => left.localeCompare(right));
   }
+  /**
+   * Renders the import set as a Go `import ( ... )` block.
+   *
+   * If the set is empty, this function does nothing.
+   *
+   * @param g - The Go code generator.
+   */
   render(g) {
     const imports = this.toArray();
     if (imports.length === 0) {
@@ -2603,9 +3209,6 @@ function generateConstantsFile(context) {
     return void 0;
   }
   const imports = new ImportSet();
-  for (const constant of context.constantDescriptors) {
-    collectImportsForTypeRef(constant.typeRef, imports);
-  }
   const g = newGenerator().withTabs();
   for (const constant of context.constantDescriptors) {
     writeDocComment(
@@ -2616,7 +3219,7 @@ function generateConstantsFile(context) {
         fallback: `${constant.goName} holds a generated VDL constant.`
       })
     );
-    if (canEmitConst(constant.typeRef, context, constant.def.position)) {
+    if (isConstEligibleType(constant.typeRef, context, constant.def.position)) {
       renderConstDeclaration(g, constant.goName, constant, context);
     } else {
       const valueExpression = renderTypedValueExpressionPretty(
@@ -2627,16 +3230,18 @@ function generateConstantsFile(context) {
       );
       g.line(`var ${constant.goName} = ${valueExpression}`);
     }
-    if (constant !== context.constantDescriptors[context.constantDescriptors.length - 1]) {
-      g.break();
-    }
+    g.break();
   }
+  const body = g.toString();
+  if (body.includes("time.")) imports.add("time");
+  if (body.includes("json.")) imports.add("encoding/json");
+  if (body.includes("fmt.")) imports.add("fmt");
   return {
     path: "constants.go",
     content: renderGoFile({
       packageName: context.options.packageName,
       imports,
-      body: g.toString()
+      body
     })
   };
 }
@@ -2654,7 +3259,7 @@ function renderConstDeclaration(g, goName, constant, context) {
 }
 __name(renderConstDeclaration, "renderConstDeclaration");
 
-// src/stages/emit/files/types-enums.ts
+// src/stages/emit/files/enums-render.ts
 function renderEnum(g, enumDescriptor, strict) {
   writeDocComment(
     g,
@@ -2674,13 +3279,13 @@ function renderEnum(g, enumDescriptor, strict) {
   g.line("const (");
   g.block(() => {
     for (const member of enumDescriptor.members) {
-      const commentLines = buildDocCommentLines({
-        doc: member.def.doc,
-        annotations: member.def.annotations
-      });
-      if (commentLines.length > 0) {
-        writeDocComment(g, commentLines);
-      }
+      writeDocComment(
+        g,
+        buildDocCommentLines({
+          doc: member.def.doc,
+          annotations: member.def.annotations
+        })
+      );
       g.line(
         `${member.constName} ${enumDescriptor.goName} = ${renderEnumMemberLiteral(enumDescriptor, member)}`
       );
@@ -2850,17 +3455,12 @@ function generateEnumsFile(context) {
   const g = newGenerator().withTabs();
   for (const enumDescriptor of context.enumDescriptors) {
     renderEnum(g, enumDescriptor, context.options.strict);
-    if (enumDescriptor !== context.enumDescriptors[context.enumDescriptors.length - 1]) {
-      g.break();
-    }
+    g.break();
   }
   const body = g.toString();
-  if (body.includes("json.")) {
-    imports.add("encoding/json");
-  }
-  if (body.includes("fmt.")) {
-    imports.add("fmt");
-  }
+  if (body.includes("time.")) imports.add("time");
+  if (body.includes("json.")) imports.add("encoding/json");
+  if (body.includes("fmt.")) imports.add("fmt");
   return {
     path: "enums.go",
     content: renderGoFile({
@@ -2911,13 +3511,13 @@ function buildByNameEntries(annotations) {
   const byName = objects_exports.mapValues(
     grouped,
     (group) => {
-      var _a2;
-      return renderMetadataValueExpression((_a2 = group[group.length - 1]) == null ? void 0 : _a2.argument);
+      var _a4;
+      return renderMetadataValueExpression((_a4 = group[group.length - 1]) == null ? void 0 : _a4.argument);
     }
   );
   return Object.keys(byName).map((name) => {
-    var _a2;
-    return [name, (_a2 = byName[name]) != null ? _a2 : "nil"];
+    var _a4;
+    return [name, (_a4 = byName[name]) != null ? _a4 : "nil"];
   });
 }
 __name(buildByNameEntries, "buildByNameEntries");
@@ -3102,7 +3702,7 @@ function writeMetadataTypeField(g, typeRef, context) {
 }
 __name(writeMetadataTypeField, "writeMetadataTypeField");
 function writeMetadataTypeRefBody(g, typeRef, context) {
-  var _a2;
+  var _a4, _b;
   g.line(`Kind: ${JSON.stringify(typeRef.kind)},`);
   switch (typeRef.kind) {
     case "primitive":
@@ -3146,7 +3746,7 @@ function writeMetadataTypeRefBody(g, typeRef, context) {
       return;
     }
     case "array": {
-      g.line(`ArrayDims: ${String((_a2 = typeRef.arrayDims) != null ? _a2 : 1)},`);
+      g.line(`ArrayDims: ${String((_a4 = typeRef.arrayDims) != null ? _a4 : 1)},`);
       g.line("Element: &VDLTypeRef{");
       g.block(() => {
         writeMetadataTypeRefBody(
@@ -3177,7 +3777,7 @@ function writeMetadataTypeRefBody(g, typeRef, context) {
       return;
     }
     case "object": {
-      const fields = getEffectiveObjectFields(typeRef.objectFields);
+      const fields = (_b = typeRef.objectFields) != null ? _b : [];
       if (fields.length === 0) {
         g.line("Fields: nil,");
         return;
@@ -3201,7 +3801,7 @@ function writeMetadataFieldEntry(g, field, context) {
   g.line(`${JSON.stringify(goName)}: VDLFieldMetadata{`);
   g.block(() => {
     g.line(`Name: ${JSON.stringify(goName)},`);
-    g.line(`JSONName: ${JSON.stringify(toGoJsonName(field.name))},`);
+    g.line(`JSONName: ${JSON.stringify(field.name)},`);
     g.line(`Optional: ${String(field.optional)},`);
     writeMetadataTypeField(g, field.typeRef, context);
     writeAnnotationSetField(g, field.annotations);
@@ -3554,6 +4154,7 @@ function namedTypeNeedsStrictObjectSupport(descriptor, context) {
 }
 __name(namedTypeNeedsStrictObjectSupport, "namedTypeNeedsStrictObjectSupport");
 function typeRefNeedsStrictTraversal(typeRef, context, position, visited = /* @__PURE__ */ new Set()) {
+  var _a4;
   switch (typeRef.kind) {
     case "primitive":
     case "enum":
@@ -3573,7 +4174,7 @@ function typeRefNeedsStrictTraversal(typeRef, context, position, visited = /* @_
         visited
       ) : false;
     case "object": {
-      const fields = getEffectiveObjectFields(typeRef.objectFields);
+      const fields = (_a4 = typeRef.objectFields) != null ? _a4 : [];
       if (fields.some((field) => !field.optional)) {
         return true;
       }
@@ -3613,7 +4214,7 @@ function renderPreFieldGoType(field, context) {
 }
 __name(renderPreFieldGoType, "renderPreFieldGoType");
 function renderPreTypeExpression(typeRef, context, position, inlineTypeGoName) {
-  var _a2;
+  var _a4;
   if (!typeRefNeedsStrictTraversal(typeRef, context, position)) {
     return renderGoType(typeRef, context, inlineTypeGoName, position);
   }
@@ -3622,7 +4223,7 @@ function renderPreTypeExpression(typeRef, context, position, inlineTypeGoName) {
     case "enum":
       return renderGoType(typeRef, context, inlineTypeGoName, position);
     case "array":
-      return `${"[]".repeat((_a2 = typeRef.arrayDims) != null ? _a2 : 1)}${renderPreTypeExpression(expectValue(typeRef.arrayType, "Encountered an array type reference without an element type.", position), context, position, inlineTypeGoName)}`;
+      return `${"[]".repeat((_a4 = typeRef.arrayDims) != null ? _a4 : 1)}${renderPreTypeExpression(expectValue(typeRef.arrayType, "Encountered an array type reference without an element type.", position), context, position, inlineTypeGoName)}`;
     case "map":
       return `map[string]${renderPreTypeExpression(expectValue(typeRef.mapType, "Encountered a map type reference without a value type.", position), context, position, inlineTypeGoName)}`;
     case "object":
@@ -3950,8 +4551,8 @@ function getTypeGoName(typeName, context, position) {
 }
 __name(getTypeGoName, "getTypeGoName");
 function getArrayItemTypeRef(typeRef, position) {
-  var _a2, _b;
-  return ((_a2 = typeRef.arrayDims) != null ? _a2 : 1) === 1 ? expectValue(
+  var _a4, _b;
+  return ((_a4 = typeRef.arrayDims) != null ? _a4 : 1) === 1 ? expectValue(
     typeRef.arrayType,
     "Encountered an array type reference without an element type.",
     position
@@ -4107,23 +4708,15 @@ function generateTypesFile(context) {
     return void 0;
   }
   const imports = new ImportSet();
-  for (const namedType of context.namedTypes) {
-    collectImportsForTypeRef(namedType.typeRef, imports);
-  }
   const g = newGenerator().withTabs();
   for (const namedType of context.namedTypes) {
     renderNamedType(g, namedType, context);
-    if (namedType !== context.namedTypes[context.namedTypes.length - 1]) {
-      g.break();
-    }
+    g.break();
   }
   const body = g.toString();
-  if (body.includes("json.")) {
-    imports.add("encoding/json");
-  }
-  if (body.includes("fmt.")) {
-    imports.add("fmt");
-  }
+  if (body.includes("time.")) imports.add("time");
+  if (body.includes("json.")) imports.add("encoding/json");
+  if (body.includes("fmt.")) imports.add("fmt");
   return {
     path: "types.go",
     content: renderGoFile({
@@ -4201,7 +4794,7 @@ function populateConstantDescriptors(context, packageScopeSymbols) {
 }
 __name(populateConstantDescriptors, "populateConstantDescriptors");
 function inferTypeRefFromLiteral(literal, _position) {
-  var _a2, _b;
+  var _a4, _b;
   switch (literal.kind) {
     case "string":
       return { typeRef: { kind: "primitive", primitiveName: "string" } };
@@ -4212,7 +4805,7 @@ function inferTypeRefFromLiteral(literal, _position) {
     case "bool":
       return { typeRef: { kind: "primitive", primitiveName: "bool" } };
     case "array": {
-      const items = (_a2 = literal.arrayItems) != null ? _a2 : [];
+      const items = (_a4 = literal.arrayItems) != null ? _a4 : [];
       if (items.length === 0) {
         return {
           error: "array literals cannot be empty when no declared constant type is available"
@@ -4299,7 +4892,7 @@ function getEffectiveObjectEntries(entries) {
     annotations: [],
     typeRef: { kind: "primitive", primitiveName: "string" }
   }));
-  const effectiveFields = getEffectiveObjectFields(fields);
+  const effectiveFields = fields != null ? fields : [];
   const indexByName = new Map(
     entries.map((entry, index) => [entry.key, index])
   );
@@ -4309,7 +4902,7 @@ function getEffectiveObjectEntries(entries) {
 }
 __name(getEffectiveObjectEntries, "getEffectiveObjectEntries");
 function areTypeRefsEquivalent(left, right) {
-  var _a2, _b;
+  var _a4, _b, _c, _d;
   if (left.kind !== right.kind) {
     return false;
   }
@@ -4321,7 +4914,7 @@ function areTypeRefsEquivalent(left, right) {
     case "enum":
       return left.enumName === right.enumName && left.enumType === right.enumType;
     case "array":
-      return ((_a2 = left.arrayDims) != null ? _a2 : 1) === ((_b = right.arrayDims) != null ? _b : 1) && areTypeRefsEquivalent(
+      return ((_a4 = left.arrayDims) != null ? _a4 : 1) === ((_b = right.arrayDims) != null ? _b : 1) && areTypeRefsEquivalent(
         left.arrayType,
         right.arrayType
       );
@@ -4331,8 +4924,8 @@ function areTypeRefsEquivalent(left, right) {
         right.mapType
       );
     case "object": {
-      const leftFields = getEffectiveObjectFields(left.objectFields);
-      const rightFields = getEffectiveObjectFields(right.objectFields);
+      const leftFields = (_c = left.objectFields) != null ? _c : [];
+      const rightFields = (_d = right.objectFields) != null ? _d : [];
       if (leftFields.length !== rightFields.length) {
         return false;
       }
@@ -4389,8 +4982,8 @@ function populateEnumDescriptors(context, packageScopeSymbols) {
 }
 __name(populateEnumDescriptors, "populateEnumDescriptors");
 function buildEnumDescriptor(enumDef, context, errors) {
-  var _a2;
-  const goName = (_a2 = context.enumGoNamesByVdlName.get(enumDef.name)) != null ? _a2 : enumDef.name;
+  var _a4;
+  const goName = (_a4 = context.enumGoNamesByVdlName.get(enumDef.name)) != null ? _a4 : enumDef.name;
   const usedMemberNames = /* @__PURE__ */ new Set();
   const members = [];
   const memberByValue = /* @__PURE__ */ new Map();
@@ -4408,7 +5001,7 @@ function buildEnumDescriptor(enumDef, context, errors) {
       def: member,
       goName: memberGoName,
       constName: `${goName}${memberGoName}`,
-      valueKey: getLiteralValueKey(member.value)
+      valueKey: crypto_exports.hash(member.value)
     };
     members.push(descriptor);
     if (!memberByValue.has(descriptor.valueKey)) {
@@ -4466,7 +5059,7 @@ function buildFieldDescriptors(options) {
     descriptors.push({
       def: field,
       goName,
-      jsonName: toGoJsonName(field.name),
+      jsonName: field.name,
       goType: field.optional ? `*${goType}` : goType,
       inlineTypeGoName
     });
@@ -4494,8 +5087,8 @@ function populateNamedTypes(context, packageScopeSymbols) {
 }
 __name(populateNamedTypes, "populateNamedTypes");
 function buildTopLevelTypeDescriptor(typeDef, context, errors) {
-  var _a2, _b;
-  const goName = (_a2 = context.typeGoNamesByVdlName.get(typeDef.name)) != null ? _a2 : typeDef.name;
+  var _a4, _b;
+  const goName = (_a4 = context.typeGoNamesByVdlName.get(typeDef.name)) != null ? _a4 : typeDef.name;
   const fieldResult = buildFieldDescriptors({
     parentGoName: goName,
     fields: (_b = typeDef.typeRef.objectFields) != null ? _b : [],
@@ -4517,11 +5110,11 @@ function buildTopLevelTypeDescriptor(typeDef, context, errors) {
 }
 __name(buildTopLevelTypeDescriptor, "buildTopLevelTypeDescriptor");
 function buildInlineTypeDescriptor(options) {
-  var _a2;
+  var _a4;
   const goName = toInlineTypeName(options.parentGoName, options.fieldName);
   const fieldResult = buildFieldDescriptors({
     parentGoName: goName,
-    fields: (_a2 = options.typeRef.objectFields) != null ? _a2 : [],
+    fields: (_a4 = options.typeRef.objectFields) != null ? _a4 : [],
     context: options.context
   });
   options.errors.push(...fieldResult.errors);
@@ -4642,6 +5235,14 @@ var _PackageScopeSymbolTable = class _PackageScopeSymbolTable {
       });
     }
   }
+  /**
+   * Attempts to reserve a Go identifier in the package scope.
+   *
+   * @param name - The Go identifier to reserve.
+   * @param origin - A description of why the symbol is being reserved (for error reporting).
+   * @param position - The VDL source position related to the symbol.
+   * @returns An error if the symbol is already reserved, otherwise undefined.
+   */
   reserve(name, origin, position) {
     const existing = __privateGet(this, _symbols).get(name);
     if (existing) {
@@ -4724,13 +5325,13 @@ __name(resolveGeneratorOptions, "resolveGeneratorOptions");
 
 // src/generate.ts
 function generate(input) {
-  const optionsResult = resolveGeneratorOptions(input);
-  if (optionsResult.errors.length > 0 || !optionsResult.options) {
-    return {
-      errors: optionsResult.errors
-    };
-  }
   try {
+    const optionsResult = resolveGeneratorOptions(input);
+    if (optionsResult.errors.length > 0 || !optionsResult.options) {
+      return {
+        errors: optionsResult.errors
+      };
+    }
     const contextResult = createGeneratorContext({
       schema: input.ir,
       generatorOptions: optionsResult.options
