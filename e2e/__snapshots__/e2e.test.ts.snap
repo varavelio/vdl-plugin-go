@@ -16961,3 +16961,1282 @@ func (x *Envelope) GetOptDirectOr(defaultValue Credentials) Credentials {
 	return defaultValue
 }"
 `;
+
+exports[`E2E: VDL to Go > compiles fixture: types-strict-enums > enums.go 1`] = `
+"package gen
+
+import (
+	"encoding/json"
+	"fmt"
+)
+
+// Status defines a generated enum.
+type Status string
+
+// Status constants define the declared values of Status.
+const (
+	StatusActive Status = "Active"
+	StatusInactive Status = "Inactive"
+)
+
+// StatusList contains every valid Status value.
+var StatusList = []Status{
+	StatusActive,
+	StatusInactive,
+}
+
+// String returns a readable representation of Status.
+func (e Status) String() string {
+	return string(e)
+}
+
+// IsValid reports whether the value belongs to Status.
+func (e Status) IsValid() bool {
+	switch e {
+		case StatusActive, StatusInactive:
+			return true
+	}
+	return false
+}
+
+// MarshalJSON encodes Status and rejects values outside the declared enum set.
+func (e Status) MarshalJSON() ([]byte, error) {
+	if !e.IsValid() {
+		return nil, fmt.Errorf("cannot marshal invalid value %q for Status enum", string(e))
+	}
+	return json.Marshal(string(e))
+}
+
+// UnmarshalJSON decodes Status and rejects values outside the declared enum set.
+func (e *Status) UnmarshalJSON(data []byte) error {
+	var value string
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	candidate := Status(value)
+	if !candidate.IsValid() {
+		return fmt.Errorf("invalid value %q for Status enum", value)
+	}
+	*e = candidate
+	return nil
+}"
+`;
+
+exports[`E2E: VDL to Go > compiles fixture: types-strict-enums > metadata.go 1`] = `
+"package gen
+
+// VDLAnnotation describes a single VDL annotation entry.
+type VDLAnnotation struct {
+	Name string
+	Value any
+}
+
+// VDLAnnotationSet groups annotations in declaration order and by name.
+type VDLAnnotationSet struct {
+	List []VDLAnnotation
+	ByName map[string]any
+}
+
+// Has reports whether an annotation exists in the set.
+func (a VDLAnnotationSet) Has(name string) bool {
+	_, ok := a.ByName[name]
+	return ok
+}
+
+// Get returns the latest value associated with the annotation name.
+func (a VDLAnnotationSet) Get(name string) (any, bool) {
+	value, ok := a.ByName[name]
+	return value, ok
+}
+
+// VDLTypeRef describes the recursive shape of a VDL type.
+type VDLTypeRef struct {
+	Kind string
+	Name string
+	ArrayDims int
+	Element *VDLTypeRef
+	Fields map[string]VDLFieldMetadata
+}
+
+// GetField looks up an object field by its generated Go name.
+func (r VDLTypeRef) GetField(name string) (VDLFieldMetadata, bool) {
+	field, ok := r.Fields[name]
+	return field, ok
+}
+
+// VDLFieldMetadata describes a generated field.
+type VDLFieldMetadata struct {
+	Name string
+	JSONName string
+	Optional bool
+	Type VDLTypeRef
+	Annotations VDLAnnotationSet
+}
+
+// VDLTypeMetadata describes a generated type.
+type VDLTypeMetadata struct {
+	Name string
+	Annotations VDLAnnotationSet
+	Type VDLTypeRef
+}
+
+// GetField looks up a field by its generated Go name.
+func (m VDLTypeMetadata) GetField(name string) (VDLFieldMetadata, bool) {
+	return m.Type.GetField(name)
+}
+
+// VDLEnumMemberMetadata describes a generated enum value.
+type VDLEnumMemberMetadata struct {
+	Name string
+	Value any
+	Annotations VDLAnnotationSet
+}
+
+// VDLEnumMetadata describes a generated enum.
+type VDLEnumMetadata struct {
+	Name string
+	Annotations VDLAnnotationSet
+	Members map[string]VDLEnumMemberMetadata
+}
+
+// GetMember looks up an enum member by its generated Go suffix name.
+func (m VDLEnumMetadata) GetMember(name string) (VDLEnumMemberMetadata, bool) {
+	member, ok := m.Members[name]
+	return member, ok
+}
+
+// VDLConstantMetadata describes a generated constant value.
+type VDLConstantMetadata struct {
+	Name string
+	Annotations VDLAnnotationSet
+	Type VDLTypeRef
+}
+
+// VDLSchemaMetadata collects metadata for every generated declaration.
+type VDLSchemaMetadata struct {
+	Types map[string]VDLTypeMetadata
+	Enums map[string]VDLEnumMetadata
+	Constants map[string]VDLConstantMetadata
+}
+
+// GetType looks up a type by its generated Go name.
+func (m VDLSchemaMetadata) GetType(name string) (VDLTypeMetadata, bool) {
+	value, ok := m.Types[name]
+	return value, ok
+}
+
+// GetEnum looks up an enum by its generated Go name.
+func (m VDLSchemaMetadata) GetEnum(name string) (VDLEnumMetadata, bool) {
+	value, ok := m.Enums[name]
+	return value, ok
+}
+
+// GetConstant looks up a constant by its generated Go name.
+func (m VDLSchemaMetadata) GetConstant(name string) (VDLConstantMetadata, bool) {
+	value, ok := m.Constants[name]
+	return value, ok
+}
+
+// VDLMetadata exposes generated metadata for the current schema.
+var VDLMetadata = VDLSchemaMetadata{
+	Types: map[string]VDLTypeMetadata{
+		"Registry": VDLTypeMetadata{
+			Name: "Registry",
+			Annotations: VDLAnnotationSet{},
+			Type: VDLTypeRef{
+				Kind: "object",
+				Fields: map[string]VDLFieldMetadata{
+					"Users": VDLFieldMetadata{
+						Name: "Users",
+						JSONName: "users",
+						Optional: false,
+						Type: VDLTypeRef{
+							Kind: "map",
+							Element: &VDLTypeRef{
+								Kind: "type",
+								Name: "User",
+							},
+						},
+						Annotations: VDLAnnotationSet{},
+					},
+				},
+			},
+		},
+		"User": VDLTypeMetadata{
+			Name: "User",
+			Annotations: VDLAnnotationSet{},
+			Type: VDLTypeRef{
+				Kind: "object",
+				Fields: map[string]VDLFieldMetadata{
+					"Id": VDLFieldMetadata{
+						Name: "Id",
+						JSONName: "id",
+						Optional: false,
+						Type: VDLTypeRef{
+							Kind: "primitive",
+							Name: "string",
+						},
+						Annotations: VDLAnnotationSet{},
+					},
+					"Status": VDLFieldMetadata{
+						Name: "Status",
+						JSONName: "status",
+						Optional: false,
+						Type: VDLTypeRef{
+							Kind: "enum",
+							Name: "Status",
+						},
+						Annotations: VDLAnnotationSet{},
+					},
+					"Roles": VDLFieldMetadata{
+						Name: "Roles",
+						JSONName: "roles",
+						Optional: false,
+						Type: VDLTypeRef{
+							Kind: "array",
+							ArrayDims: 1,
+							Element: &VDLTypeRef{
+								Kind: "enum",
+								Name: "Status",
+							},
+						},
+						Annotations: VDLAnnotationSet{},
+					},
+				},
+			},
+		},
+	},
+	Enums: map[string]VDLEnumMetadata{
+		"Status": VDLEnumMetadata{
+			Name: "Status",
+			Annotations: VDLAnnotationSet{},
+			Members: map[string]VDLEnumMemberMetadata{
+				"Active": VDLEnumMemberMetadata{
+					Name: "Active",
+					Value: "Active",
+					Annotations: VDLAnnotationSet{},
+				},
+				"Inactive": VDLEnumMemberMetadata{
+					Name: "Inactive",
+					Value: "Inactive",
+					Annotations: VDLAnnotationSet{},
+				},
+			},
+		},
+	},
+	Constants: map[string]VDLConstantMetadata{
+	},
+}"
+`;
+
+exports[`E2E: VDL to Go > compiles fixture: types-strict-enums > pointers.go 1`] = `
+"package gen
+
+// Ptr returns a pointer to the provided value.
+func Ptr[T any](value T) *T {
+	return &value
+}
+
+// Val dereferences a pointer or returns the zero value when it is nil.
+func Val[T any](pointer *T) T {
+	if pointer == nil {
+		var zero T
+		return zero
+	}
+	return *pointer
+}
+
+// Or dereferences a pointer or returns the provided default when it is nil.
+func Or[T any](pointer *T, defaultValue T) T {
+	if pointer == nil {
+		return defaultValue
+	}
+	return *pointer
+}"
+`;
+
+exports[`E2E: VDL to Go > compiles fixture: types-strict-enums > types.go 1`] = `
+"package gen
+
+import (
+	"encoding/json"
+	"fmt"
+)
+
+// Registry represents a VDL object.
+type Registry struct {
+	Users map[string]User \`json:"users"\`
+}
+
+// preRegistry mirrors Registry during strict JSON decoding.
+type preRegistry struct {
+	Users *map[string]preUser \`json:"users"\`
+}
+
+// validate reports whether preRegistry satisfies strict JSON requirements.
+func (p *preRegistry) validate(parentPath string) error {
+	vdlPathUsers := "users"
+	if parentPath != "" {
+		vdlPathUsers = parentPath + ".users"
+	}
+	if p.Users == nil {
+		return fmt.Errorf("field %s is required", vdlPathUsers)
+	}
+	if p.Users != nil {
+		for vdlKey0, vdlValue0 := range *p.Users {
+			vdlValuePath0 := fmt.Sprintf("%s[%q]", vdlPathUsers, vdlKey0)
+			if err := vdlValue0.validate(vdlValuePath0); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+// transform converts preRegistry to Registry.
+func (p *preRegistry) transform() Registry {
+	var transUsers map[string]User
+	transUsers = make(map[string]User, len(*p.Users))
+	for vdlKey0, vdlValue0 := range *p.Users {
+		var vdlTransformed0 User
+		vdlTransformed0 = User(vdlValue0.transform())
+		transUsers[vdlKey0] = vdlTransformed0
+	}
+
+	return Registry{
+		Users: transUsers,
+	}
+}
+
+// UnmarshalJSON decodes Registry while requiring every non-optional JSON field.
+func (x *Registry) UnmarshalJSON(data []byte) error {
+	var pre preRegistry
+	if err := json.Unmarshal(data, &pre); err != nil {
+		return err
+	}
+	if err := pre.validate(""); err != nil {
+		return err
+	}
+	*x = pre.transform()
+	return nil
+}
+
+// GetUsers returns the Users field. It returns the zero value when the receiver is nil.
+func (x *Registry) GetUsers() map[string]User {
+	if x != nil {
+		return x.Users
+	}
+	var zero map[string]User
+	return zero
+}
+
+// GetUsersOr returns the Users field. It returns defaultValue when the receiver is nil.
+func (x *Registry) GetUsersOr(defaultValue map[string]User) map[string]User {
+	if x != nil {
+		return x.Users
+	}
+	return defaultValue
+}
+
+// User represents a VDL object.
+type User struct {
+	Id string \`json:"id"\`
+	Status Status \`json:"status"\`
+	Roles []Status \`json:"roles"\`
+}
+
+// preUser mirrors User during strict JSON decoding.
+type preUser struct {
+	Id *string \`json:"id"\`
+	Status *Status \`json:"status"\`
+	Roles *[]Status \`json:"roles"\`
+}
+
+// validate reports whether preUser satisfies strict JSON requirements.
+func (p *preUser) validate(parentPath string) error {
+	vdlPathId := "id"
+	if parentPath != "" {
+		vdlPathId = parentPath + ".id"
+	}
+	if p.Id == nil {
+		return fmt.Errorf("field %s is required", vdlPathId)
+	}
+
+	vdlPathStatus := "status"
+	if parentPath != "" {
+		vdlPathStatus = parentPath + ".status"
+	}
+	if p.Status == nil {
+		return fmt.Errorf("field %s is required", vdlPathStatus)
+	}
+
+	vdlPathRoles := "roles"
+	if parentPath != "" {
+		vdlPathRoles = parentPath + ".roles"
+	}
+	if p.Roles == nil {
+		return fmt.Errorf("field %s is required", vdlPathRoles)
+	}
+	return nil
+}
+
+// transform converts preUser to User.
+func (p *preUser) transform() User {
+	var transId string
+	transId = *p.Id
+
+	var transStatus Status
+	transStatus = *p.Status
+
+	var transRoles []Status
+	transRoles = *p.Roles
+
+	return User{
+		Id: transId,
+		Status: transStatus,
+		Roles: transRoles,
+	}
+}
+
+// UnmarshalJSON decodes User while requiring every non-optional JSON field.
+func (x *User) UnmarshalJSON(data []byte) error {
+	var pre preUser
+	if err := json.Unmarshal(data, &pre); err != nil {
+		return err
+	}
+	if err := pre.validate(""); err != nil {
+		return err
+	}
+	*x = pre.transform()
+	return nil
+}
+
+// GetId returns the Id field. It returns the zero value when the receiver is nil.
+func (x *User) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	var zero string
+	return zero
+}
+
+// GetIdOr returns the Id field. It returns defaultValue when the receiver is nil.
+func (x *User) GetIdOr(defaultValue string) string {
+	if x != nil {
+		return x.Id
+	}
+	return defaultValue
+}
+
+// GetStatus returns the Status field. It returns the zero value when the receiver is nil.
+func (x *User) GetStatus() Status {
+	if x != nil {
+		return x.Status
+	}
+	var zero Status
+	return zero
+}
+
+// GetStatusOr returns the Status field. It returns defaultValue when the receiver is nil.
+func (x *User) GetStatusOr(defaultValue Status) Status {
+	if x != nil {
+		return x.Status
+	}
+	return defaultValue
+}
+
+// GetRoles returns the Roles field. It returns the zero value when the receiver is nil.
+func (x *User) GetRoles() []Status {
+	if x != nil {
+		return x.Roles
+	}
+	var zero []Status
+	return zero
+}
+
+// GetRolesOr returns the Roles field. It returns defaultValue when the receiver is nil.
+func (x *User) GetRolesOr(defaultValue []Status) []Status {
+	if x != nil {
+		return x.Roles
+	}
+	return defaultValue
+}"
+`;
+
+exports[`E2E: VDL to Go > compiles fixture: types-strict-validation-paths > metadata.go 1`] = `
+"package gen
+
+// VDLAnnotation describes a single VDL annotation entry.
+type VDLAnnotation struct {
+	Name string
+	Value any
+}
+
+// VDLAnnotationSet groups annotations in declaration order and by name.
+type VDLAnnotationSet struct {
+	List []VDLAnnotation
+	ByName map[string]any
+}
+
+// Has reports whether an annotation exists in the set.
+func (a VDLAnnotationSet) Has(name string) bool {
+	_, ok := a.ByName[name]
+	return ok
+}
+
+// Get returns the latest value associated with the annotation name.
+func (a VDLAnnotationSet) Get(name string) (any, bool) {
+	value, ok := a.ByName[name]
+	return value, ok
+}
+
+// VDLTypeRef describes the recursive shape of a VDL type.
+type VDLTypeRef struct {
+	Kind string
+	Name string
+	ArrayDims int
+	Element *VDLTypeRef
+	Fields map[string]VDLFieldMetadata
+}
+
+// GetField looks up an object field by its generated Go name.
+func (r VDLTypeRef) GetField(name string) (VDLFieldMetadata, bool) {
+	field, ok := r.Fields[name]
+	return field, ok
+}
+
+// VDLFieldMetadata describes a generated field.
+type VDLFieldMetadata struct {
+	Name string
+	JSONName string
+	Optional bool
+	Type VDLTypeRef
+	Annotations VDLAnnotationSet
+}
+
+// VDLTypeMetadata describes a generated type.
+type VDLTypeMetadata struct {
+	Name string
+	Annotations VDLAnnotationSet
+	Type VDLTypeRef
+}
+
+// GetField looks up a field by its generated Go name.
+func (m VDLTypeMetadata) GetField(name string) (VDLFieldMetadata, bool) {
+	return m.Type.GetField(name)
+}
+
+// VDLEnumMemberMetadata describes a generated enum value.
+type VDLEnumMemberMetadata struct {
+	Name string
+	Value any
+	Annotations VDLAnnotationSet
+}
+
+// VDLEnumMetadata describes a generated enum.
+type VDLEnumMetadata struct {
+	Name string
+	Annotations VDLAnnotationSet
+	Members map[string]VDLEnumMemberMetadata
+}
+
+// GetMember looks up an enum member by its generated Go suffix name.
+func (m VDLEnumMetadata) GetMember(name string) (VDLEnumMemberMetadata, bool) {
+	member, ok := m.Members[name]
+	return member, ok
+}
+
+// VDLConstantMetadata describes a generated constant value.
+type VDLConstantMetadata struct {
+	Name string
+	Annotations VDLAnnotationSet
+	Type VDLTypeRef
+}
+
+// VDLSchemaMetadata collects metadata for every generated declaration.
+type VDLSchemaMetadata struct {
+	Types map[string]VDLTypeMetadata
+	Enums map[string]VDLEnumMetadata
+	Constants map[string]VDLConstantMetadata
+}
+
+// GetType looks up a type by its generated Go name.
+func (m VDLSchemaMetadata) GetType(name string) (VDLTypeMetadata, bool) {
+	value, ok := m.Types[name]
+	return value, ok
+}
+
+// GetEnum looks up an enum by its generated Go name.
+func (m VDLSchemaMetadata) GetEnum(name string) (VDLEnumMetadata, bool) {
+	value, ok := m.Enums[name]
+	return value, ok
+}
+
+// GetConstant looks up a constant by its generated Go name.
+func (m VDLSchemaMetadata) GetConstant(name string) (VDLConstantMetadata, bool) {
+	value, ok := m.Constants[name]
+	return value, ok
+}
+
+// VDLMetadata exposes generated metadata for the current schema.
+var VDLMetadata = VDLSchemaMetadata{
+	Types: map[string]VDLTypeMetadata{
+		"Container": VDLTypeMetadata{
+			Name: "Container",
+			Annotations: VDLAnnotationSet{},
+			Type: VDLTypeRef{
+				Kind: "object",
+				Fields: map[string]VDLFieldMetadata{
+					"Id": VDLFieldMetadata{
+						Name: "Id",
+						JSONName: "id",
+						Optional: false,
+						Type: VDLTypeRef{
+							Kind: "primitive",
+							Name: "string",
+						},
+						Annotations: VDLAnnotationSet{},
+					},
+					"Nested": VDLFieldMetadata{
+						Name: "Nested",
+						JSONName: "nested",
+						Optional: false,
+						Type: VDLTypeRef{
+							Kind: "type",
+							Name: "Nested",
+						},
+						Annotations: VDLAnnotationSet{},
+					},
+					"Items": VDLFieldMetadata{
+						Name: "Items",
+						JSONName: "items",
+						Optional: false,
+						Type: VDLTypeRef{
+							Kind: "array",
+							ArrayDims: 1,
+							Element: &VDLTypeRef{
+								Kind: "type",
+								Name: "Nested",
+							},
+						},
+						Annotations: VDLAnnotationSet{},
+					},
+					"Lookup": VDLFieldMetadata{
+						Name: "Lookup",
+						JSONName: "lookup",
+						Optional: false,
+						Type: VDLTypeRef{
+							Kind: "map",
+							Element: &VDLTypeRef{
+								Kind: "type",
+								Name: "Nested",
+							},
+						},
+						Annotations: VDLAnnotationSet{},
+					},
+				},
+			},
+		},
+		"Leaf": VDLTypeMetadata{
+			Name: "Leaf",
+			Annotations: VDLAnnotationSet{},
+			Type: VDLTypeRef{
+				Kind: "object",
+				Fields: map[string]VDLFieldMetadata{
+					"Val": VDLFieldMetadata{
+						Name: "Val",
+						JSONName: "val",
+						Optional: false,
+						Type: VDLTypeRef{
+							Kind: "primitive",
+							Name: "string",
+						},
+						Annotations: VDLAnnotationSet{},
+					},
+				},
+			},
+		},
+		"Nested": VDLTypeMetadata{
+			Name: "Nested",
+			Annotations: VDLAnnotationSet{},
+			Type: VDLTypeRef{
+				Kind: "object",
+				Fields: map[string]VDLFieldMetadata{
+					"Id": VDLFieldMetadata{
+						Name: "Id",
+						JSONName: "id",
+						Optional: false,
+						Type: VDLTypeRef{
+							Kind: "primitive",
+							Name: "string",
+						},
+						Annotations: VDLAnnotationSet{},
+					},
+					"Leaf": VDLFieldMetadata{
+						Name: "Leaf",
+						JSONName: "leaf",
+						Optional: false,
+						Type: VDLTypeRef{
+							Kind: "type",
+							Name: "Leaf",
+						},
+						Annotations: VDLAnnotationSet{},
+					},
+				},
+			},
+		},
+		"Root": VDLTypeMetadata{
+			Name: "Root",
+			Annotations: VDLAnnotationSet{},
+			Type: VDLTypeRef{
+				Kind: "object",
+				Fields: map[string]VDLFieldMetadata{
+					"Containers": VDLFieldMetadata{
+						Name: "Containers",
+						JSONName: "containers",
+						Optional: false,
+						Type: VDLTypeRef{
+							Kind: "array",
+							ArrayDims: 1,
+							Element: &VDLTypeRef{
+								Kind: "type",
+								Name: "Container",
+							},
+						},
+						Annotations: VDLAnnotationSet{},
+					},
+					"Registry": VDLFieldMetadata{
+						Name: "Registry",
+						JSONName: "registry",
+						Optional: false,
+						Type: VDLTypeRef{
+							Kind: "map",
+							Element: &VDLTypeRef{
+								Kind: "array",
+								ArrayDims: 1,
+								Element: &VDLTypeRef{
+									Kind: "type",
+									Name: "Container",
+								},
+							},
+						},
+						Annotations: VDLAnnotationSet{},
+					},
+				},
+			},
+		},
+	},
+	Enums: map[string]VDLEnumMetadata{
+	},
+	Constants: map[string]VDLConstantMetadata{
+	},
+}"
+`;
+
+exports[`E2E: VDL to Go > compiles fixture: types-strict-validation-paths > pointers.go 1`] = `
+"package gen
+
+// Ptr returns a pointer to the provided value.
+func Ptr[T any](value T) *T {
+	return &value
+}
+
+// Val dereferences a pointer or returns the zero value when it is nil.
+func Val[T any](pointer *T) T {
+	if pointer == nil {
+		var zero T
+		return zero
+	}
+	return *pointer
+}
+
+// Or dereferences a pointer or returns the provided default when it is nil.
+func Or[T any](pointer *T, defaultValue T) T {
+	if pointer == nil {
+		return defaultValue
+	}
+	return *pointer
+}"
+`;
+
+exports[`E2E: VDL to Go > compiles fixture: types-strict-validation-paths > types.go 1`] = `
+"package gen
+
+import (
+	"encoding/json"
+	"fmt"
+)
+
+// Container represents a VDL object.
+type Container struct {
+	Id string \`json:"id"\`
+	Nested Nested \`json:"nested"\`
+	Items []Nested \`json:"items"\`
+	Lookup map[string]Nested \`json:"lookup"\`
+}
+
+// preContainer mirrors Container during strict JSON decoding.
+type preContainer struct {
+	Id *string \`json:"id"\`
+	Nested *preNested \`json:"nested"\`
+	Items *[]preNested \`json:"items"\`
+	Lookup *map[string]preNested \`json:"lookup"\`
+}
+
+// validate reports whether preContainer satisfies strict JSON requirements.
+func (p *preContainer) validate(parentPath string) error {
+	vdlPathId := "id"
+	if parentPath != "" {
+		vdlPathId = parentPath + ".id"
+	}
+	if p.Id == nil {
+		return fmt.Errorf("field %s is required", vdlPathId)
+	}
+
+	vdlPathNested := "nested"
+	if parentPath != "" {
+		vdlPathNested = parentPath + ".nested"
+	}
+	if p.Nested == nil {
+		return fmt.Errorf("field %s is required", vdlPathNested)
+	}
+	if p.Nested != nil {
+		if err := p.Nested.validate(vdlPathNested); err != nil {
+			return err
+		}
+	}
+
+	vdlPathItems := "items"
+	if parentPath != "" {
+		vdlPathItems = parentPath + ".items"
+	}
+	if p.Items == nil {
+		return fmt.Errorf("field %s is required", vdlPathItems)
+	}
+	if p.Items != nil {
+		for vdlIndex0, vdlItem0 := range *p.Items {
+			vdlItemPath0 := fmt.Sprintf("%s[%d]", vdlPathItems, vdlIndex0)
+			if err := vdlItem0.validate(vdlItemPath0); err != nil {
+				return err
+			}
+		}
+	}
+
+	vdlPathLookup := "lookup"
+	if parentPath != "" {
+		vdlPathLookup = parentPath + ".lookup"
+	}
+	if p.Lookup == nil {
+		return fmt.Errorf("field %s is required", vdlPathLookup)
+	}
+	if p.Lookup != nil {
+		for vdlKey0, vdlValue0 := range *p.Lookup {
+			vdlValuePath0 := fmt.Sprintf("%s[%q]", vdlPathLookup, vdlKey0)
+			if err := vdlValue0.validate(vdlValuePath0); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+// transform converts preContainer to Container.
+func (p *preContainer) transform() Container {
+	var transId string
+	transId = *p.Id
+
+	var transNested Nested
+	transNested = Nested(p.Nested.transform())
+
+	var transItems []Nested
+	transItems = make([]Nested, len(*p.Items))
+	for vdlIndex0, vdlItem0 := range *p.Items {
+		var vdlTransformed0 Nested
+		vdlTransformed0 = Nested(vdlItem0.transform())
+		transItems[vdlIndex0] = vdlTransformed0
+	}
+
+	var transLookup map[string]Nested
+	transLookup = make(map[string]Nested, len(*p.Lookup))
+	for vdlKey0, vdlValue0 := range *p.Lookup {
+		var vdlTransformed0 Nested
+		vdlTransformed0 = Nested(vdlValue0.transform())
+		transLookup[vdlKey0] = vdlTransformed0
+	}
+
+	return Container{
+		Id: transId,
+		Nested: transNested,
+		Items: transItems,
+		Lookup: transLookup,
+	}
+}
+
+// UnmarshalJSON decodes Container while requiring every non-optional JSON field.
+func (x *Container) UnmarshalJSON(data []byte) error {
+	var pre preContainer
+	if err := json.Unmarshal(data, &pre); err != nil {
+		return err
+	}
+	if err := pre.validate(""); err != nil {
+		return err
+	}
+	*x = pre.transform()
+	return nil
+}
+
+// GetId returns the Id field. It returns the zero value when the receiver is nil.
+func (x *Container) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	var zero string
+	return zero
+}
+
+// GetIdOr returns the Id field. It returns defaultValue when the receiver is nil.
+func (x *Container) GetIdOr(defaultValue string) string {
+	if x != nil {
+		return x.Id
+	}
+	return defaultValue
+}
+
+// GetNested returns the Nested field. It returns the zero value when the receiver is nil.
+func (x *Container) GetNested() Nested {
+	if x != nil {
+		return x.Nested
+	}
+	var zero Nested
+	return zero
+}
+
+// GetNestedOr returns the Nested field. It returns defaultValue when the receiver is nil.
+func (x *Container) GetNestedOr(defaultValue Nested) Nested {
+	if x != nil {
+		return x.Nested
+	}
+	return defaultValue
+}
+
+// GetItems returns the Items field. It returns the zero value when the receiver is nil.
+func (x *Container) GetItems() []Nested {
+	if x != nil {
+		return x.Items
+	}
+	var zero []Nested
+	return zero
+}
+
+// GetItemsOr returns the Items field. It returns defaultValue when the receiver is nil.
+func (x *Container) GetItemsOr(defaultValue []Nested) []Nested {
+	if x != nil {
+		return x.Items
+	}
+	return defaultValue
+}
+
+// GetLookup returns the Lookup field. It returns the zero value when the receiver is nil.
+func (x *Container) GetLookup() map[string]Nested {
+	if x != nil {
+		return x.Lookup
+	}
+	var zero map[string]Nested
+	return zero
+}
+
+// GetLookupOr returns the Lookup field. It returns defaultValue when the receiver is nil.
+func (x *Container) GetLookupOr(defaultValue map[string]Nested) map[string]Nested {
+	if x != nil {
+		return x.Lookup
+	}
+	return defaultValue
+}
+
+// Leaf represents a VDL object.
+type Leaf struct {
+	Val string \`json:"val"\`
+}
+
+// preLeaf mirrors Leaf during strict JSON decoding.
+type preLeaf struct {
+	Val *string \`json:"val"\`
+}
+
+// validate reports whether preLeaf satisfies strict JSON requirements.
+func (p *preLeaf) validate(parentPath string) error {
+	vdlPathVal := "val"
+	if parentPath != "" {
+		vdlPathVal = parentPath + ".val"
+	}
+	if p.Val == nil {
+		return fmt.Errorf("field %s is required", vdlPathVal)
+	}
+	return nil
+}
+
+// transform converts preLeaf to Leaf.
+func (p *preLeaf) transform() Leaf {
+	var transVal string
+	transVal = *p.Val
+
+	return Leaf{
+		Val: transVal,
+	}
+}
+
+// UnmarshalJSON decodes Leaf while requiring every non-optional JSON field.
+func (x *Leaf) UnmarshalJSON(data []byte) error {
+	var pre preLeaf
+	if err := json.Unmarshal(data, &pre); err != nil {
+		return err
+	}
+	if err := pre.validate(""); err != nil {
+		return err
+	}
+	*x = pre.transform()
+	return nil
+}
+
+// GetVal returns the Val field. It returns the zero value when the receiver is nil.
+func (x *Leaf) GetVal() string {
+	if x != nil {
+		return x.Val
+	}
+	var zero string
+	return zero
+}
+
+// GetValOr returns the Val field. It returns defaultValue when the receiver is nil.
+func (x *Leaf) GetValOr(defaultValue string) string {
+	if x != nil {
+		return x.Val
+	}
+	return defaultValue
+}
+
+// Nested represents a VDL object.
+type Nested struct {
+	Id string \`json:"id"\`
+	Leaf Leaf \`json:"leaf"\`
+}
+
+// preNested mirrors Nested during strict JSON decoding.
+type preNested struct {
+	Id *string \`json:"id"\`
+	Leaf *preLeaf \`json:"leaf"\`
+}
+
+// validate reports whether preNested satisfies strict JSON requirements.
+func (p *preNested) validate(parentPath string) error {
+	vdlPathId := "id"
+	if parentPath != "" {
+		vdlPathId = parentPath + ".id"
+	}
+	if p.Id == nil {
+		return fmt.Errorf("field %s is required", vdlPathId)
+	}
+
+	vdlPathLeaf := "leaf"
+	if parentPath != "" {
+		vdlPathLeaf = parentPath + ".leaf"
+	}
+	if p.Leaf == nil {
+		return fmt.Errorf("field %s is required", vdlPathLeaf)
+	}
+	if p.Leaf != nil {
+		if err := p.Leaf.validate(vdlPathLeaf); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// transform converts preNested to Nested.
+func (p *preNested) transform() Nested {
+	var transId string
+	transId = *p.Id
+
+	var transLeaf Leaf
+	transLeaf = Leaf(p.Leaf.transform())
+
+	return Nested{
+		Id: transId,
+		Leaf: transLeaf,
+	}
+}
+
+// UnmarshalJSON decodes Nested while requiring every non-optional JSON field.
+func (x *Nested) UnmarshalJSON(data []byte) error {
+	var pre preNested
+	if err := json.Unmarshal(data, &pre); err != nil {
+		return err
+	}
+	if err := pre.validate(""); err != nil {
+		return err
+	}
+	*x = pre.transform()
+	return nil
+}
+
+// GetId returns the Id field. It returns the zero value when the receiver is nil.
+func (x *Nested) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	var zero string
+	return zero
+}
+
+// GetIdOr returns the Id field. It returns defaultValue when the receiver is nil.
+func (x *Nested) GetIdOr(defaultValue string) string {
+	if x != nil {
+		return x.Id
+	}
+	return defaultValue
+}
+
+// GetLeaf returns the Leaf field. It returns the zero value when the receiver is nil.
+func (x *Nested) GetLeaf() Leaf {
+	if x != nil {
+		return x.Leaf
+	}
+	var zero Leaf
+	return zero
+}
+
+// GetLeafOr returns the Leaf field. It returns defaultValue when the receiver is nil.
+func (x *Nested) GetLeafOr(defaultValue Leaf) Leaf {
+	if x != nil {
+		return x.Leaf
+	}
+	return defaultValue
+}
+
+// Root represents a VDL object.
+type Root struct {
+	Containers []Container \`json:"containers"\`
+	Registry map[string][]Container \`json:"registry"\`
+}
+
+// preRoot mirrors Root during strict JSON decoding.
+type preRoot struct {
+	Containers *[]preContainer \`json:"containers"\`
+	Registry *map[string][]preContainer \`json:"registry"\`
+}
+
+// validate reports whether preRoot satisfies strict JSON requirements.
+func (p *preRoot) validate(parentPath string) error {
+	vdlPathContainers := "containers"
+	if parentPath != "" {
+		vdlPathContainers = parentPath + ".containers"
+	}
+	if p.Containers == nil {
+		return fmt.Errorf("field %s is required", vdlPathContainers)
+	}
+	if p.Containers != nil {
+		for vdlIndex0, vdlItem0 := range *p.Containers {
+			vdlItemPath0 := fmt.Sprintf("%s[%d]", vdlPathContainers, vdlIndex0)
+			if err := vdlItem0.validate(vdlItemPath0); err != nil {
+				return err
+			}
+		}
+	}
+
+	vdlPathRegistry := "registry"
+	if parentPath != "" {
+		vdlPathRegistry = parentPath + ".registry"
+	}
+	if p.Registry == nil {
+		return fmt.Errorf("field %s is required", vdlPathRegistry)
+	}
+	if p.Registry != nil {
+		for vdlKey0, vdlValue0 := range *p.Registry {
+			vdlValuePath0 := fmt.Sprintf("%s[%q]", vdlPathRegistry, vdlKey0)
+			for vdlIndex1, vdlItem1 := range vdlValue0 {
+				vdlItemPath1 := fmt.Sprintf("%s[%d]", vdlValuePath0, vdlIndex1)
+				if err := vdlItem1.validate(vdlItemPath1); err != nil {
+					return err
+				}
+			}
+		}
+	}
+	return nil
+}
+
+// transform converts preRoot to Root.
+func (p *preRoot) transform() Root {
+	var transContainers []Container
+	transContainers = make([]Container, len(*p.Containers))
+	for vdlIndex0, vdlItem0 := range *p.Containers {
+		var vdlTransformed0 Container
+		vdlTransformed0 = Container(vdlItem0.transform())
+		transContainers[vdlIndex0] = vdlTransformed0
+	}
+
+	var transRegistry map[string][]Container
+	transRegistry = make(map[string][]Container, len(*p.Registry))
+	for vdlKey0, vdlValue0 := range *p.Registry {
+		var vdlTransformed0 []Container
+		vdlTransformed0 = make([]Container, len(vdlValue0))
+		for vdlIndex1, vdlItem1 := range vdlValue0 {
+			var vdlTransformed1 Container
+			vdlTransformed1 = Container(vdlItem1.transform())
+			vdlTransformed0[vdlIndex1] = vdlTransformed1
+		}
+		transRegistry[vdlKey0] = vdlTransformed0
+	}
+
+	return Root{
+		Containers: transContainers,
+		Registry: transRegistry,
+	}
+}
+
+// UnmarshalJSON decodes Root while requiring every non-optional JSON field.
+func (x *Root) UnmarshalJSON(data []byte) error {
+	var pre preRoot
+	if err := json.Unmarshal(data, &pre); err != nil {
+		return err
+	}
+	if err := pre.validate(""); err != nil {
+		return err
+	}
+	*x = pre.transform()
+	return nil
+}
+
+// GetContainers returns the Containers field. It returns the zero value when the receiver is nil.
+func (x *Root) GetContainers() []Container {
+	if x != nil {
+		return x.Containers
+	}
+	var zero []Container
+	return zero
+}
+
+// GetContainersOr returns the Containers field. It returns defaultValue when the receiver is nil.
+func (x *Root) GetContainersOr(defaultValue []Container) []Container {
+	if x != nil {
+		return x.Containers
+	}
+	return defaultValue
+}
+
+// GetRegistry returns the Registry field. It returns the zero value when the receiver is nil.
+func (x *Root) GetRegistry() map[string][]Container {
+	if x != nil {
+		return x.Registry
+	}
+	var zero map[string][]Container
+	return zero
+}
+
+// GetRegistryOr returns the Registry field. It returns defaultValue when the receiver is nil.
+func (x *Root) GetRegistryOr(defaultValue map[string][]Container) map[string][]Container {
+	if x != nil {
+		return x.Registry
+	}
+	return defaultValue
+}"
+`;

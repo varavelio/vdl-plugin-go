@@ -1,0 +1,20 @@
+type Leaf {
+  val string
+}
+
+type Nested {
+  id string
+  leaf Leaf
+}
+
+type Container {
+  id string
+  nested Nested
+  items Nested[]
+  lookup map[Nested]
+}
+
+type Root {
+  containers Container[]
+  registry map[Container[]]
+}

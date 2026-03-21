@@ -1,0 +1,14 @@
+enum Status {
+  Active
+  Inactive
+}
+
+type User {
+  id string
+  status Status
+  roles Status[]
+}
+
+type Registry {
+  users map[User]
+}
