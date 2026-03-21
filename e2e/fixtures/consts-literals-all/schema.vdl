@@ -1,0 +1,42 @@
+// Primitive constants
+const strVal = "hello"
+const intVal = 42
+const floatVal = 3.14
+const boolVal = true
+
+// Array constants
+const strArray = ["a" "b" "c"]
+const intArray = [1 2 3]
+
+// Object constants
+const simpleObj = {
+  name "VDL"
+  version 1
+}
+
+const nestedObj = {
+  metadata {
+    owner "admin"
+    tags ["tag1" "tag2"]
+  }
+}
+
+// References in constants
+const anotherInt = intVal
+const enumRef = Color.Red
+
+enum Color {
+  Red
+  Green
+}
+
+// Spread in objects
+const base = {
+  a 1
+  b 2
+}
+
+const extended = {
+  ...base
+  c 3
+}

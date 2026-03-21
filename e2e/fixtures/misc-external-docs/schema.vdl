@@ -1,0 +1,15 @@
+""" ./docs/standalone.md """
+
+""" ./docs/status.md """
+enum Status {
+  Active
+  Inactive
+}
+
+""" ./docs/user.md """
+type User {
+  id string
+  status Status
+}
+
+const version = "1.0.0"

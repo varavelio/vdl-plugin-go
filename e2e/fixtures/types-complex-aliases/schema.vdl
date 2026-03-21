@@ -1,0 +1,21 @@
+type IntArray int[]
+type ArrayOfIntArrays IntArray[]
+
+type StringMap map[string]
+type MapOfMaps map[StringMap]
+
+type User {
+  id string
+}
+type UserArray User[]
+type UserMap map[User]
+type MapOfUserArrays map[UserArray]
+
+type RecursiveAlias UserArray
+
+type Container {
+  aoia ArrayOfIntArrays
+  mom MapOfMaps
+  moua MapOfUserArrays
+  ra RecursiveAlias
+}

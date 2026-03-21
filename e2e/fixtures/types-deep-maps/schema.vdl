@@ -1,0 +1,33 @@
+enum Status {
+  Active
+  Inactive
+}
+
+type Nested {
+  id string
+  status Status
+}
+
+type Matrix {
+  // Deeply nested maps and arrays
+  deep map[map[map[Nested[]]]]
+}
+
+const sampleMatrix = {
+  deep {
+    outer {
+      middle {
+        inner [
+          {
+            id "1"
+            status Status.Active
+          }
+          {
+            id "2"
+            status Status.Inactive
+          }
+        ]
+      }
+    }
+  }
+}

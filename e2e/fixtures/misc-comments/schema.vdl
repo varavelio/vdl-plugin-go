@@ -1,0 +1,29 @@
+// Single line top-level comment
+
+/*
+  Multi-line
+  top-level comment
+*/
+
+type User {
+  // Single line field comment
+  id string
+  /*
+    Multi-line
+    field comment
+  */
+  email string
+}
+
+enum Status {
+  // Single line enum member comment
+  Active
+  /*
+    Multi-line
+    enum member comment
+  */
+  Inactive
+}
+
+// Comment before a constant
+const version = "1.0.0"

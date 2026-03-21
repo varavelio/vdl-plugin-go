@@ -1,0 +1,25 @@
+// Primitive aliases
+type StringAlias string
+type IntAlias int
+type FloatAlias float
+type BoolAlias bool
+type DateAlias datetime
+
+// Collection aliases
+type StringArray string[]
+type IntMatrix int[][]
+type UserMap map[User]
+type NestedMap map[map[int]]
+
+// Object alias (naming an existing object)
+type User {
+  id string
+}
+type UserAlias User
+
+type Container {
+  s StringAlias
+  sa StringArray
+  m UserMap
+  ua UserAlias
+}
