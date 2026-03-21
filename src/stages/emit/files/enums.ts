@@ -1,12 +1,13 @@
 import { newGenerator } from "@varavel/gen";
+import type { PluginOutputFile } from "@varavel/vdl-plugin-sdk";
 import { renderGoFile } from "../../../shared/render/go-file";
 import { ImportSet } from "../../../shared/render/imports";
-import type { GeneratedFile, GeneratorContext } from "../../model/types";
+import type { GeneratorContext } from "../../model/types";
 import { renderEnum } from "./types-enums";
 
 export function generateEnumsFile(
   context: GeneratorContext,
-): GeneratedFile | undefined {
+): PluginOutputFile | undefined {
   if (context.enumDescriptors.length === 0) {
     return undefined;
   }

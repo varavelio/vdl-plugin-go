@@ -1,4 +1,5 @@
 import { newGenerator } from "@varavel/gen";
+import type { PluginOutputFile } from "@varavel/vdl-plugin-sdk";
 import {
   buildDocCommentLines,
   writeDocComment,
@@ -14,11 +15,11 @@ import {
 } from "../../../shared/go-types";
 import { renderGoFile } from "../../../shared/render/go-file";
 import { ImportSet } from "../../../shared/render/imports";
-import type { GeneratedFile, GeneratorContext } from "../../model/types";
+import type { GeneratorContext } from "../../model/types";
 
 export function generateConstantsFile(
   context: GeneratorContext,
-): GeneratedFile | undefined {
+): PluginOutputFile | undefined {
   if (!context.options.genConsts || context.constantDescriptors.length === 0) {
     return undefined;
   }

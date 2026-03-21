@@ -1,13 +1,14 @@
 import { newGenerator } from "@varavel/gen";
+import type { PluginOutputFile } from "@varavel/vdl-plugin-sdk";
 import { collectImportsForTypeRef } from "../../../shared/go-types";
 import { renderGoFile } from "../../../shared/render/go-file";
 import { ImportSet } from "../../../shared/render/imports";
-import type { GeneratedFile, GeneratorContext } from "../../model/types";
+import type { GeneratorContext } from "../../model/types";
 import { renderNamedType } from "./types-named-types";
 
 export function generateTypesFile(
   context: GeneratorContext,
-): GeneratedFile | undefined {
+): PluginOutputFile | undefined {
   if (context.namedTypes.length === 0) {
     return undefined;
   }

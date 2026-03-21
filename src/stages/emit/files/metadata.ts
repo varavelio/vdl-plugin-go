@@ -1,14 +1,15 @@
 import { newGenerator } from "@varavel/gen";
+import type { PluginOutputFile } from "@varavel/vdl-plugin-sdk";
 import { renderMetadataValueExpression } from "../../../shared/go-literals";
 import { renderGoFile } from "../../../shared/render/go-file";
-import type { GeneratedFile, GeneratorContext } from "../../model/types";
+import type { GeneratorContext } from "../../model/types";
 import { writeAnnotationSetField } from "./metadata-annotations";
 import { renderMetadataSupportTypes } from "./metadata-runtime";
 import { writeMetadataTypeField } from "./metadata-types";
 
 export function generateMetadataFile(
   context: GeneratorContext,
-): GeneratedFile | undefined {
+): PluginOutputFile | undefined {
   if (!context.options.genMeta) {
     return undefined;
   }
