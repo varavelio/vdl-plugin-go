@@ -15,6 +15,20 @@ import {
   resolveScalarTarget,
 } from "./scalar";
 
+/**
+ * Renders a VDL literal value as a typed Go expression.
+ *
+ * This function handles primitives, enums, and composite types (arrays, maps, objects).
+ * It ensures that the generated Go code is correctly typed, including pointer wrapping
+ * for optional fields and proper type conversions for named aliases.
+ *
+ * @param typeRef - The VDL type of the value being rendered.
+ * @param literal - The VDL literal value.
+ * @param context - The generator context.
+ * @param position - The optional VDL source position.
+ * @param namedTypeGoName - The Go name of the type if it's a named type.
+ * @returns A Go expression string representing the literal value.
+ */
 export function renderTypedValueExpression(
   typeRef: TypeRef,
   literal: LiteralValue,
@@ -85,6 +99,19 @@ export function renderTypedValueExpression(
   }
 }
 
+/**
+ * Renders a VDL literal value as a formatted, multiline Go expression.
+ *
+ * Similar to `renderTypedValueExpression`, but produces human-readable, indented
+ * output for composite literals.
+ *
+ * @param typeRef - The VDL type of the value.
+ * @param literal - The VDL literal value.
+ * @param context - The generator context.
+ * @param position - The optional VDL source position.
+ * @param namedTypeGoName - The Go name of the type if it's a named type.
+ * @returns A formatted Go expression string.
+ */
 export function renderTypedValueExpressionPretty(
   typeRef: TypeRef,
   literal: LiteralValue,
@@ -149,6 +176,17 @@ export function renderTypedValueExpressionPretty(
   }
 }
 
+/**
+ * Renders a composite literal (array, map, or object) in a compact format.
+ *
+ * @param typeExpression - The Go type expression for the literal.
+ * @param typeRef - The VDL type reference.
+ * @param literal - The VDL literal value.
+ * @param context - The generator context.
+ * @param position - The optional VDL source position.
+ * @param namedTypeGoName - The Go name of the type if it's a named type.
+ * @returns A compact Go composite literal string.
+ */
 function renderCompositeLiteral(
   typeExpression: string,
   typeRef: TypeRef,
@@ -193,6 +231,19 @@ function renderCompositeLiteral(
   }
 }
 
+/**
+ * Renders an array literal in a compact format.
+ *
+ * Handles multi-dimensional arrays by recursively rendering nested items.
+ *
+ * @param typeExpression - The Go type expression.
+ * @param typeRef - The VDL array type.
+ * @param literal - The VDL array literal.
+ * @param context - The generator context.
+ * @param position - The optional VDL source position.
+ * @param namedTypeGoName - The Go name of the type if it's a named type.
+ * @returns A compact Go array literal string.
+ */
 function renderArrayLiteral(
   typeExpression: string,
   typeRef: TypeRef,
@@ -235,6 +286,19 @@ function renderArrayLiteral(
   return `${typeExpression}{${items.join(", ")}}`;
 }
 
+/**
+ * Renders a map literal in a compact format.
+ *
+ * All VDL maps are rendered as Go `map[string]T`.
+ *
+ * @param typeExpression - The Go type expression.
+ * @param typeRef - The VDL map type.
+ * @param literal - The VDL object literal used as a map.
+ * @param context - The generator context.
+ * @param position - The optional VDL source position.
+ * @param namedTypeGoName - The Go name of the type if it's a named type.
+ * @returns A compact Go map literal string.
+ */
 function renderMapLiteral(
   typeExpression: string,
   typeRef: TypeRef,
@@ -261,6 +325,20 @@ function renderMapLiteral(
   return `${typeExpression}{${entries.join(", ")}}`;
 }
 
+/**
+ * Renders an object literal in a compact format.
+ *
+ * Handles optional fields by wrapping values with `Ptr()` or using an anonymous
+ * closure if pointer utilities are disabled.
+ *
+ * @param typeExpression - The Go type expression.
+ * @param typeRef - The VDL object type.
+ * @param literal - The VDL object literal.
+ * @param context - The generator context.
+ * @param position - The optional VDL source position.
+ * @param namedTypeGoName - The Go name of the type if it's a named type.
+ * @returns A compact Go struct literal string.
+ */
 function renderObjectLiteral(
   typeExpression: string,
   typeRef: TypeRef,
@@ -322,6 +400,12 @@ function renderObjectLiteral(
   return `${typeExpression}{${entries.join(", ")}}`;
 }
 
+/**
+ * Renders a composite literal (array, map, or object) in a pretty-printed format.
+ *
+ * @param options - The rendering options.
+ * @returns A formatted Go composite literal string.
+ */
 function renderCompositeLiteralPretty(options: {
   typeRef: TypeRef;
   literal: LiteralValue;
@@ -375,6 +459,12 @@ function renderCompositeLiteralPretty(options: {
   }
 }
 
+/**
+ * Renders an array literal in a pretty-printed format.
+ *
+ * @param options - The rendering options.
+ * @returns A formatted Go array literal string.
+ */
 function renderArrayLiteralPretty(options: {
   typeExpression: string;
   typeRef: TypeRef;
@@ -417,6 +507,12 @@ function renderArrayLiteralPretty(options: {
   return renderBlockLiteral(options.typeExpression, items);
 }
 
+/**
+ * Renders a map literal in a pretty-printed format.
+ *
+ * @param options - The rendering options.
+ * @returns A formatted Go map literal string.
+ */
 function renderMapLiteralPretty(options: {
   typeExpression: string;
   typeRef: TypeRef;
@@ -443,6 +539,12 @@ function renderMapLiteralPretty(options: {
   return renderBlockLiteral(options.typeExpression, entries);
 }
 
+/**
+ * Renders an object literal in a pretty-printed format.
+ *
+ * @param options - The rendering options.
+ * @returns A formatted Go struct literal string.
+ */
 function renderObjectLiteralPretty(options: {
   typeExpression: string;
   typeRef: TypeRef;
@@ -504,6 +606,13 @@ function renderObjectLiteralPretty(options: {
   return renderBlockLiteral(options.typeExpression, entries);
 }
 
+/**
+ * Renders a block literal (multiline composite literal) with the provided entries.
+ *
+ * @param typeExpression - The Go type expression.
+ * @param entries - The rendered literal entries (fields, items, or keys:values).
+ * @returns A formatted, multiline Go composite literal string.
+ */
 function renderBlockLiteral(typeExpression: string, entries: string[]): string {
   if (entries.length === 0) {
     return `${typeExpression}{}`;
@@ -513,6 +622,12 @@ function renderBlockLiteral(typeExpression: string, entries: string[]): string {
   return `${typeExpression}{\n${body},\n}`;
 }
 
+/**
+ * Indents each line of a string block with a single tab.
+ *
+ * @param value - The string to indent.
+ * @returns The indented string.
+ */
 function indentBlock(value: string): string {
   return value
     .split("\n")

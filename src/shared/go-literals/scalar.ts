@@ -17,6 +17,19 @@ interface ScalarTarget {
   enumDescriptor?: EnumDescriptor;
 }
 
+/**
+ * Resolves a VDL TypeRef to its underlying scalar target (primitive or enum).
+ *
+ * This is used to determine how a literal value should be rendered in Go.
+ * If the type resolves to a structural type (array, map, object), it returns undefined.
+ *
+ * Note: `datetime` is currently not supported as a scalar literal target in this plugin.
+ *
+ * @param typeRef - The VDL type reference to resolve.
+ * @param context - The generator context.
+ * @param position - The optional VDL source position.
+ * @returns A ScalarTarget object if it's a primitive or enum, otherwise undefined.
+ */
 export function resolveScalarTarget(
   typeRef: TypeRef,
   context: GeneratorContext,
@@ -39,6 +52,15 @@ export function resolveScalarTarget(
   return undefined;
 }
 
+/**
+ * Retrieves the EnumDescriptor for a given enum type reference.
+ *
+ * @param typeRef - The VDL type reference, which must be of kind "enum".
+ * @param context - The generator context.
+ * @param position - The optional VDL source position.
+ * @returns The resolved EnumDescriptor.
+ * @throws {GenerationError} If the enum name is missing or unknown.
+ */
 export function resolveDirectEnumDescriptor(
   typeRef: TypeRef,
   context: GeneratorContext,
@@ -57,6 +79,18 @@ export function resolveDirectEnumDescriptor(
   );
 }
 
+/**
+ * Renders a VDL literal as a Go enum constant expression.
+ *
+ * It validates that the literal value matches one of the declared members
+ * of the enum and returns the corresponding Go constant name.
+ *
+ * @param enumDescriptor - The descriptor for the enum type.
+ * @param literal - The VDL literal value.
+ * @param position - The optional VDL source position.
+ * @returns The Go name of the enum constant.
+ * @throws {GenerationError} If the literal does not match any enum member.
+ */
 export function renderDirectEnumExpression(
   enumDescriptor: EnumDescriptor,
   literal: LiteralValue,
@@ -74,6 +108,18 @@ export function renderDirectEnumExpression(
   return member.constName;
 }
 
+/**
+ * Renders a VDL literal as a raw Go scalar value (string, number, or bool).
+ *
+ * This function handles the low-level rendering of scalar types, including
+ * enum underlying values and primitive types.
+ *
+ * @param literal - The VDL literal value.
+ * @param target - The scalar target (primitive or enum) to render for.
+ * @param position - The optional VDL source position.
+ * @returns A Go literal string.
+ * @throws {GenerationError} If the literal kind doesn't match the target type.
+ */
 export function renderRawScalarLiteral(
   literal: LiteralValue,
   target: ScalarTarget,
@@ -119,6 +165,14 @@ export function renderRawScalarLiteral(
   }
 }
 
+/**
+ * Renders a VDL literal as the underlying scalar value for an enum.
+ *
+ * @param enumDescriptor - The enum descriptor.
+ * @param literal - The VDL literal value.
+ * @param position - The optional VDL source position.
+ * @returns A Go literal string (quoted string or number).
+ */
 function renderEnumScalarLiteral(
   enumDescriptor: EnumDescriptor,
   literal: LiteralValue,

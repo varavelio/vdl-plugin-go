@@ -1,4 +1,4 @@
-export { canEmitConst, renderConstInitializer } from "./const";
+export { renderConstInitializer } from "./const";
 export { renderMetadataValueExpression } from "./metadata";
 export {
   renderTypedValueExpression,

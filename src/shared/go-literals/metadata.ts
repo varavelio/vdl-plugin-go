@@ -1,5 +1,16 @@
 import type { LiteralValue } from "@varavel/vdl-plugin-sdk";
 
+/**
+ * Renders a VDL literal value as a generic Go expression (`any`) for metadata.
+ *
+ * Unlike `renderTypedValueExpression`, this function renders values into a generic
+ * Go representation (`[]any` for arrays, `map[string]any` for objects). This is used
+ * primarily in the `metadata.go` file to represent annotation values and other
+ * dynamic metadata that doesn't need strict typing at the Go level.
+ *
+ * @param value - The VDL literal value to render.
+ * @returns A Go expression string representing the value as `any`.
+ */
 export function renderMetadataValueExpression(
   value: LiteralValue | undefined,
 ): string {
@@ -30,6 +41,15 @@ export function renderMetadataValueExpression(
   }
 }
 
+/**
+ * Filters object literal entries to ensure only the last value for each key is kept.
+ *
+ * This implements "last-key-wins" semantics for metadata object literals,
+ * mirroring how fields are handled in objects.
+ *
+ * @param entries - The original list of object literal entries.
+ * @returns A list of unique entries where each key appears only once.
+ */
 function getLastObjectEntries(
   entries: NonNullable<LiteralValue["objectEntries"]>,
 ): NonNullable<LiteralValue["objectEntries"]> {
