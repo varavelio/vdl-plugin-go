@@ -32,10 +32,7 @@ export function generateTypesFile(
 
   for (const namedType of context.namedTypes) {
     renderNamedType(g, namedType, context);
-
-    if (namedType !== context.namedTypes[context.namedTypes.length - 1]) {
-      g.break();
-    }
+    g.break();
   }
 
   const body = g.toString();
