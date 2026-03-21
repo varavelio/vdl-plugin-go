@@ -3,6 +3,15 @@ import type { GeneratorContext } from "../../stages/model/types";
 import { expectValue, fail } from "../errors";
 import { toGoFieldName } from "../naming";
 
+/**
+ * Renders a VDL primitive name into its corresponding Go type name.
+ *
+ * It maps VDL types like `int` to `int64`, `float` to `float64`, and `datetime` to `time.Time`.
+ *
+ * @param primitiveName - The VDL primitive name.
+ * @param position - The optional VDL source position for error reporting.
+ * @returns The Go type name as a string.
+ */
 export function renderPrimitiveGoType(
   primitiveName: PrimitiveType | undefined,
   position?: Position,
@@ -26,6 +35,18 @@ export function renderPrimitiveGoType(
   }
 }
 
+/**
+ * Renders a VDL TypeRef into its Go type name representation.
+ *
+ * This function resolves named types, enums, arrays, maps, and inline objects
+ * to their generated Go names or built-in Go types.
+ *
+ * @param typeRef - The VDL type reference to render.
+ * @param context - The generator context containing type and enum name mappings.
+ * @param inlineTypeGoName - The generated Go name for an inline object type, if applicable.
+ * @param position - The optional VDL source position for error reporting.
+ * @returns The rendered Go type name.
+ */
 export function renderGoType(
   typeRef: TypeRef,
   context: GeneratorContext,
@@ -79,6 +100,19 @@ export function renderGoType(
   }
 }
 
+/**
+ * Renders a VDL TypeRef as an anonymous Go type expression (e.g., `struct { ... }`).
+ *
+ * This is primarily used for generating composite literals and metadata descriptors
+ * where a named type might not be appropriate or available. Inline objects are
+ * expanded into anonymous struct definitions unless a name is provided.
+ *
+ * @param typeRef - The VDL type to render.
+ * @param context - The generator context.
+ * @param position - The optional VDL source position.
+ * @param inlineTypeGoName - The Go name for an inline object, if it should be named.
+ * @returns A Go type expression string.
+ */
 export function renderAnonymousGoTypeExpression(
   typeRef: TypeRef,
   context: GeneratorContext,
@@ -123,6 +157,18 @@ export function renderAnonymousGoTypeExpression(
   }
 }
 
+/**
+ * Renders a VDL TypeRef as a formatted, multiline anonymous Go type expression.
+ *
+ * Similar to `renderAnonymousGoTypeExpression`, but produces human-readable, indented
+ * struct definitions suitable for inclusion in generated source code.
+ *
+ * @param typeRef - The VDL type to render.
+ * @param context - The generator context.
+ * @param position - The optional VDL source position.
+ * @param inlineTypeGoName - The Go name for an inline object, if it should be named.
+ * @returns A formatted Go type expression string.
+ */
 export function renderAnonymousGoTypeExpressionPretty(
   typeRef: TypeRef,
   context: GeneratorContext,
@@ -174,6 +220,12 @@ export function renderAnonymousGoTypeExpressionPretty(
   }
 }
 
+/**
+ * Indents each line of a multiline string with a single tab character.
+ *
+ * @param value - The multiline string to indent.
+ * @returns The indented string.
+ */
 function indentMultiline(value: string): string {
   return value
     .split("\n")
