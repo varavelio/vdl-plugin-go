@@ -89,6 +89,7 @@ When updating this document, do so with the context of the entire document in mi
 - **Respect Go symbol reservations**: `src/stages/model/symbols.ts` reserves helper and metadata symbols such as `Ptr`, `Val`, `Or`, `VDLAnnotation`, `VDLFieldMetadata`, and `VDLMetadata`. Any new generated symbol must participate in collision checking.
 - **Keep `src/index.ts` thin**: Business logic belongs in pure helpers, not the SDK export wrapper.
 - **Follow existing TypeScript style**: ESM imports, small focused modules, explicit helper functions, early returns, and discriminated-union switching over IR kinds.
+- **Documentation**: All types, functions and classes MUST be documented using JSDoc/TSDoc for JavaScript/Typescript and godoc for Golang. Documentation must follow industry best practices and be written idiomatically. Comments should NOT merely describe the implementation ("what" the code does line-by-line); instead, they MUST focus on the **purpose**, **context**, and **technical decisions** ("why" it exists and what it accomplishes) to ensure high value for future maintainers.
 - **Prefer SDK utilities over ad hoc helpers**: In plugin runtime code, reach for `@varavel/vdl-plugin-sdk/utils` namespaces such as `strings`, `arrays`, `objects`, `options`, `ir`, etc before introducing custom utility layers or third-party helpers.
 - **Use the right helper instead of duplicating logic**:
   - Naming changes belong in `src/shared/naming.ts`.
@@ -266,10 +267,3 @@ For behavior changes in generated output, run at least the focused unit tests pl
 - **Lint**: `npm run lint`
 - **Test**: `npm run test`
 - **CI parity**: `npm run ci`
-
-## Known Caveats
-
-- Maps are hardcoded to string keys.
-- Datetime literals are not currently supported as Go const values.
-- The generator trusts validated, flattened VDL IR for most semantic correctness checks and keeps validation focused on Go-specific output constraints and current SDK limitations.
-- `temp/` contains historical reference material but is not the current implementation source of truth.
