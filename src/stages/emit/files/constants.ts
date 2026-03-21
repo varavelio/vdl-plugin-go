@@ -63,12 +63,7 @@ export function generateConstantsFile(
       g.line(`var ${constant.goName} = ${valueExpression}`);
     }
 
-    if (
-      constant !==
-      context.constantDescriptors[context.constantDescriptors.length - 1]
-    ) {
-      g.break();
-    }
+    g.break();
   }
 
   const body = g.toString();
