@@ -34,14 +34,9 @@ export function generateEnumsFile(
   }
 
   const body = g.toString();
-
-  if (body.includes("json.")) {
-    imports.add("encoding/json");
-  }
-
-  if (body.includes("fmt.")) {
-    imports.add("fmt");
-  }
+  if (body.includes("time.")) imports.add("time");
+  if (body.includes("json.")) imports.add("encoding/json");
+  if (body.includes("fmt.")) imports.add("fmt");
 
   return {
     path: "enums.go",

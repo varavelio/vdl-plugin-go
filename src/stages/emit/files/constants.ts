@@ -8,11 +8,7 @@ import {
   renderConstInitializer,
   renderTypedValueExpressionPretty,
 } from "../../../shared/go-literals";
-import {
-  collectImportsForTypeRef,
-  isConstEligibleType,
-  renderGoType,
-} from "../../../shared/go-types";
+import { isConstEligibleType, renderGoType } from "../../../shared/go-types";
 import { renderGoFile } from "../../../shared/render/go-file";
 import { ImportSet } from "../../../shared/render/imports";
 import type { GeneratorContext } from "../../model/types";
@@ -42,11 +38,6 @@ export function generateConstantsFile(
   }
 
   const imports = new ImportSet();
-
-  for (const constant of context.constantDescriptors) {
-    collectImportsForTypeRef(constant.typeRef, imports);
-  }
-
   const g = newGenerator().withTabs();
 
   for (const constant of context.constantDescriptors) {
@@ -80,12 +71,17 @@ export function generateConstantsFile(
     }
   }
 
+  const body = g.toString();
+  if (body.includes("time.")) imports.add("time");
+  if (body.includes("json.")) imports.add("encoding/json");
+  if (body.includes("fmt.")) imports.add("fmt");
+
   return {
     path: "constants.go",
     content: renderGoFile({
       packageName: context.options.packageName,
       imports,
-      body: g.toString(),
+      body,
     }),
   };
 }

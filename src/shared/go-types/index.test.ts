@@ -1,9 +1,7 @@
 import { irb } from "@varavel/vdl-plugin-sdk/testing";
 import { describe, expect, it } from "vitest";
 import { createGeneratorContext } from "../../stages/model/build-context";
-import { ImportSet } from "../render/imports";
 import {
-  collectImportsForTypeRef,
   isConstEligibleType,
   renderAnonymousGoTypeExpression,
   renderGoType,
@@ -93,23 +91,6 @@ describe("type-ref", () => {
         "Location",
       ),
     ).toBe("Location");
-  });
-
-  it("collects imports for nested datetime references", () => {
-    const imports = new ImportSet();
-
-    collectImportsForTypeRef(
-      irb.objectType([
-        irb.field("createdAt", irb.primitiveType("datetime")),
-        irb.field(
-          "history",
-          irb.arrayType(irb.mapType(irb.primitiveType("datetime")), 2),
-        ),
-      ]),
-      imports,
-    );
-
-    expect(imports.toArray()).toEqual(["time"]);
   });
 
   it("knows which types can be emitted as Go const declarations", () => {
