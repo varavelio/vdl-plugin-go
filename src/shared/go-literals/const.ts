@@ -1,21 +1,26 @@
 import type { LiteralValue, Position, TypeRef } from "@varavel/vdl-plugin-sdk";
 import type { GeneratorContext } from "../../stages/model/types";
 import { expectValue, fail } from "../errors";
-import { isConstEligibleType } from "../go-types";
 import {
   renderDirectEnumExpression,
   renderRawScalarLiteral,
   resolveScalarTarget,
 } from "./scalar";
 
-export function canEmitConst(
-  typeRef: TypeRef,
-  context: GeneratorContext,
-  position?: Position,
-): boolean {
-  return isConstEligibleType(typeRef, context, position);
-}
-
+/**
+ * Renders a VDL literal as a Go constant initializer value.
+ *
+ * This function handles both primitive values and enum constants. It validates
+ * that the type is indeed eligible for a constant and resolves the appropriate
+ * Go expression for the initializer.
+ *
+ * @param typeRef - The VDL type of the constant.
+ * @param literal - The VDL literal value.
+ * @param context - The generator context.
+ * @param position - The optional VDL source position.
+ * @returns A Go expression string suitable for a `const` declaration.
+ * @throws {GenerationError} If the type is not eligible for a constant.
+ */
 export function renderConstInitializer(
   typeRef: TypeRef,
   literal: LiteralValue,

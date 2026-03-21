@@ -3,7 +3,6 @@ import { describe, expect, it } from "vitest";
 import { createGeneratorContext } from "../../stages/model/build-context";
 import { GenerationError } from "../errors";
 import {
-  canEmitConst,
   renderConstInitializer,
   renderMetadataValueExpression,
   renderTypedValueExpression,
@@ -27,8 +26,6 @@ describe("literal-renderer", () => {
         context,
       ),
     ).toBe("OrderStatusPending");
-    expect(canEmitConst(irb.namedType("UserID"), context)).toBe(true);
-    expect(canEmitConst(irb.namedType("Product"), context)).toBe(false);
 
     expect(
       renderTypedValueExpression(
