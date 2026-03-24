@@ -43,12 +43,11 @@ When updating this document, do so with the context of the entire document in mi
   - `src/index.ts`: SDK-facing plugin export. Keep it thin.
   - `src/generate.ts`: pure orchestration that resolves options, builds context, emits files, and converts thrown failures into plugin errors.
 - **Stage Layout**:
-- `src/stages/options/resolve.ts`: parses plugin options. Current options are `package`, `genConsts`, `genMeta`, `strict`, and `genPointerUtils`.
+- `src/stages/options/resolve.ts`: parses plugin options. Current options are `package`, `genConsts`, `strict`, and `genPointerUtils`.
   - `src/stages/model/build-context.ts`: builds the shared generation context and aggregates stage errors.
   - `src/stages/model/*.ts`: indexes schema definitions, derives Go names, discovers inline object types recursively, builds descriptors, and validates Go-specific symbol collisions.
   - `src/stages/emit/generate-files.ts`: emits files in fixed order.
-- `src/stages/emit/files/*.ts`: file-level Go emitters for `enums.go`, `types.go`, `constants.go`, `metadata.go`, and `pointers.go`.
-- Metadata emission is split into focused helpers: runtime type/method definitions (`metadata-runtime.ts`), type-shape literals (`metadata-literals.ts`), and annotation literal formatting (`metadata-annotations.ts`).
+- `src/stages/emit/files/*.ts`: file-level Go emitters for `enums.go`, `types.go`, `constants.go`, and `pointers.go`.
 - **Shared Modules**:
   - `src/shared/errors.ts`: typed generation errors, assertions, and conversion to `PluginOutputError`.
   - `src/shared/naming.ts`: VDL-to-Go naming rules for types, fields, enum members, constants, inline types, and package validation, built on SDK string utilities.
@@ -56,7 +55,7 @@ When updating this document, do so with the context of the entire document in mi
   - `src/shared/object-fields.ts`: enforces last-field-wins semantics for duplicate object fields in resolved IR.
   - `src/shared/literal-key.ts`: stable literal comparison keys used mainly for enum value matching.
   - `src/shared/go-types/*.ts`: Go type rendering, anonymous type expressions, import requirements, named-type resolution, and const eligibility.
-  - `src/shared/go-literals/*.ts`: Go literal rendering for consts, typed values, scalars, and metadata.
+  - `src/shared/go-literals/*.ts`: Go literal rendering for consts, typed values, and scalars.
   - `src/shared/render/*.ts`: package/import wrappers for emitted Go files.
 - **Tests in `src/`**:
   - Tests are colocated beside the modules they specify.
@@ -86,7 +85,7 @@ When updating this document, do so with the context of the entire document in mi
 - **Do not bypass context building**: All file emitters depend on the normalized `GeneratorContext` from `src/stages/model/build-context.ts`. New generation features should usually be modeled there first, not computed ad hoc inside emitters.
 - **Use errors as data**: Validation failures should become `PluginOutputError` objects with `position` when available. Throw only when it simplifies internal control flow, then map through `toPluginOutputError`.
 - **Preserve determinism**: File order, import sorting, symbol naming, enum member resolution, and object field behavior are intentionally stable and covered by tests.
-- **Respect Go symbol reservations**: `src/stages/model/symbols.ts` reserves helper and metadata symbols such as `Ptr`, `Val`, `Or`, `VDLAnnotation`, `VDLFieldMetadata`, and `VDLMetadata`. Any new generated symbol must participate in collision checking.
+- **Respect Go symbol reservations**: `src/stages/model/symbols.ts` reserves helper symbols such as `Ptr`, `Val`, and `Or`. Any new generated symbol must participate in collision checking.
 - **Keep `src/index.ts` thin**: Business logic belongs in pure helpers, not the SDK export wrapper.
 - **Follow existing TypeScript style**: ESM imports, small focused modules, explicit helper functions, early returns, and discriminated-union switching over IR kinds.
 - **Documentation**: All types, functions and classes MUST be documented using JSDoc/TSDoc for JavaScript/Typescript and godoc for Golang. Documentation must follow industry best practices and be written idiomatically. Comments should NOT merely describe the implementation ("what" the code does line-by-line); instead, they MUST focus on the **purpose**, **context**, and **technical decisions** ("why" it exists and what it accomplishes) to ensure high value for future maintainers.
@@ -107,7 +106,6 @@ When updating this document, do so with the context of the entire document in mi
    - `enums.go` (optional)
    - `types.go` (optional)
    - `constants.go` (optional)
-   - `metadata.go` (optional)
    - `pointers.go` (optional)
 5. If any phase fails, the plugin returns `errors` instead of partial success.
 
@@ -142,7 +140,7 @@ This order is intentional and covered by tests. Preserve it unless the test suit
 - Arrays render as repeated `[]` dimensions.
 - Maps currently render only as `map[string]...`.
 - Optional object fields render as pointers.
-- Inline objects become named Go structs in generated output; anonymous struct expressions are mainly used for composite literals and constant metadata type strings.
+- Inline objects become named Go structs in generated output; anonymous struct expressions are mainly used for composite literals.
 
 ### Strict JSON Rules
 
@@ -181,18 +179,6 @@ This order is intentional and covered by tests. Preserve it unless the test suit
 - Enum JSON handling rejects invalid values.
 - Top-level constants whose declared type is a direct enum currently emit as untyped underlying scalar constants; tests lock this behavior in.
 
-### Metadata Rules
-
-- `metadata.go` is emitted only when `genMeta` is enabled (default `true`).
-- `VDLMetadata` exposes generated metadata for types, enums, and constants.
-- Metadata is intentionally compact: avoid dumping raw IR, positions, docs, or fully duplicated constant values into the generated Go runtime.
-- Types, constants, and fields now describe shape through a recursive `VDLTypeRef` tree (`kind`, named target, array dims, element, and nested object fields) so annotations remain reachable inside arrays, maps, and inline objects without bloating the output.
-- Annotation metadata preserves declaration order in `List` and latest value in `ByName`.
-- Schema lookup helpers are `GetType`, `GetEnum`, and `GetConstant`.
-- Nested metadata lookup helpers are `GetField` on both `VDLTypeMetadata` and `VDLTypeRef`, plus `GetMember` on `VDLEnumMetadata`.
-- Enum member metadata keeps resolved values, but constant metadata intentionally omits duplicated runtime values.
-- Missing metadata lookups must return zero values plus `false`, not panic.
-
 ### Pointer Helper Rules
 
 - `pointers.go` is emitted unless `genPointerUtils` is disabled.
@@ -214,7 +200,6 @@ This order is intentional and covered by tests. Preserve it unless the test suit
 - Recursive inline object discovery.
 - Datetime import propagation.
 - `genConsts` option behavior.
-- `genMeta` option behavior.
 - `strict` option behavior.
 - `genPointerUtils` option behavior.
 - Runtime helper name collision reporting.
@@ -222,7 +207,6 @@ This order is intentional and covered by tests. Preserve it unless the test suit
 - Optional fields use pointers and `omitempty`.
 - Enum marshal/unmarshal validation.
 - Object strict JSON presence checks and enum strict JSON behavior.
-- Metadata helper behavior and annotation handling.
 
 ### Test Conventions
 
