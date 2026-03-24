@@ -1,3 +1,0 @@
-type Payload {
-  name string
-}
