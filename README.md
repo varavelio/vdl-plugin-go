@@ -5,7 +5,6 @@ A VDL code generation plugin that transforms a VDL schema into Go source files r
 ## Overview
 
 - Converts VDL types, enums, and constants into idiomatic Go code.
-- Optionally emits schema metadata (`metadata.go`) for runtime introspection.
 - Optionally generates strict JSON validation logic (`strict`) for objects and enums.
 
 At a high level, the pipeline is:
@@ -43,7 +42,6 @@ const config = {
 | ----------------- | --------- | -------- | ------------------------------------------------------------------------------------------------ | ------------------------- |
 | `package`         | `string`  | `"vdl"`  | Generated Go package name. Must be a lowercase Go identifier and not a Go keyword.               | `package "gen"`           |
 | `genConsts`       | `boolean` | `"true"` | Controls emission of `constants.go`. If `false`, top-level constants are not emitted.            | `genConsts "false"`       |
-| `genMeta`         | `boolean` | `"true"` | Controls emission of `metadata.go` with schema metadata.                                         | `genMeta "false"`         |
 | `strict`          | `boolean` | `"true"` | Enables strict JSON validation where applicable (objects and enums, including relevant aliases). | `strict "false"`          |
 | `genPointerUtils` | `boolean` | `"true"` | Controls emission of `pointers.go` with generic helper functions `Ptr`, `Val`, and `Or`.         | `genPointerUtils "false"` |
 
@@ -77,15 +75,13 @@ The generator emits files in this fixed orchestration order:
 1. `enums.go`
 2. `types.go`
 3. `constants.go`
-4. `metadata.go`
-5. `pointers.go`
+4. `pointers.go`
 
 Each file is emitted only when applicable:
 
 - `enums.go`: when enums exist in the schema.
 - `types.go`: when types exist in the schema.
 - `constants.go`: when constants exist in the schema and `genConsts = true`.
-- `metadata.go`: when `genMeta = true`.
 - `pointers.go`: when `genPointerUtils = true`.
 
 Typical file contents:
@@ -94,7 +90,6 @@ Typical file contents:
 - `enums.go`: enum type, member constants, list, `String()`, `IsValid()`, and strict JSON helpers when `strict = true`.
 - `constants.go`: `const` for eligible values and `var` for composite values that cannot be represented as Go constants.
 - `pointers.go`: generic pointer helper functions `Ptr`, `Val`, and `Or`.
-- `metadata.go`: `VDLMetadata` and supporting metadata types for schema/type/enum/constant introspection and annotations.
 
 ## Local Development
 
