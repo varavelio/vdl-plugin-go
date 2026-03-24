@@ -3,7 +3,6 @@ import { arrays } from "@varavel/vdl-plugin-sdk/utils";
 import type { GeneratorContext } from "../model/types";
 import { generateConstantsFile } from "./files/constants";
 import { generateEnumsFile } from "./files/enums";
-import { generateMetadataFile } from "./files/metadata";
 import { generatePointersFile } from "./files/pointers";
 import { generateTypesFile } from "./files/types";
 
@@ -16,7 +15,7 @@ import { generateTypesFile } from "./files/types";
  * are stable.
  *
  * Files are only generated if the corresponding schema definitions exist or if
- * the generator options (like `genMeta` or `genPointerUtils`) enable them.
+ * the generator options (like `genPointerUtils`) enable them.
  *
  * @param context - The prepared generator context containing all descriptors and options.
  * @returns An array of generated Go files for the plugin output.
@@ -26,7 +25,6 @@ export function generateFiles(context: GeneratorContext): PluginOutputFile[] {
     generateEnumsFile(context),
     generateTypesFile(context),
     generateConstantsFile(context),
-    generateMetadataFile(context),
     generatePointersFile(context),
   ]);
 }
