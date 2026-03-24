@@ -1,46 +1,45 @@
+import { newGenerator } from "@varavel/gen";
 import { irb } from "@varavel/vdl-plugin-sdk/testing";
 import { describe, expect, it } from "vitest";
-import { buildDocCommentLines, getDeprecatedMessage } from "./comments";
+import { writeDocComment } from "./comments";
 
 describe("comments", () => {
-  it("extracts a deprecated message from a string annotation", () => {
+  it("renders docs, fallback text, and deprecated comments together", () => {
     expect(
-      getDeprecatedMessage([
-        irb.annotation(
-          "deprecated",
-          irb.stringLiteral("Use NewThing instead."),
-        ),
-      ]),
-    ).toBe("Use NewThing instead.");
-  });
-
-  it("falls back to the generic deprecated message", () => {
-    expect(getDeprecatedMessage([irb.annotation("deprecated")])).toBe(
-      "This symbol is deprecated and should not be used in new code.",
-    );
-    expect(
-      getDeprecatedMessage([irb.annotation("deprecated", irb.intLiteral(42))]),
-    ).toBe("This symbol is deprecated and should not be used in new code.");
-  });
-
-  it("returns undefined when no deprecated annotation exists", () => {
-    expect(getDeprecatedMessage([irb.annotation("tag")])).toBeUndefined();
-  });
-
-  it("combines docs, fallback text, and deprecated comments", () => {
-    expect(
-      buildDocCommentLines({
+      renderComment({
         doc: "Line one\nLine two",
         annotations: [
           irb.annotation("deprecated", irb.stringLiteral("Use X.")),
         ],
       }),
-    ).toEqual(["Line one", "Line two", "", "Deprecated: Use X."]);
+    ).toBe("// Line one\n// Line two\n//\n// Deprecated: Use X.");
+
+    expect(renderComment({ fallback: "Fallback text" })).toBe(
+      "// Fallback text",
+    );
+  });
+
+  it("uses the generic deprecation message when needed", () => {
+    expect(renderComment({ annotations: [irb.annotation("deprecated")] })).toBe(
+      "// Deprecated: This symbol is deprecated and should not be used in new code.",
+    );
 
     expect(
-      buildDocCommentLines({
-        fallback: "Fallback text",
+      renderComment({
+        annotations: [irb.annotation("deprecated", irb.intLiteral(42))],
       }),
-    ).toEqual(["Fallback text"]);
+    ).toBe(
+      "// Deprecated: This symbol is deprecated and should not be used in new code.",
+    );
+  });
+
+  it("writes nothing when no doc or deprecation exists", () => {
+    expect(renderComment({ annotations: [irb.annotation("tag")] })).toBe("");
   });
 });
+
+function renderComment(options: Parameters<typeof writeDocComment>[1]): string {
+  const g = newGenerator().withTabs();
+  writeDocComment(g, options);
+  return g.toString().trim();
+}
