@@ -5,8 +5,8 @@ import {
   renderAnonymousGoTypeExpression,
   renderAnonymousGoTypeExpressionPretty,
   renderGoType,
-  resolveNonTypeRef,
-} from "../go-types";
+} from "../go-types/render";
+import { resolveNonTypeRef } from "../go-types/resolve";
 import { toGoFieldName, toInlineTypeName } from "../naming";
 import {
   renderDirectEnumExpression,

@@ -2,7 +2,8 @@ import { irb } from "@varavel/vdl-plugin-sdk/testing";
 import { describe, expect, it } from "vitest";
 import { createGeneratorContext } from "../../stages/model/build-context";
 import { GenerationError } from "../errors";
-import { renderConstInitializer, renderTypedValueExpression } from "./index";
+import { renderConstInitializer } from "./const";
+import { renderTypedValueExpression } from "./render";
 
 describe("literal-renderer", () => {
   it("renders primitive, enum, alias, map, array, and object values", () => {
@@ -83,6 +84,7 @@ function buildContext() {
         ]),
       ],
       types: [
+        irb.typeDef("$ConstapiVersion", irb.primitiveType("string")),
         irb.typeDef("UserID", irb.primitiveType("string")),
         irb.typeDef("UserIDs", irb.arrayType(irb.namedType("UserID"))),
         irb.typeDef("Labels", irb.mapType(irb.primitiveType("string"))),

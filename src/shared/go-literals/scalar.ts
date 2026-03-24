@@ -10,7 +10,7 @@ import type {
   GeneratorContext,
 } from "../../stages/model/types";
 import { expectValue, fail } from "../errors";
-import { resolveNonTypeRef } from "../go-types";
+import { resolveNonTypeRef } from "../go-types/resolve";
 
 interface ScalarTarget {
   primitiveName?: PrimitiveType;
