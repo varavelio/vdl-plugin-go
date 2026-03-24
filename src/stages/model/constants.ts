@@ -2,7 +2,6 @@ import type {
   Field,
   LiteralValue,
   PluginOutputError,
-  Position,
   TypeRef,
 } from "@varavel/vdl-plugin-sdk";
 import { toGoConstName } from "../../shared/naming";
@@ -12,10 +11,9 @@ import type { ConstantDescriptor, GeneratorContext } from "./types";
 /**
  * Populates the context with descriptors for all constant definitions in the schema.
  *
- * This function resolves the type of each constant, either by looking up
- * synthetic "inferred" type definitions from the VDL IR or by performing
- * manual type inference from the literal value itself. It also ensures that
- * generated constant names are unique and tracked in the symbol table.
+ * This function resolves each constant type from the best source available:
+ * synthetic `$Const...` definitions when present, otherwise a lightweight type
+ * inference pass over the already-valid literal shape in the VDL IR.
  *
  * @param context - The generator context to populate.
  * @param packageScopeSymbols - The symbol table for collision detection.
@@ -26,38 +24,20 @@ export function populateConstantDescriptors(
   packageScopeSymbols: PackageScopeSymbolTable,
 ): PluginOutputError[] {
   const errors: PluginOutputError[] = [];
-  const inferredTypeDefs = context.schema.types.filter(
-    (typeDef) => typeDef.name.startsWith("$Const") && typeDef.name.length > 6,
-  );
-  const inferredTypeByConstName = new Map(
-    inferredTypeDefs.map((typeDef) => [typeDef.name.slice(6), typeDef.typeRef]),
+  const typeByConstantName = new Map<string, TypeRef>(
+    context.schema.types
+      .filter((typeDef) => typeDef.name.startsWith("$Const"))
+      .map((typeDef) => [typeDef.name.slice("$Const".length), typeDef.typeRef]),
   );
 
   for (const constantDef of context.schema.constants) {
-    const inferredType = inferredTypeByConstName.get(constantDef.name);
-    let typeRef = inferredType;
-    let inferenceError: string | undefined;
+    const inferred =
+      typeByConstantName.get(constantDef.name) ??
+      inferTypeRefFromLiteral(constantDef.value);
 
-    if (!typeRef) {
-      const inference = inferTypeRefFromLiteral(
-        constantDef.value,
-        constantDef.position,
-      );
-      typeRef = inference.typeRef;
-      inferenceError = inference.error;
-    }
-
-    if (inferenceError) {
+    if (!inferred) {
       errors.push({
-        message: `Could not infer type for constant ${JSON.stringify(constantDef.name)}: ${inferenceError}`,
-        position: constantDef.position,
-      });
-      continue;
-    }
-
-    if (!typeRef) {
-      errors.push({
-        message: `Could not infer type for constant ${JSON.stringify(constantDef.name)}.`,
+        message: `Could not infer a Go-compatible type for constant ${JSON.stringify(constantDef.name)}.`,
         position: constantDef.position,
       });
       continue;
@@ -66,7 +46,7 @@ export function populateConstantDescriptors(
     const descriptor: ConstantDescriptor = {
       def: constantDef,
       goName: toGoConstName(constantDef.name),
-      typeRef,
+      typeRef: inferred,
     };
 
     context.constantDescriptors.push(descriptor);
@@ -86,153 +66,103 @@ export function populateConstantDescriptors(
 }
 
 /**
- * Infer the VDL TypeRef from a literal value.
+ * Infers a TypeRef directly from a literal shape.
  *
- * This is used for constants that don't have an explicit type declared in VDL.
- * It recursively determines the type for primitives, arrays, and objects.
+ * The VDL CLI currently does not always materialize `$Const...` helper types, so
+ * the generator falls back to the literal itself for constants. The IR is already
+ * validated, which lets this stay small and focused on shape reconstruction.
+ *
+ * @param literal - The literal value attached to the constant.
+ * @returns The inferred type, or `undefined` when the literal is too ambiguous.
  */
-function inferTypeRefFromLiteral(
-  literal: LiteralValue,
-  _position: Position,
-): { typeRef?: TypeRef; error?: string } {
+function inferTypeRefFromLiteral(literal: LiteralValue): TypeRef | undefined {
   switch (literal.kind) {
     case "string":
-      return { typeRef: { kind: "primitive", primitiveName: "string" } };
+      return { kind: "primitive", primitiveName: "string" };
     case "int":
-      return { typeRef: { kind: "primitive", primitiveName: "int" } };
+      return { kind: "primitive", primitiveName: "int" };
     case "float":
-      return { typeRef: { kind: "primitive", primitiveName: "float" } };
+      return { kind: "primitive", primitiveName: "float" };
     case "bool":
-      return { typeRef: { kind: "primitive", primitiveName: "bool" } };
+      return { kind: "primitive", primitiveName: "bool" };
     case "array": {
       const items = literal.arrayItems ?? [];
-
-      if (items.length === 0) {
-        return {
-          error:
-            "array literals cannot be empty when no declared constant type is available",
-        };
-      }
-
       const firstItem = items[0];
 
       if (!firstItem) {
-        return { error: "encountered an undefined array item literal" };
+        return undefined;
       }
 
-      const elementInference = inferTypeRefFromLiteral(
-        firstItem,
-        firstItem.position,
-      );
-      const elementType = elementInference.typeRef;
-      const elementError = elementInference.error;
+      const itemType = inferTypeRefFromLiteral(firstItem);
 
-      if (elementError) {
-        return { error: elementError };
+      if (!itemType) {
+        return undefined;
       }
 
-      if (!elementType) {
-        return { error: "could not infer array element type" };
-      }
+      for (const item of items.slice(1)) {
+        const candidate = inferTypeRefFromLiteral(item);
 
-      for (let index = 1; index < items.length; index += 1) {
-        const item = items[index];
-
-        if (!item) {
-          return { error: "encountered an undefined array item literal" };
-        }
-
-        const candidateInference = inferTypeRefFromLiteral(item, item.position);
-        const candidate = candidateInference.typeRef;
-        const candidateError = candidateInference.error;
-
-        if (candidateError) {
-          return { error: candidateError };
-        }
-
-        if (!candidate) {
-          return { error: "could not infer array item type" };
-        }
-
-        if (!areTypeRefsEquivalent(elementType, candidate)) {
-          return {
-            error: `array literal item at index ${String(index)} does not match inferred element type`,
-          };
+        if (!candidate || !typeRefsMatch(itemType, candidate)) {
+          return undefined;
         }
       }
 
-      return {
-        typeRef: { kind: "array", arrayDims: 1, arrayType: elementType },
-      };
+      return { kind: "array", arrayDims: 1, arrayType: itemType };
     }
     case "object": {
-      const entries = literal.objectEntries ?? [];
-      const fields: Field[] = [];
+      const objectFields: Field[] = [];
 
-      for (const entry of getEffectiveObjectEntries(entries)) {
-        const fieldInference = inferTypeRefFromLiteral(
-          entry.value,
-          entry.position,
-        );
-        const fieldType = fieldInference.typeRef;
-        const fieldError = fieldInference.error;
-
-        if (fieldError) {
-          return { error: fieldError };
-        }
+      for (const entry of getEffectiveObjectEntries(
+        literal.objectEntries ?? [],
+      )) {
+        const fieldType = inferTypeRefFromLiteral(entry.value);
 
         if (!fieldType) {
-          return {
-            error: `could not infer object field type for ${JSON.stringify(entry.key)}`,
-          };
+          return undefined;
         }
 
-        fields.push({
-          position: entry.position,
+        objectFields.push({
+          annotations: [],
           name: entry.key,
           optional: false,
-          annotations: [],
+          position: entry.position,
           typeRef: fieldType,
         });
       }
 
-      return { typeRef: { kind: "object", objectFields: fields } };
+      return { kind: "object", objectFields };
     }
     default:
-      return { error: "unsupported literal kind" };
+      return undefined;
   }
 }
 
 /**
- * Filters object literal entries to implement "last-key-wins" semantics.
+ * Applies the generator's last-entry-wins object semantics to literal entries.
+ *
+ * @param literal - The object literal to normalize.
+ * @returns The effective entries after spread expansion and duplicate resolution.
  */
 function getEffectiveObjectEntries(
   entries: NonNullable<LiteralValue["objectEntries"]>,
 ): NonNullable<LiteralValue["objectEntries"]> {
-  const fields = entries.map((entry) => ({
-    position: entry.position,
-    name: entry.key,
-    optional: false,
-    annotations: [],
-    typeRef: { kind: "primitive", primitiveName: "string" } as TypeRef,
-  }));
-  const effectiveFields = fields ?? [];
-  const indexByName = new Map(
-    entries.map((entry, index) => [entry.key, index]),
-  );
+  const entryByKey = new Map<string, (typeof entries)[number]>();
 
-  return effectiveFields.map(
-    (field) =>
-      entries[
-        indexByName.get(field.name) as number
-      ] as (typeof entries)[number],
-  );
+  for (const entry of entries) {
+    entryByKey.set(entry.key, entry);
+  }
+
+  return [...entryByKey.values()];
 }
 
 /**
- * Checks if two TypeRef structures are semantically equivalent.
+ * Reports whether two inferred TypeRefs describe the same shape.
+ *
+ * @param left - The first inferred type.
+ * @param right - The second inferred type.
+ * @returns `true` when both types can share a single Go declaration.
  */
-function areTypeRefsEquivalent(left: TypeRef, right: TypeRef): boolean {
+function typeRefsMatch(left: TypeRef, right: TypeRef): boolean {
   if (left.kind !== right.kind) {
     return false;
   }
@@ -247,18 +177,20 @@ function areTypeRefsEquivalent(left: TypeRef, right: TypeRef): boolean {
         left.enumName === right.enumName && left.enumType === right.enumType
       );
     case "array":
+      if (!left.arrayType || !right.arrayType) {
+        return false;
+      }
+
       return (
         (left.arrayDims ?? 1) === (right.arrayDims ?? 1) &&
-        areTypeRefsEquivalent(
-          left.arrayType as TypeRef,
-          right.arrayType as TypeRef,
-        )
+        typeRefsMatch(left.arrayType, right.arrayType)
       );
     case "map":
-      return areTypeRefsEquivalent(
-        left.mapType as TypeRef,
-        right.mapType as TypeRef,
-      );
+      if (!left.mapType || !right.mapType) {
+        return false;
+      }
+
+      return typeRefsMatch(left.mapType, right.mapType);
     case "object": {
       const leftFields = left.objectFields ?? [];
       const rightFields = right.objectFields ?? [];
@@ -267,20 +199,16 @@ function areTypeRefsEquivalent(left: TypeRef, right: TypeRef): boolean {
         return false;
       }
 
-      for (let index = 0; index < leftFields.length; index += 1) {
-        const leftField = leftFields[index] as Field;
-        const rightField = rightFields[index] as Field;
+      return leftFields.every((field, index) => {
+        const otherField = rightFields[index];
 
-        if (
-          leftField.name !== rightField.name ||
-          leftField.optional !== rightField.optional ||
-          !areTypeRefsEquivalent(leftField.typeRef, rightField.typeRef)
-        ) {
-          return false;
-        }
-      }
-
-      return true;
+        return (
+          otherField !== undefined &&
+          field.name === otherField.name &&
+          field.optional === otherField.optional &&
+          typeRefsMatch(field.typeRef, otherField.typeRef)
+        );
+      });
     }
     default:
       return false;

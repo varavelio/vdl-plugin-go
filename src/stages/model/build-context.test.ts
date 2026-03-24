@@ -99,6 +99,26 @@ describe("build-context", () => {
       "collides with another generated type",
     );
   });
+
+  it("infers constant types from literals when helper types are absent", () => {
+    const result = createGeneratorContext({
+      schema: irb.schema({
+        constants: [irb.constantDef("apiVersion", irb.stringLiteral("1.0.0"))],
+      }),
+      generatorOptions: {
+        packageName: "vdl",
+        genConsts: true,
+        strict: true,
+        genPointerUtils: true,
+      },
+    });
+
+    expect(result.errors).toEqual([]);
+    expect(result.context?.constantDescriptors[0]?.typeRef).toEqual({
+      kind: "primitive",
+      primitiveName: "string",
+    });
+  });
 });
 
 function expectContext<T>(value: T | undefined): T {

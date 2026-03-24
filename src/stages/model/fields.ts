@@ -1,5 +1,5 @@
 import type { Field, PluginOutputError } from "@varavel/vdl-plugin-sdk";
-import { renderGoType } from "../../shared/go-types";
+import { renderGoType } from "../../shared/go-types/render";
 import { toGoFieldName, toInlineTypeName } from "../../shared/naming";
 import type { FieldDescriptor, GeneratorContext } from "./types";
 

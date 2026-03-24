@@ -26,12 +26,13 @@ export function populateNamedTypes(
   packageScopeSymbols: PackageScopeSymbolTable,
 ): PluginOutputError[] {
   const errors: PluginOutputError[] = [];
+  const seenGoNames = new Set<string>();
 
   for (const typeDef of context.schema.types) {
     appendNamedTypeDescriptor(
       context,
       buildTopLevelTypeDescriptor(typeDef, context, errors),
-      context.namedTypesByGoName,
+      seenGoNames,
       packageScopeSymbols,
       errors,
     );
@@ -100,7 +101,6 @@ function buildInlineTypeDescriptor(options: {
     vdlName: options.fieldName,
     path: options.path,
     inline: true,
-    parentGoName: options.parentGoName,
     annotations: [],
     position: options.fieldPosition,
     kind: "object",
@@ -117,11 +117,11 @@ function buildInlineTypeDescriptor(options: {
 function appendNamedTypeDescriptor(
   context: GeneratorContext,
   descriptor: NamedTypeDescriptor,
-  namedTypesByGoName: Map<string, NamedTypeDescriptor>,
+  seenGoNames: Set<string>,
   packageScopeSymbols: PackageScopeSymbolTable,
   errors: PluginOutputError[],
 ): void {
-  if (namedTypesByGoName.has(descriptor.goName)) {
+  if (seenGoNames.has(descriptor.goName)) {
     errors.push({
       message: `Generated Go type name ${JSON.stringify(descriptor.goName)} collides with another generated type.`,
       position: descriptor.position,
@@ -129,7 +129,7 @@ function appendNamedTypeDescriptor(
     return;
   }
 
-  namedTypesByGoName.set(descriptor.goName, descriptor);
+  seenGoNames.add(descriptor.goName);
   context.namedTypes.push(descriptor);
 
   const symbolError = packageScopeSymbols.reserve(
@@ -151,7 +151,7 @@ function appendNamedTypeDescriptor(
       parentPath: descriptor.path,
       field: fieldDescriptor.def,
       typeRef: fieldDescriptor.def.typeRef,
-      namedTypesByGoName,
+      seenGoNames,
       packageScopeSymbols,
       errors,
     });
@@ -169,7 +169,7 @@ function appendInlineTypesFromTypeRef(options: {
   parentPath: string;
   field: Field;
   typeRef: TypeRef;
-  namedTypesByGoName: Map<string, NamedTypeDescriptor>;
+  seenGoNames: Set<string>;
   packageScopeSymbols: PackageScopeSymbolTable;
   errors: PluginOutputError[];
 }): void {
@@ -204,7 +204,7 @@ function appendInlineTypesFromTypeRef(options: {
       appendNamedTypeDescriptor(
         options.context,
         descriptor,
-        options.namedTypesByGoName,
+        options.seenGoNames,
         options.packageScopeSymbols,
         options.errors,
       );
