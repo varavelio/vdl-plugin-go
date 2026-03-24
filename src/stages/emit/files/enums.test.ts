@@ -10,7 +10,6 @@ describe("generateEnumsFile", () => {
       generatorOptions: {
         packageName: "vdl",
         genConsts: true,
-        genMeta: true,
         genPointerUtils: true,
         strict: true,
       },
@@ -54,7 +53,6 @@ describe("generateEnumsFile", () => {
       generatorOptions: {
         packageName: "vdl",
         genConsts: true,
-        genMeta: true,
         strict: true,
         genPointerUtils: true,
       },
@@ -92,7 +90,6 @@ describe("generateEnumsFile", () => {
       generatorOptions: {
         packageName: "vdl",
         genConsts: true,
-        genMeta: true,
         strict: false,
         genPointerUtils: true,
       },
