@@ -103,8 +103,8 @@ export function renderGoType(
 /**
  * Renders a VDL TypeRef as an anonymous Go type expression (e.g., `struct { ... }`).
  *
- * This is primarily used for generating composite literals and metadata descriptors
- * where a named type might not be appropriate or available. Inline objects are
+ * This is primarily used for generating composite literals where a named type
+ * might not be appropriate or available. Inline objects are
  * expanded into anonymous struct definitions unless a name is provided.
  *
  * @param typeRef - The VDL type to render.

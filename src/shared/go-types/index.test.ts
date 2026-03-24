@@ -21,7 +21,6 @@ describe("type-ref", () => {
       generatorOptions: {
         packageName: "vdl",
         genConsts: true,
-        genMeta: true,
         strict: true,
         genPointerUtils: true,
       },
@@ -63,7 +62,6 @@ describe("type-ref", () => {
       generatorOptions: {
         packageName: "vdl",
         genConsts: true,
-        genMeta: true,
         strict: true,
         genPointerUtils: true,
       },
@@ -109,7 +107,6 @@ describe("type-ref", () => {
       generatorOptions: {
         packageName: "vdl",
         genConsts: true,
-        genMeta: true,
         strict: true,
         genPointerUtils: true,
       },
