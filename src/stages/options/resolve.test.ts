@@ -10,7 +10,6 @@ describe("options", () => {
     expect(result.options).toEqual({
       packageName: "vdl",
       genConsts: true,
-      genMeta: true,
       strict: true,
       genPointerUtils: true,
     });
@@ -22,7 +21,6 @@ describe("options", () => {
         options: {
           package: "catalog",
           genConsts: "off",
-          genMeta: "off",
           strict: "false",
           genPointerUtils: "false",
         },
@@ -33,7 +31,6 @@ describe("options", () => {
     expect(result.options).toEqual({
       packageName: "catalog",
       genConsts: false,
-      genMeta: false,
       strict: false,
       genPointerUtils: false,
     });
@@ -44,7 +41,6 @@ describe("options", () => {
       irb.pluginInput({
         options: {
           genConsts: "definitely",
-          genMeta: "definitely",
           strict: "definitely",
           genPointerUtils: "definitely",
         },
@@ -53,7 +49,6 @@ describe("options", () => {
 
     expect(result.errors).toEqual([]);
     expect(result.options?.genConsts).toBe(true);
-    expect(result.options?.genMeta).toBe(true);
     expect(result.options?.strict).toBe(true);
     expect(result.options?.genPointerUtils).toBe(true);
   });

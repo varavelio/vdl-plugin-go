@@ -15,7 +15,6 @@ import type { GeneratorOptions } from "../model/types";
  * Current supported options:
  * - `package`: The name of the generated Go package (default: "vdl").
  * - `genConsts`: Whether to emit top-level constants (default: true).
- * - `genMeta`: Whether to emit the metadata.go file (default: true).
  * - `strict`: Whether to generate strict JSON validation logic (default: true).
  * - `genPointerUtils`: Whether to include the Ptr/Val/Or helpers in pointers.go (default: true).
  *
@@ -28,7 +27,6 @@ export function resolveGeneratorOptions(input: PluginInput): {
 } {
   const packageName = options.getOptionString(input.options, "package", "vdl");
   const genConsts = options.getOptionBool(input.options, "genConsts", true);
-  const genMeta = options.getOptionBool(input.options, "genMeta", true);
   const strict = options.getOptionBool(input.options, "strict", true);
   const genPointerUtils = options.getOptionBool(
     input.options,
@@ -51,7 +49,6 @@ export function resolveGeneratorOptions(input: PluginInput): {
     options: {
       packageName,
       genConsts,
-      genMeta,
       strict,
       genPointerUtils,
     },
