@@ -38,7 +38,7 @@ const GO_PACKAGE_RE = /^[a-z_][a-z0-9_]*$/;
  * @param value - The identifier to check.
  * @returns True if the value is a Go keyword, false otherwise.
  */
-export function isGoKeyword(value: string): boolean {
+function isGoKeyword(value: string): boolean {
   return GO_KEYWORDS.has(value);
 }
 
