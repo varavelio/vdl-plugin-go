@@ -12,7 +12,7 @@ function fileContent(
 }
 
 describe("generate", () => {
-  it("generates enums, named types, complex constants, metadata, and pointer helpers", () => {
+  it("generates enums, named types, complex constants, and pointer helpers", () => {
     const result = generate(
       irb.pluginInput({
         options: {
@@ -155,7 +155,6 @@ describe("generate", () => {
       "enums.go",
       "types.go",
       "constants.go",
-      "metadata.go",
       "pointers.go",
     ]);
 
@@ -200,23 +199,6 @@ describe("generate", () => {
     expect(constants).toContain(
       'var DefaultIDs = UserIDs{\n\tUserId("user-1"),\n\tUserId("user-2"),\n}',
     );
-
-    const metadata = fileContent(result, "metadata.go");
-    expect(metadata).toContain("var VDLMetadata = VDLSchemaMetadata{");
-    expect(metadata).toContain("type VDLTypeRef struct {");
-    expect(metadata).toContain('"Product": VDLTypeMetadata');
-    expect(metadata).toContain("Annotations: VDLAnnotationSet{");
-    expect(metadata).toContain("List: []VDLAnnotation{");
-    expect(metadata).toContain('"Description": VDLFieldMetadata');
-    expect(metadata).toContain('"deprecated": nil');
-    expect(metadata).not.toContain("AllByName");
-    expect(metadata).toContain('"OrderStatus": VDLEnumMetadata');
-    expect(metadata).toContain('Value: "pending"');
-    expect(metadata).toContain('"DefaultProduct": VDLConstantMetadata');
-    expect(metadata).toContain("Type: VDLTypeRef{");
-    expect(metadata).toContain('Kind: "type"');
-    expect(metadata).toContain('Name: "Product"');
-    expect(metadata).toContain('"scope": "public"');
 
     const pointers = fileContent(result, "pointers.go");
     expect(pointers).toContain("func Ptr[T any](value T) *T {");
@@ -300,32 +282,6 @@ describe("generate", () => {
     expect(result.files?.some((file) => file.path === "constants.go")).toBe(
       false,
     );
-    expect(result.files?.some((file) => file.path === "metadata.go")).toBe(
-      true,
-    );
-  });
-
-  it("omits metadata.go when genMeta is disabled", () => {
-    const result = generate(
-      irb.pluginInput({
-        options: {
-          genMeta: "false",
-        },
-        ir: irb.schema({
-          types: [
-            irb.typeDef(
-              "Payload",
-              irb.objectType([irb.field("name", irb.primitiveType("string"))]),
-            ),
-          ],
-        }),
-      }),
-    );
-
-    expect(result.errors).toBeUndefined();
-    expect(result.files?.some((file) => file.path === "metadata.go")).toBe(
-      false,
-    );
   });
 
   it("omits pointers.go when genPointerUtils is disabled", () => {
@@ -403,29 +359,6 @@ describe("generate", () => {
     expect(types).not.toContain(
       "func (e Status) MarshalJSON() ([]byte, error) {",
     );
-  });
-
-  it("allows schema symbols that used to collide with metadata runtime names", () => {
-    const result = generate(
-      irb.pluginInput({
-        ir: irb.schema({
-          types: [
-            irb.typeDef(
-              "Annotation",
-              irb.objectType([irb.field("name", irb.primitiveType("string"))]),
-            ),
-          ],
-        }),
-      }),
-    );
-
-    expect(result.errors).toBeUndefined();
-    const types = fileContent(result, "types.go");
-    expect(types).toContain("type Annotation struct");
-
-    const metadata = fileContent(result, "metadata.go");
-    expect(metadata).toContain("type VDLAnnotation struct {");
-    expect(metadata).toContain('"Annotation": VDLTypeMetadata{');
   });
 
   it("returns an error when generated names collide with runtime helpers", () => {

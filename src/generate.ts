@@ -17,7 +17,7 @@ import { resolveGeneratorOptions } from "./stages/options/resolve";
  * 2. **Context Building**: Indexes the VDL schema, derives Go-safe names,
  *    recursively discovers inline objects, and validates symbol collisions.
  * 3. **File Emission**: Emits the final Go source files (types, enums, constants,
- *    metadata, etc.) based on the prepared context.
+ *    pointer helpers, etc.) based on the prepared context.
  *
  * Any failure at any stage results in a `PluginOutput` containing structured errors.
  *
