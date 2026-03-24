@@ -7,7 +7,6 @@ const config = {
       outDir "./gen"
       options {
         package "gen"
-        genMeta "true"
       }
     }
   ]
