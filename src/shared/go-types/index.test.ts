@@ -1,11 +1,8 @@
 import { irb } from "@varavel/vdl-plugin-sdk/testing";
 import { describe, expect, it } from "vitest";
 import { createGeneratorContext } from "../../stages/model/build-context";
-import {
-  isConstEligibleType,
-  renderAnonymousGoTypeExpression,
-  renderGoType,
-} from "./index";
+import { isConstEligibleType } from "./const-eligibility";
+import { renderAnonymousGoTypeExpression, renderGoType } from "./render";
 
 describe("type-ref", () => {
   it("renders named, array, map, and inline object types", () => {

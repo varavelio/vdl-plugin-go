@@ -12,7 +12,7 @@ import { toGoFieldName } from "../naming";
  * @param position - The optional VDL source position for error reporting.
  * @returns The Go type name as a string.
  */
-export function renderPrimitiveGoType(
+function renderPrimitiveGoType(
   primitiveName: PrimitiveType | undefined,
   position?: Position,
 ): string {
