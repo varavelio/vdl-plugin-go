@@ -2,11 +2,7 @@ import { irb } from "@varavel/vdl-plugin-sdk/testing";
 import { describe, expect, it } from "vitest";
 import { createGeneratorContext } from "../../stages/model/build-context";
 import { GenerationError } from "../errors";
-import {
-  renderConstInitializer,
-  renderMetadataValueExpression,
-  renderTypedValueExpression,
-} from "./index";
+import { renderConstInitializer, renderTypedValueExpression } from "./index";
 
 describe("literal-renderer", () => {
   it("renders primitive, enum, alias, map, array, and object values", () => {
@@ -60,41 +56,6 @@ describe("literal-renderer", () => {
     );
   });
 
-  it("renders metadata values for nested arrays and objects", () => {
-    expect(
-      renderMetadataValueExpression(
-        irb.objectLiteral({
-          owner: irb.stringLiteral("core"),
-          tags: irb.arrayLiteral([
-            irb.stringLiteral("a"),
-            irb.stringLiteral("b"),
-          ]),
-        }),
-      ),
-    ).toBe('map[string]any{"owner": "core", "tags": []any{"a", "b"}}');
-  });
-
-  it("uses the last object entry for metadata values", () => {
-    expect(
-      renderMetadataValueExpression({
-        kind: "object",
-        position: { file: "schema.vdl", line: 1, column: 1 },
-        objectEntries: [
-          {
-            key: "region",
-            value: irb.stringLiteral("eu"),
-            position: { file: "schema.vdl", line: 1, column: 2 },
-          },
-          {
-            key: "region",
-            value: irb.stringLiteral("us"),
-            position: { file: "schema.vdl", line: 1, column: 3 },
-          },
-        ],
-      }),
-    ).toBe('map[string]any{"region": "us"}');
-  });
-
   it("throws a typed error for invalid enum literals", () => {
     const context = buildContext();
 
@@ -143,7 +104,6 @@ function buildContext() {
     generatorOptions: {
       packageName: "vdl",
       genConsts: true,
-      genMeta: true,
       strict: true,
       genPointerUtils: true,
     },
