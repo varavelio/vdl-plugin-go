@@ -53,8 +53,6 @@ export interface NamedTypeDescriptor {
   path: string;
   /** Whether this type was defined inline within another object. */
   inline: boolean;
-  /** The Go name of the containing type if this is an inline type. */
-  parentGoName?: string;
   /** Documentation comment lines. */
   doc?: string;
   /** VDL annotations attached to this type. */
@@ -130,8 +128,6 @@ export interface GeneratorContext {
   enumGoNamesByVdlName: Map<string, string>;
   /** All processed named types (including inline ones). */
   namedTypes: NamedTypeDescriptor[];
-  /** Lookup map for named types by their Go name. */
-  namedTypesByGoName: Map<string, NamedTypeDescriptor>;
   /** All processed enums. */
   enumDescriptors: EnumDescriptor[];
   /** Lookup map for enums by their VDL name. */
