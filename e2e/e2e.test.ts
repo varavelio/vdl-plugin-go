@@ -3,6 +3,7 @@ import {
   existsSync,
   readdirSync,
   readFileSync,
+  rmSync,
   unlinkSync,
   writeFileSync,
 } from "node:fs";
@@ -36,6 +37,9 @@ describe("E2E: VDL to Go", () => {
     // Write a generic go.mod file with shared fixture helpers.
     if (existsSync(goModPath)) unlinkSync(goModPath);
     writeFileSync(goModPath, goModTemplate);
+
+    // Remove previously generated files so snapshots only reflect fresh output.
+    if (existsSync(outDir)) rmSync(outDir, { recursive: true, force: true });
 
     // Execute the VDL generator
     execSync("npx vdl generate", { cwd: fixturePath, stdio: "pipe" });
