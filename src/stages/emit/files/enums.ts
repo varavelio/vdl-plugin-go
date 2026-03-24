@@ -1,7 +1,6 @@
 import { newGenerator } from "@varavel/gen";
 import type { PluginOutputFile } from "@varavel/vdl-plugin-sdk";
 import { renderGoFile } from "../../../shared/render/go-file";
-import { ImportSet } from "../../../shared/render/imports";
 import type { GeneratorContext } from "../../model/types";
 import { renderEnum } from "./enums-render";
 
@@ -25,7 +24,6 @@ export function generateEnumsFile(
     return undefined;
   }
 
-  const imports = new ImportSet();
   const g = newGenerator().withTabs();
 
   for (const enumDescriptor of context.enumDescriptors) {
@@ -33,17 +31,11 @@ export function generateEnumsFile(
     g.break();
   }
 
-  const body = g.toString();
-  if (body.includes("time.")) imports.add("time");
-  if (body.includes("json.")) imports.add("encoding/json");
-  if (body.includes("fmt.")) imports.add("fmt");
-
   return {
     path: "enums.go",
     content: renderGoFile({
       packageName: context.options.packageName,
-      imports,
-      body,
+      body: g.toString(),
     }),
   };
 }

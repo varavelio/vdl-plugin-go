@@ -1,7 +1,8 @@
 import type { newGenerator } from "@varavel/gen";
 import type { Position, TypeDef, TypeRef } from "@varavel/vdl-plugin-sdk";
 import { expectValue } from "../../../shared/errors";
-import { renderGoType, resolveNonTypeRef } from "../../../shared/go-types";
+import { renderGoType } from "../../../shared/go-types/render";
+import { resolveNonTypeRef } from "../../../shared/go-types/resolve";
 import type {
   FieldDescriptor,
   GeneratorContext,

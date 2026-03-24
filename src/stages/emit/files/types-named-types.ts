@@ -1,9 +1,6 @@
 import type { newGenerator } from "@varavel/gen";
-import {
-  buildDocCommentLines,
-  writeDocComment,
-} from "../../../shared/comments";
-import { renderGoType } from "../../../shared/go-types";
+import { writeDocComment } from "../../../shared/comments";
+import { renderGoType } from "../../../shared/go-types/render";
 import type {
   FieldDescriptor,
   GeneratorContext,
@@ -39,14 +36,11 @@ export function renderNamedType(
       ? `${descriptor.goName} represents a VDL object.`
       : `${descriptor.goName} declares a VDL type alias.`;
 
-  writeDocComment(
-    g,
-    buildDocCommentLines({
-      doc: descriptor.doc,
-      annotations: descriptor.annotations,
-      fallback,
-    }),
-  );
+  writeDocComment(g, {
+    doc: descriptor.doc,
+    annotations: descriptor.annotations,
+    fallback,
+  });
 
   if (descriptor.kind === "object") {
     renderStructType(g, descriptor);
@@ -74,14 +68,10 @@ function renderStructType(
   g.line(`type ${descriptor.goName} struct {`);
   g.block(() => {
     for (const field of descriptor.fields) {
-      const commentLines = buildDocCommentLines({
+      writeDocComment(g, {
         doc: field.def.doc,
         annotations: field.def.annotations,
       });
-
-      if (commentLines.length > 0) {
-        writeDocComment(g, commentLines);
-      }
 
       const jsonTag = field.def.optional
         ? `json:${JSON.stringify(`${field.jsonName},omitempty`)}`

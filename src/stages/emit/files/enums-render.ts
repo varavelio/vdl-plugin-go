@@ -1,8 +1,5 @@
 import type { newGenerator } from "@varavel/gen";
-import {
-  buildDocCommentLines,
-  writeDocComment,
-} from "../../../shared/comments";
+import { writeDocComment } from "../../../shared/comments";
 import type { EnumDescriptor } from "../../model/types";
 
 /**
@@ -29,14 +26,11 @@ export function renderEnum(
   enumDescriptor: EnumDescriptor,
   strict: boolean,
 ): void {
-  writeDocComment(
-    g,
-    buildDocCommentLines({
-      doc: enumDescriptor.def.doc,
-      annotations: enumDescriptor.def.annotations,
-      fallback: `${enumDescriptor.goName} defines a generated enum.`,
-    }),
-  );
+  writeDocComment(g, {
+    doc: enumDescriptor.def.doc,
+    annotations: enumDescriptor.def.annotations,
+    fallback: `${enumDescriptor.goName} defines a generated enum.`,
+  });
   g.line(
     `type ${enumDescriptor.goName} ${enumDescriptor.def.enumType === "string" ? "string" : "int"}`,
   );
@@ -48,13 +42,10 @@ export function renderEnum(
   g.line("const (");
   g.block(() => {
     for (const member of enumDescriptor.members) {
-      writeDocComment(
-        g,
-        buildDocCommentLines({
-          doc: member.def.doc,
-          annotations: member.def.annotations,
-        }),
-      );
+      writeDocComment(g, {
+        doc: member.def.doc,
+        annotations: member.def.annotations,
+      });
 
       g.line(
         `${member.constName} ${enumDescriptor.goName} = ${renderEnumMemberLiteral(enumDescriptor, member)}`,

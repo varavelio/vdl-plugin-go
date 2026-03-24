@@ -1,16 +1,11 @@
 import { newGenerator } from "@varavel/gen";
 import type { PluginOutputFile } from "@varavel/vdl-plugin-sdk";
-import {
-  buildDocCommentLines,
-  writeDocComment,
-} from "../../../shared/comments";
-import {
-  renderConstInitializer,
-  renderTypedValueExpressionPretty,
-} from "../../../shared/go-literals";
-import { isConstEligibleType, renderGoType } from "../../../shared/go-types";
+import { writeDocComment } from "../../../shared/comments";
+import { renderConstInitializer } from "../../../shared/go-literals/const";
+import { renderTypedValueExpressionPretty } from "../../../shared/go-literals/render";
+import { isConstEligibleType } from "../../../shared/go-types/const-eligibility";
+import { renderGoType } from "../../../shared/go-types/render";
 import { renderGoFile } from "../../../shared/render/go-file";
-import { ImportSet } from "../../../shared/render/imports";
 import type { GeneratorContext } from "../../model/types";
 
 /**
@@ -37,18 +32,14 @@ export function generateConstantsFile(
     return undefined;
   }
 
-  const imports = new ImportSet();
   const g = newGenerator().withTabs();
 
   for (const constant of context.constantDescriptors) {
-    writeDocComment(
-      g,
-      buildDocCommentLines({
-        doc: constant.def.doc,
-        annotations: constant.def.annotations,
-        fallback: `${constant.goName} holds a generated VDL constant.`,
-      }),
-    );
+    writeDocComment(g, {
+      doc: constant.def.doc,
+      annotations: constant.def.annotations,
+      fallback: `${constant.goName} holds a generated VDL constant.`,
+    });
 
     if (isConstEligibleType(constant.typeRef, context, constant.def.position)) {
       renderConstDeclaration(g, constant.goName, constant, context);
@@ -66,17 +57,11 @@ export function generateConstantsFile(
     g.break();
   }
 
-  const body = g.toString();
-  if (body.includes("time.")) imports.add("time");
-  if (body.includes("json.")) imports.add("encoding/json");
-  if (body.includes("fmt.")) imports.add("fmt");
-
   return {
     path: "constants.go",
     content: renderGoFile({
       packageName: context.options.packageName,
-      imports,
-      body,
+      body: g.toString(),
     }),
   };
 }
