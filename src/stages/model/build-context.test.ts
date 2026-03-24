@@ -33,7 +33,6 @@ describe("build-context", () => {
       generatorOptions: {
         packageName: "vdl",
         genConsts: true,
-        genMeta: true,
         strict: true,
         genPointerUtils: true,
       },
@@ -66,7 +65,6 @@ describe("build-context", () => {
       generatorOptions: {
         packageName: "vdl",
         genConsts: true,
-        genMeta: true,
         strict: true,
         genPointerUtils: true,
       },
@@ -90,7 +88,6 @@ describe("build-context", () => {
       generatorOptions: {
         packageName: "vdl",
         genConsts: true,
-        genMeta: true,
         strict: true,
         genPointerUtils: true,
       },

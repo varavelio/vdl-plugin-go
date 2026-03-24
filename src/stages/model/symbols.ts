@@ -1,20 +1,6 @@
 import type { PluginOutputError, Position } from "@varavel/vdl-plugin-sdk";
 
-const RESERVED_PACKAGE_SCOPE_SYMBOLS = [
-  "Ptr",
-  "Val",
-  "Or",
-  "VDLAnnotation",
-  "VDLAnnotationSet",
-  "VDLTypeRef",
-  "VDLFieldMetadata",
-  "VDLTypeMetadata",
-  "VDLEnumMemberMetadata",
-  "VDLEnumMetadata",
-  "VDLConstantMetadata",
-  "VDLSchemaMetadata",
-  "VDLMetadata",
-];
+const RESERVED_PACKAGE_SCOPE_SYMBOLS = ["Ptr", "Val", "Or"];
 
 interface ReservedSymbol {
   origin: string;
@@ -28,8 +14,7 @@ interface ReservedSymbol {
  * clash with:
  *
  * 1. Each other.
- * 2. Generated metadata symbols (e.g., VDLMetadata).
- * 3. Pointer utility helpers (e.g., Ptr, Val).
+ * 2. Pointer utility helpers (e.g., Ptr, Val).
  */
 export class PackageScopeSymbolTable {
   readonly #symbols = new Map<string, ReservedSymbol>();

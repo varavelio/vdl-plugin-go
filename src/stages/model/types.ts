@@ -19,8 +19,6 @@ export interface GeneratorOptions {
   packageName: string;
   /** Whether to generate Go constants for VDL constants. */
   genConsts: boolean;
-  /** Whether to generate the metadata.go file. */
-  genMeta: boolean;
   /** Whether to generate pointer utility helpers (Ptr, Val, Or). */
   genPointerUtils: boolean;
   /** Whether to generate strict JSON validation logic. */
