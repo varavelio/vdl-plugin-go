@@ -48,127 +48,772 @@ __export(index_exports, {
 });
 module.exports = __toCommonJS(index_exports);
 
-// node_modules/@varavel/vdl-plugin-sdk/dist/types-DU-ClSGG.js
-function hydrateAnnotation(input) {
-  return {
-    position: hydratePosition(input.position),
-    name: input.name,
-    argument: input.argument ? hydrateLiteralValue(input.argument) : input.argument
-  };
-}
-__name(hydrateAnnotation, "hydrateAnnotation");
-function hydrateConstantDef(input) {
-  return {
-    position: hydratePosition(input.position),
-    name: input.name,
-    doc: input.doc ? input.doc : input.doc,
-    annotations: input.annotations.map((el) => hydrateAnnotation(el)),
-    value: hydrateLiteralValue(input.value)
-  };
-}
-__name(hydrateConstantDef, "hydrateConstantDef");
-function hydrateEnumDef(input) {
-  return {
-    position: hydratePosition(input.position),
-    name: input.name,
-    doc: input.doc ? input.doc : input.doc,
-    annotations: input.annotations.map((el) => hydrateAnnotation(el)),
-    enumType: input.enumType,
-    members: input.members.map((el) => hydrateEnumMember(el))
-  };
-}
-__name(hydrateEnumDef, "hydrateEnumDef");
-function hydrateEnumMember(input) {
-  return {
-    position: hydratePosition(input.position),
-    name: input.name,
-    value: hydrateLiteralValue(input.value),
-    doc: input.doc ? input.doc : input.doc,
-    annotations: input.annotations.map((el) => hydrateAnnotation(el))
-  };
-}
-__name(hydrateEnumMember, "hydrateEnumMember");
-function hydrateField(input) {
-  return {
-    position: hydratePosition(input.position),
-    name: input.name,
-    doc: input.doc ? input.doc : input.doc,
-    optional: input.optional,
-    annotations: input.annotations.map((el) => hydrateAnnotation(el)),
-    typeRef: hydrateTypeRef(input.typeRef)
-  };
-}
-__name(hydrateField, "hydrateField");
-function hydrateIrSchema(input) {
-  return {
-    entryPoint: input.entryPoint,
-    constants: input.constants.map((el) => hydrateConstantDef(el)),
-    enums: input.enums.map((el) => hydrateEnumDef(el)),
-    types: input.types.map((el) => hydrateTypeDef(el)),
-    docs: input.docs.map((el) => hydrateTopLevelDoc(el))
-  };
-}
-__name(hydrateIrSchema, "hydrateIrSchema");
-function hydrateLiteralValue(input) {
-  return {
-    position: hydratePosition(input.position),
-    kind: input.kind,
-    stringValue: input.stringValue ? input.stringValue : input.stringValue,
-    intValue: input.intValue ? input.intValue : input.intValue,
-    floatValue: input.floatValue ? input.floatValue : input.floatValue,
-    boolValue: input.boolValue ? input.boolValue : input.boolValue,
-    objectEntries: input.objectEntries ? input.objectEntries.map((el) => hydrateObjectEntry(el)) : input.objectEntries,
-    arrayItems: input.arrayItems ? input.arrayItems.map((el) => hydrateLiteralValue(el)) : input.arrayItems
-  };
-}
-__name(hydrateLiteralValue, "hydrateLiteralValue");
-function hydrateObjectEntry(input) {
-  return {
-    position: hydratePosition(input.position),
-    key: input.key,
-    value: hydrateLiteralValue(input.value)
-  };
-}
-__name(hydrateObjectEntry, "hydrateObjectEntry");
-function hydratePosition(input) {
-  return {
-    file: input.file,
-    line: input.line,
-    column: input.column
-  };
-}
-__name(hydratePosition, "hydratePosition");
-function hydrateTopLevelDoc(input) {
-  return {
-    position: hydratePosition(input.position),
-    content: input.content
-  };
-}
-__name(hydrateTopLevelDoc, "hydrateTopLevelDoc");
-function hydrateTypeDef(input) {
-  return {
-    position: hydratePosition(input.position),
-    name: input.name,
-    doc: input.doc ? input.doc : input.doc,
-    annotations: input.annotations.map((el) => hydrateAnnotation(el)),
-    typeRef: hydrateTypeRef(input.typeRef)
-  };
-}
-__name(hydrateTypeDef, "hydrateTypeDef");
-function hydrateTypeRef(input) {
-  return {
-    kind: input.kind,
-    primitiveName: input.primitiveName ? input.primitiveName : input.primitiveName,
-    typeName: input.typeName ? input.typeName : input.typeName,
-    enumName: input.enumName ? input.enumName : input.enumName,
-    enumType: input.enumType ? input.enumType : input.enumType,
-    arrayType: input.arrayType ? hydrateTypeRef(input.arrayType) : input.arrayType,
-    arrayDims: input.arrayDims ? input.arrayDims : input.arrayDims,
-    mapType: input.mapType ? hydrateTypeRef(input.mapType) : input.mapType,
-    objectFields: input.objectFields ? input.objectFields.map((el) => hydrateField(el)) : input.objectFields
-  };
-}
-__name(hydrateTypeRef, "hydrateTypeRef");
+// node_modules/@varavel/vdl-plugin-sdk/dist/types-DqmMLTFd.js
+var EnumValueType = {
+  String: "string",
+  Int: "int",
+  values() {
+    return ["string", "int"];
+  },
+  parse(json) {
+    const input = _vdl$1.parseJson(json);
+    const error = EnumValueType.validate(input);
+    if (error !== null) throw new Error(error);
+    return EnumValueType.hydrate(input);
+  },
+  validate(input, path = "EnumValueType") {
+    if (!_vdl$1.arrayIncludes(EnumValueType.values(), input)) return `${path}: invalid value "${String(input)}" for EnumValueType enum`;
+    return null;
+  },
+  hydrate(input) {
+    return input;
+  }
+};
+var LiteralKind = {
+  String: "string",
+  Int: "int",
+  Float: "float",
+  Bool: "bool",
+  Object: "object",
+  Array: "array",
+  values() {
+    return [
+      "string",
+      "int",
+      "float",
+      "bool",
+      "object",
+      "array"
+    ];
+  },
+  parse(json) {
+    const input = _vdl$1.parseJson(json);
+    const error = LiteralKind.validate(input);
+    if (error !== null) throw new Error(error);
+    return LiteralKind.hydrate(input);
+  },
+  validate(input, path = "LiteralKind") {
+    if (!_vdl$1.arrayIncludes(LiteralKind.values(), input)) return `${path}: invalid value "${String(input)}" for LiteralKind enum`;
+    return null;
+  },
+  hydrate(input) {
+    return input;
+  }
+};
+var PrimitiveType = {
+  String: "string",
+  Int: "int",
+  Float: "float",
+  Bool: "bool",
+  Datetime: "datetime",
+  values() {
+    return [
+      "string",
+      "int",
+      "float",
+      "bool",
+      "datetime"
+    ];
+  },
+  parse(json) {
+    const input = _vdl$1.parseJson(json);
+    const error = PrimitiveType.validate(input);
+    if (error !== null) throw new Error(error);
+    return PrimitiveType.hydrate(input);
+  },
+  validate(input, path = "PrimitiveType") {
+    if (!_vdl$1.arrayIncludes(PrimitiveType.values(), input)) return `${path}: invalid value "${String(input)}" for PrimitiveType enum`;
+    return null;
+  },
+  hydrate(input) {
+    return input;
+  }
+};
+var TypeKind = {
+  Primitive: "primitive",
+  Type: "type",
+  Enum: "enum",
+  Array: "array",
+  Map: "map",
+  Object: "object",
+  values() {
+    return [
+      "primitive",
+      "type",
+      "enum",
+      "array",
+      "map",
+      "object"
+    ];
+  },
+  parse(json) {
+    const input = _vdl$1.parseJson(json);
+    const error = TypeKind.validate(input);
+    if (error !== null) throw new Error(error);
+    return TypeKind.hydrate(input);
+  },
+  validate(input, path = "TypeKind") {
+    if (!_vdl$1.arrayIncludes(TypeKind.values(), input)) return `${path}: invalid value "${String(input)}" for TypeKind enum`;
+    return null;
+  },
+  hydrate(input) {
+    return input;
+  }
+};
+var _vdl$1 = {
+  parseJson(json) {
+    try {
+      return JSON.parse(json);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      throw new Error(`Invalid JSON input: ${message}`);
+    }
+  },
+  arrayIncludes(values, value) {
+    for (let index = 0; index < values.length; index += 1) if (values[index] === value) return true;
+    return false;
+  }
+};
+var Annotation = {
+  parse(json) {
+    const input = _vdl.parseJson(json);
+    const error = Annotation.validate(input);
+    if (error !== null) throw new Error(error);
+    return Annotation.hydrate(input);
+  },
+  validate(input, path = "Annotation") {
+    if (!_vdl.isRecord(input)) return `${path}: expected object, got ${_vdl.describeValue(input)}`;
+    const record0 = input;
+    const fieldPath0_0 = `${path}.position`;
+    if (!_vdl.hasOwn(record0, "position") || record0["position"] === void 0) return `${fieldPath0_0}: required field is missing`;
+    {
+      const error = Position.validate(record0["position"], fieldPath0_0);
+      if (error !== null) return error;
+    }
+    const fieldPath0_1 = `${path}.name`;
+    if (!_vdl.hasOwn(record0, "name") || record0["name"] === void 0) return `${fieldPath0_1}: required field is missing`;
+    if (typeof record0["name"] !== "string") return `${fieldPath0_1}: expected string, got ${_vdl.describeValue(record0["name"])}`;
+    const fieldPath0_2 = `${path}.argument`;
+    if (_vdl.hasOwn(record0, "argument") && record0["argument"] !== void 0) {
+      const error = LiteralValue.validate(record0["argument"], fieldPath0_2);
+      if (error !== null) return error;
+    }
+    return null;
+  },
+  hydrate(input) {
+    return _vdl.withOptional({
+      position: Position.hydrate(input.position),
+      name: input.name
+    }, "argument", input.argument === void 0 ? void 0 : LiteralValue.hydrate(input.argument));
+  }
+};
+var ConstantDef = {
+  parse(json) {
+    const input = _vdl.parseJson(json);
+    const error = ConstantDef.validate(input);
+    if (error !== null) throw new Error(error);
+    return ConstantDef.hydrate(input);
+  },
+  validate(input, path = "ConstantDef") {
+    if (!_vdl.isRecord(input)) return `${path}: expected object, got ${_vdl.describeValue(input)}`;
+    const record0 = input;
+    const fieldPath0_0 = `${path}.position`;
+    if (!_vdl.hasOwn(record0, "position") || record0["position"] === void 0) return `${fieldPath0_0}: required field is missing`;
+    {
+      const error = Position.validate(record0["position"], fieldPath0_0);
+      if (error !== null) return error;
+    }
+    const fieldPath0_1 = `${path}.name`;
+    if (!_vdl.hasOwn(record0, "name") || record0["name"] === void 0) return `${fieldPath0_1}: required field is missing`;
+    if (typeof record0["name"] !== "string") return `${fieldPath0_1}: expected string, got ${_vdl.describeValue(record0["name"])}`;
+    const fieldPath0_2 = `${path}.doc`;
+    if (_vdl.hasOwn(record0, "doc") && record0["doc"] !== void 0) {
+      if (typeof record0["doc"] !== "string") return `${fieldPath0_2}: expected string, got ${_vdl.describeValue(record0["doc"])}`;
+    }
+    const fieldPath0_3 = `${path}.annotations`;
+    if (!_vdl.hasOwn(record0, "annotations") || record0["annotations"] === void 0) return `${fieldPath0_3}: required field is missing`;
+    if (!Array.isArray(record0["annotations"])) return `${fieldPath0_3}: expected array, got ${_vdl.describeValue(record0["annotations"])}`;
+    for (let index1 = 0; index1 < record0["annotations"].length; index1 += 1) {
+      const itemPath1 = `${fieldPath0_3}[${index1}]`;
+      {
+        const error = Annotation.validate(record0["annotations"][index1], itemPath1);
+        if (error !== null) return error;
+      }
+    }
+    const fieldPath0_4 = `${path}.value`;
+    if (!_vdl.hasOwn(record0, "value") || record0["value"] === void 0) return `${fieldPath0_4}: required field is missing`;
+    {
+      const error = LiteralValue.validate(record0["value"], fieldPath0_4);
+      if (error !== null) return error;
+    }
+    return null;
+  },
+  hydrate(input) {
+    return _vdl.withOptional({
+      position: Position.hydrate(input.position),
+      name: input.name,
+      annotations: input.annotations.map((item1) => Annotation.hydrate(item1)),
+      value: LiteralValue.hydrate(input.value)
+    }, "doc", input.doc === void 0 ? void 0 : input.doc);
+  }
+};
+var EnumDef = {
+  parse(json) {
+    const input = _vdl.parseJson(json);
+    const error = EnumDef.validate(input);
+    if (error !== null) throw new Error(error);
+    return EnumDef.hydrate(input);
+  },
+  validate(input, path = "EnumDef") {
+    if (!_vdl.isRecord(input)) return `${path}: expected object, got ${_vdl.describeValue(input)}`;
+    const record0 = input;
+    const fieldPath0_0 = `${path}.position`;
+    if (!_vdl.hasOwn(record0, "position") || record0["position"] === void 0) return `${fieldPath0_0}: required field is missing`;
+    {
+      const error = Position.validate(record0["position"], fieldPath0_0);
+      if (error !== null) return error;
+    }
+    const fieldPath0_1 = `${path}.name`;
+    if (!_vdl.hasOwn(record0, "name") || record0["name"] === void 0) return `${fieldPath0_1}: required field is missing`;
+    if (typeof record0["name"] !== "string") return `${fieldPath0_1}: expected string, got ${_vdl.describeValue(record0["name"])}`;
+    const fieldPath0_2 = `${path}.doc`;
+    if (_vdl.hasOwn(record0, "doc") && record0["doc"] !== void 0) {
+      if (typeof record0["doc"] !== "string") return `${fieldPath0_2}: expected string, got ${_vdl.describeValue(record0["doc"])}`;
+    }
+    const fieldPath0_3 = `${path}.annotations`;
+    if (!_vdl.hasOwn(record0, "annotations") || record0["annotations"] === void 0) return `${fieldPath0_3}: required field is missing`;
+    if (!Array.isArray(record0["annotations"])) return `${fieldPath0_3}: expected array, got ${_vdl.describeValue(record0["annotations"])}`;
+    for (let index1 = 0; index1 < record0["annotations"].length; index1 += 1) {
+      const itemPath1 = `${fieldPath0_3}[${index1}]`;
+      {
+        const error = Annotation.validate(record0["annotations"][index1], itemPath1);
+        if (error !== null) return error;
+      }
+    }
+    const fieldPath0_4 = `${path}.enumType`;
+    if (!_vdl.hasOwn(record0, "enumType") || record0["enumType"] === void 0) return `${fieldPath0_4}: required field is missing`;
+    {
+      const error = EnumValueType.validate(record0["enumType"], fieldPath0_4);
+      if (error !== null) return error;
+    }
+    const fieldPath0_5 = `${path}.members`;
+    if (!_vdl.hasOwn(record0, "members") || record0["members"] === void 0) return `${fieldPath0_5}: required field is missing`;
+    if (!Array.isArray(record0["members"])) return `${fieldPath0_5}: expected array, got ${_vdl.describeValue(record0["members"])}`;
+    for (let index1 = 0; index1 < record0["members"].length; index1 += 1) {
+      const itemPath1 = `${fieldPath0_5}[${index1}]`;
+      {
+        const error = EnumMember.validate(record0["members"][index1], itemPath1);
+        if (error !== null) return error;
+      }
+    }
+    return null;
+  },
+  hydrate(input) {
+    return _vdl.withOptional({
+      position: Position.hydrate(input.position),
+      name: input.name,
+      annotations: input.annotations.map((item1) => Annotation.hydrate(item1)),
+      enumType: EnumValueType.hydrate(input.enumType),
+      members: input.members.map((item1) => EnumMember.hydrate(item1))
+    }, "doc", input.doc === void 0 ? void 0 : input.doc);
+  }
+};
+var EnumMember = {
+  parse(json) {
+    const input = _vdl.parseJson(json);
+    const error = EnumMember.validate(input);
+    if (error !== null) throw new Error(error);
+    return EnumMember.hydrate(input);
+  },
+  validate(input, path = "EnumMember") {
+    if (!_vdl.isRecord(input)) return `${path}: expected object, got ${_vdl.describeValue(input)}`;
+    const record0 = input;
+    const fieldPath0_0 = `${path}.position`;
+    if (!_vdl.hasOwn(record0, "position") || record0["position"] === void 0) return `${fieldPath0_0}: required field is missing`;
+    {
+      const error = Position.validate(record0["position"], fieldPath0_0);
+      if (error !== null) return error;
+    }
+    const fieldPath0_1 = `${path}.name`;
+    if (!_vdl.hasOwn(record0, "name") || record0["name"] === void 0) return `${fieldPath0_1}: required field is missing`;
+    if (typeof record0["name"] !== "string") return `${fieldPath0_1}: expected string, got ${_vdl.describeValue(record0["name"])}`;
+    const fieldPath0_2 = `${path}.value`;
+    if (!_vdl.hasOwn(record0, "value") || record0["value"] === void 0) return `${fieldPath0_2}: required field is missing`;
+    {
+      const error = LiteralValue.validate(record0["value"], fieldPath0_2);
+      if (error !== null) return error;
+    }
+    const fieldPath0_3 = `${path}.doc`;
+    if (_vdl.hasOwn(record0, "doc") && record0["doc"] !== void 0) {
+      if (typeof record0["doc"] !== "string") return `${fieldPath0_3}: expected string, got ${_vdl.describeValue(record0["doc"])}`;
+    }
+    const fieldPath0_4 = `${path}.annotations`;
+    if (!_vdl.hasOwn(record0, "annotations") || record0["annotations"] === void 0) return `${fieldPath0_4}: required field is missing`;
+    if (!Array.isArray(record0["annotations"])) return `${fieldPath0_4}: expected array, got ${_vdl.describeValue(record0["annotations"])}`;
+    for (let index1 = 0; index1 < record0["annotations"].length; index1 += 1) {
+      const itemPath1 = `${fieldPath0_4}[${index1}]`;
+      {
+        const error = Annotation.validate(record0["annotations"][index1], itemPath1);
+        if (error !== null) return error;
+      }
+    }
+    return null;
+  },
+  hydrate(input) {
+    return _vdl.withOptional({
+      position: Position.hydrate(input.position),
+      name: input.name,
+      value: LiteralValue.hydrate(input.value),
+      annotations: input.annotations.map((item1) => Annotation.hydrate(item1))
+    }, "doc", input.doc === void 0 ? void 0 : input.doc);
+  }
+};
+var Field = {
+  parse(json) {
+    const input = _vdl.parseJson(json);
+    const error = Field.validate(input);
+    if (error !== null) throw new Error(error);
+    return Field.hydrate(input);
+  },
+  validate(input, path = "Field") {
+    if (!_vdl.isRecord(input)) return `${path}: expected object, got ${_vdl.describeValue(input)}`;
+    const record0 = input;
+    const fieldPath0_0 = `${path}.position`;
+    if (!_vdl.hasOwn(record0, "position") || record0["position"] === void 0) return `${fieldPath0_0}: required field is missing`;
+    {
+      const error = Position.validate(record0["position"], fieldPath0_0);
+      if (error !== null) return error;
+    }
+    const fieldPath0_1 = `${path}.name`;
+    if (!_vdl.hasOwn(record0, "name") || record0["name"] === void 0) return `${fieldPath0_1}: required field is missing`;
+    if (typeof record0["name"] !== "string") return `${fieldPath0_1}: expected string, got ${_vdl.describeValue(record0["name"])}`;
+    const fieldPath0_2 = `${path}.doc`;
+    if (_vdl.hasOwn(record0, "doc") && record0["doc"] !== void 0) {
+      if (typeof record0["doc"] !== "string") return `${fieldPath0_2}: expected string, got ${_vdl.describeValue(record0["doc"])}`;
+    }
+    const fieldPath0_3 = `${path}.optional`;
+    if (!_vdl.hasOwn(record0, "optional") || record0["optional"] === void 0) return `${fieldPath0_3}: required field is missing`;
+    if (typeof record0["optional"] !== "boolean") return `${fieldPath0_3}: expected boolean, got ${_vdl.describeValue(record0["optional"])}`;
+    const fieldPath0_4 = `${path}.annotations`;
+    if (!_vdl.hasOwn(record0, "annotations") || record0["annotations"] === void 0) return `${fieldPath0_4}: required field is missing`;
+    if (!Array.isArray(record0["annotations"])) return `${fieldPath0_4}: expected array, got ${_vdl.describeValue(record0["annotations"])}`;
+    for (let index1 = 0; index1 < record0["annotations"].length; index1 += 1) {
+      const itemPath1 = `${fieldPath0_4}[${index1}]`;
+      {
+        const error = Annotation.validate(record0["annotations"][index1], itemPath1);
+        if (error !== null) return error;
+      }
+    }
+    const fieldPath0_5 = `${path}.typeRef`;
+    if (!_vdl.hasOwn(record0, "typeRef") || record0["typeRef"] === void 0) return `${fieldPath0_5}: required field is missing`;
+    {
+      const error = TypeRef.validate(record0["typeRef"], fieldPath0_5);
+      if (error !== null) return error;
+    }
+    return null;
+  },
+  hydrate(input) {
+    return _vdl.withOptional({
+      position: Position.hydrate(input.position),
+      name: input.name,
+      optional: input.optional,
+      annotations: input.annotations.map((item1) => Annotation.hydrate(item1)),
+      typeRef: TypeRef.hydrate(input.typeRef)
+    }, "doc", input.doc === void 0 ? void 0 : input.doc);
+  }
+};
+var IrSchema = {
+  parse(json) {
+    const input = _vdl.parseJson(json);
+    const error = IrSchema.validate(input);
+    if (error !== null) throw new Error(error);
+    return IrSchema.hydrate(input);
+  },
+  validate(input, path = "IrSchema") {
+    if (!_vdl.isRecord(input)) return `${path}: expected object, got ${_vdl.describeValue(input)}`;
+    const record0 = input;
+    const fieldPath0_0 = `${path}.entryPoint`;
+    if (!_vdl.hasOwn(record0, "entryPoint") || record0["entryPoint"] === void 0) return `${fieldPath0_0}: required field is missing`;
+    if (typeof record0["entryPoint"] !== "string") return `${fieldPath0_0}: expected string, got ${_vdl.describeValue(record0["entryPoint"])}`;
+    const fieldPath0_1 = `${path}.constants`;
+    if (!_vdl.hasOwn(record0, "constants") || record0["constants"] === void 0) return `${fieldPath0_1}: required field is missing`;
+    if (!Array.isArray(record0["constants"])) return `${fieldPath0_1}: expected array, got ${_vdl.describeValue(record0["constants"])}`;
+    for (let index1 = 0; index1 < record0["constants"].length; index1 += 1) {
+      const itemPath1 = `${fieldPath0_1}[${index1}]`;
+      {
+        const error = ConstantDef.validate(record0["constants"][index1], itemPath1);
+        if (error !== null) return error;
+      }
+    }
+    const fieldPath0_2 = `${path}.enums`;
+    if (!_vdl.hasOwn(record0, "enums") || record0["enums"] === void 0) return `${fieldPath0_2}: required field is missing`;
+    if (!Array.isArray(record0["enums"])) return `${fieldPath0_2}: expected array, got ${_vdl.describeValue(record0["enums"])}`;
+    for (let index1 = 0; index1 < record0["enums"].length; index1 += 1) {
+      const itemPath1 = `${fieldPath0_2}[${index1}]`;
+      {
+        const error = EnumDef.validate(record0["enums"][index1], itemPath1);
+        if (error !== null) return error;
+      }
+    }
+    const fieldPath0_3 = `${path}.types`;
+    if (!_vdl.hasOwn(record0, "types") || record0["types"] === void 0) return `${fieldPath0_3}: required field is missing`;
+    if (!Array.isArray(record0["types"])) return `${fieldPath0_3}: expected array, got ${_vdl.describeValue(record0["types"])}`;
+    for (let index1 = 0; index1 < record0["types"].length; index1 += 1) {
+      const itemPath1 = `${fieldPath0_3}[${index1}]`;
+      {
+        const error = TypeDef.validate(record0["types"][index1], itemPath1);
+        if (error !== null) return error;
+      }
+    }
+    const fieldPath0_4 = `${path}.docs`;
+    if (!_vdl.hasOwn(record0, "docs") || record0["docs"] === void 0) return `${fieldPath0_4}: required field is missing`;
+    if (!Array.isArray(record0["docs"])) return `${fieldPath0_4}: expected array, got ${_vdl.describeValue(record0["docs"])}`;
+    for (let index1 = 0; index1 < record0["docs"].length; index1 += 1) {
+      const itemPath1 = `${fieldPath0_4}[${index1}]`;
+      {
+        const error = TopLevelDoc.validate(record0["docs"][index1], itemPath1);
+        if (error !== null) return error;
+      }
+    }
+    return null;
+  },
+  hydrate(input) {
+    return {
+      entryPoint: input.entryPoint,
+      constants: input.constants.map((item1) => ConstantDef.hydrate(item1)),
+      enums: input.enums.map((item1) => EnumDef.hydrate(item1)),
+      types: input.types.map((item1) => TypeDef.hydrate(item1)),
+      docs: input.docs.map((item1) => TopLevelDoc.hydrate(item1))
+    };
+  }
+};
+var LiteralValue = {
+  parse(json) {
+    const input = _vdl.parseJson(json);
+    const error = LiteralValue.validate(input);
+    if (error !== null) throw new Error(error);
+    return LiteralValue.hydrate(input);
+  },
+  validate(input, path = "LiteralValue") {
+    if (!_vdl.isRecord(input)) return `${path}: expected object, got ${_vdl.describeValue(input)}`;
+    const record0 = input;
+    const fieldPath0_0 = `${path}.position`;
+    if (!_vdl.hasOwn(record0, "position") || record0["position"] === void 0) return `${fieldPath0_0}: required field is missing`;
+    {
+      const error = Position.validate(record0["position"], fieldPath0_0);
+      if (error !== null) return error;
+    }
+    const fieldPath0_1 = `${path}.kind`;
+    if (!_vdl.hasOwn(record0, "kind") || record0["kind"] === void 0) return `${fieldPath0_1}: required field is missing`;
+    {
+      const error = LiteralKind.validate(record0["kind"], fieldPath0_1);
+      if (error !== null) return error;
+    }
+    const fieldPath0_2 = `${path}.stringValue`;
+    if (_vdl.hasOwn(record0, "stringValue") && record0["stringValue"] !== void 0) {
+      if (typeof record0["stringValue"] !== "string") return `${fieldPath0_2}: expected string, got ${_vdl.describeValue(record0["stringValue"])}`;
+    }
+    const fieldPath0_3 = `${path}.intValue`;
+    if (_vdl.hasOwn(record0, "intValue") && record0["intValue"] !== void 0) {
+      if (typeof record0["intValue"] !== "number" || !Number.isFinite(record0["intValue"])) return `${fieldPath0_3}: expected number, got ${_vdl.describeValue(record0["intValue"])}`;
+    }
+    const fieldPath0_4 = `${path}.floatValue`;
+    if (_vdl.hasOwn(record0, "floatValue") && record0["floatValue"] !== void 0) {
+      if (typeof record0["floatValue"] !== "number" || !Number.isFinite(record0["floatValue"])) return `${fieldPath0_4}: expected number, got ${_vdl.describeValue(record0["floatValue"])}`;
+    }
+    const fieldPath0_5 = `${path}.boolValue`;
+    if (_vdl.hasOwn(record0, "boolValue") && record0["boolValue"] !== void 0) {
+      if (typeof record0["boolValue"] !== "boolean") return `${fieldPath0_5}: expected boolean, got ${_vdl.describeValue(record0["boolValue"])}`;
+    }
+    const fieldPath0_6 = `${path}.objectEntries`;
+    if (_vdl.hasOwn(record0, "objectEntries") && record0["objectEntries"] !== void 0) {
+      if (!Array.isArray(record0["objectEntries"])) return `${fieldPath0_6}: expected array, got ${_vdl.describeValue(record0["objectEntries"])}`;
+      for (let index1 = 0; index1 < record0["objectEntries"].length; index1 += 1) {
+        const itemPath1 = `${fieldPath0_6}[${index1}]`;
+        {
+          const error = ObjectEntry.validate(record0["objectEntries"][index1], itemPath1);
+          if (error !== null) return error;
+        }
+      }
+    }
+    const fieldPath0_7 = `${path}.arrayItems`;
+    if (_vdl.hasOwn(record0, "arrayItems") && record0["arrayItems"] !== void 0) {
+      if (!Array.isArray(record0["arrayItems"])) return `${fieldPath0_7}: expected array, got ${_vdl.describeValue(record0["arrayItems"])}`;
+      for (let index1 = 0; index1 < record0["arrayItems"].length; index1 += 1) {
+        const itemPath1 = `${fieldPath0_7}[${index1}]`;
+        {
+          const error = LiteralValue.validate(record0["arrayItems"][index1], itemPath1);
+          if (error !== null) return error;
+        }
+      }
+    }
+    return null;
+  },
+  hydrate(input) {
+    return _vdl.withOptional(_vdl.withOptional(_vdl.withOptional(_vdl.withOptional(_vdl.withOptional(_vdl.withOptional({
+      position: Position.hydrate(input.position),
+      kind: LiteralKind.hydrate(input.kind)
+    }, "stringValue", input.stringValue === void 0 ? void 0 : input.stringValue), "intValue", input.intValue === void 0 ? void 0 : input.intValue), "floatValue", input.floatValue === void 0 ? void 0 : input.floatValue), "boolValue", input.boolValue === void 0 ? void 0 : input.boolValue), "objectEntries", input.objectEntries === void 0 ? void 0 : input.objectEntries.map((item1) => ObjectEntry.hydrate(item1))), "arrayItems", input.arrayItems === void 0 ? void 0 : input.arrayItems.map((item1) => LiteralValue.hydrate(item1)));
+  }
+};
+var ObjectEntry = {
+  parse(json) {
+    const input = _vdl.parseJson(json);
+    const error = ObjectEntry.validate(input);
+    if (error !== null) throw new Error(error);
+    return ObjectEntry.hydrate(input);
+  },
+  validate(input, path = "ObjectEntry") {
+    if (!_vdl.isRecord(input)) return `${path}: expected object, got ${_vdl.describeValue(input)}`;
+    const record0 = input;
+    const fieldPath0_0 = `${path}.position`;
+    if (!_vdl.hasOwn(record0, "position") || record0["position"] === void 0) return `${fieldPath0_0}: required field is missing`;
+    {
+      const error = Position.validate(record0["position"], fieldPath0_0);
+      if (error !== null) return error;
+    }
+    const fieldPath0_1 = `${path}.key`;
+    if (!_vdl.hasOwn(record0, "key") || record0["key"] === void 0) return `${fieldPath0_1}: required field is missing`;
+    if (typeof record0["key"] !== "string") return `${fieldPath0_1}: expected string, got ${_vdl.describeValue(record0["key"])}`;
+    const fieldPath0_2 = `${path}.value`;
+    if (!_vdl.hasOwn(record0, "value") || record0["value"] === void 0) return `${fieldPath0_2}: required field is missing`;
+    {
+      const error = LiteralValue.validate(record0["value"], fieldPath0_2);
+      if (error !== null) return error;
+    }
+    return null;
+  },
+  hydrate(input) {
+    return {
+      position: Position.hydrate(input.position),
+      key: input.key,
+      value: LiteralValue.hydrate(input.value)
+    };
+  }
+};
+var Position = {
+  parse(json) {
+    const input = _vdl.parseJson(json);
+    const error = Position.validate(input);
+    if (error !== null) throw new Error(error);
+    return Position.hydrate(input);
+  },
+  validate(input, path = "Position") {
+    if (!_vdl.isRecord(input)) return `${path}: expected object, got ${_vdl.describeValue(input)}`;
+    const record0 = input;
+    const fieldPath0_0 = `${path}.file`;
+    if (!_vdl.hasOwn(record0, "file") || record0["file"] === void 0) return `${fieldPath0_0}: required field is missing`;
+    if (typeof record0["file"] !== "string") return `${fieldPath0_0}: expected string, got ${_vdl.describeValue(record0["file"])}`;
+    const fieldPath0_1 = `${path}.line`;
+    if (!_vdl.hasOwn(record0, "line") || record0["line"] === void 0) return `${fieldPath0_1}: required field is missing`;
+    if (typeof record0["line"] !== "number" || !Number.isFinite(record0["line"])) return `${fieldPath0_1}: expected number, got ${_vdl.describeValue(record0["line"])}`;
+    const fieldPath0_2 = `${path}.column`;
+    if (!_vdl.hasOwn(record0, "column") || record0["column"] === void 0) return `${fieldPath0_2}: required field is missing`;
+    if (typeof record0["column"] !== "number" || !Number.isFinite(record0["column"])) return `${fieldPath0_2}: expected number, got ${_vdl.describeValue(record0["column"])}`;
+    return null;
+  },
+  hydrate(input) {
+    return {
+      file: input.file,
+      line: input.line,
+      column: input.column
+    };
+  }
+};
+var TopLevelDoc = {
+  parse(json) {
+    const input = _vdl.parseJson(json);
+    const error = TopLevelDoc.validate(input);
+    if (error !== null) throw new Error(error);
+    return TopLevelDoc.hydrate(input);
+  },
+  validate(input, path = "TopLevelDoc") {
+    if (!_vdl.isRecord(input)) return `${path}: expected object, got ${_vdl.describeValue(input)}`;
+    const record0 = input;
+    const fieldPath0_0 = `${path}.position`;
+    if (!_vdl.hasOwn(record0, "position") || record0["position"] === void 0) return `${fieldPath0_0}: required field is missing`;
+    {
+      const error = Position.validate(record0["position"], fieldPath0_0);
+      if (error !== null) return error;
+    }
+    const fieldPath0_1 = `${path}.content`;
+    if (!_vdl.hasOwn(record0, "content") || record0["content"] === void 0) return `${fieldPath0_1}: required field is missing`;
+    if (typeof record0["content"] !== "string") return `${fieldPath0_1}: expected string, got ${_vdl.describeValue(record0["content"])}`;
+    return null;
+  },
+  hydrate(input) {
+    return {
+      position: Position.hydrate(input.position),
+      content: input.content
+    };
+  }
+};
+var TypeDef = {
+  parse(json) {
+    const input = _vdl.parseJson(json);
+    const error = TypeDef.validate(input);
+    if (error !== null) throw new Error(error);
+    return TypeDef.hydrate(input);
+  },
+  validate(input, path = "TypeDef") {
+    if (!_vdl.isRecord(input)) return `${path}: expected object, got ${_vdl.describeValue(input)}`;
+    const record0 = input;
+    const fieldPath0_0 = `${path}.position`;
+    if (!_vdl.hasOwn(record0, "position") || record0["position"] === void 0) return `${fieldPath0_0}: required field is missing`;
+    {
+      const error = Position.validate(record0["position"], fieldPath0_0);
+      if (error !== null) return error;
+    }
+    const fieldPath0_1 = `${path}.name`;
+    if (!_vdl.hasOwn(record0, "name") || record0["name"] === void 0) return `${fieldPath0_1}: required field is missing`;
+    if (typeof record0["name"] !== "string") return `${fieldPath0_1}: expected string, got ${_vdl.describeValue(record0["name"])}`;
+    const fieldPath0_2 = `${path}.doc`;
+    if (_vdl.hasOwn(record0, "doc") && record0["doc"] !== void 0) {
+      if (typeof record0["doc"] !== "string") return `${fieldPath0_2}: expected string, got ${_vdl.describeValue(record0["doc"])}`;
+    }
+    const fieldPath0_3 = `${path}.annotations`;
+    if (!_vdl.hasOwn(record0, "annotations") || record0["annotations"] === void 0) return `${fieldPath0_3}: required field is missing`;
+    if (!Array.isArray(record0["annotations"])) return `${fieldPath0_3}: expected array, got ${_vdl.describeValue(record0["annotations"])}`;
+    for (let index1 = 0; index1 < record0["annotations"].length; index1 += 1) {
+      const itemPath1 = `${fieldPath0_3}[${index1}]`;
+      {
+        const error = Annotation.validate(record0["annotations"][index1], itemPath1);
+        if (error !== null) return error;
+      }
+    }
+    const fieldPath0_4 = `${path}.typeRef`;
+    if (!_vdl.hasOwn(record0, "typeRef") || record0["typeRef"] === void 0) return `${fieldPath0_4}: required field is missing`;
+    {
+      const error = TypeRef.validate(record0["typeRef"], fieldPath0_4);
+      if (error !== null) return error;
+    }
+    return null;
+  },
+  hydrate(input) {
+    return _vdl.withOptional({
+      position: Position.hydrate(input.position),
+      name: input.name,
+      annotations: input.annotations.map((item1) => Annotation.hydrate(item1)),
+      typeRef: TypeRef.hydrate(input.typeRef)
+    }, "doc", input.doc === void 0 ? void 0 : input.doc);
+  }
+};
+var TypeRef = {
+  parse(json) {
+    const input = _vdl.parseJson(json);
+    const error = TypeRef.validate(input);
+    if (error !== null) throw new Error(error);
+    return TypeRef.hydrate(input);
+  },
+  validate(input, path = "TypeRef") {
+    if (!_vdl.isRecord(input)) return `${path}: expected object, got ${_vdl.describeValue(input)}`;
+    const record0 = input;
+    const fieldPath0_0 = `${path}.kind`;
+    if (!_vdl.hasOwn(record0, "kind") || record0["kind"] === void 0) return `${fieldPath0_0}: required field is missing`;
+    {
+      const error = TypeKind.validate(record0["kind"], fieldPath0_0);
+      if (error !== null) return error;
+    }
+    const fieldPath0_1 = `${path}.primitiveName`;
+    if (_vdl.hasOwn(record0, "primitiveName") && record0["primitiveName"] !== void 0) {
+      const error = PrimitiveType.validate(record0["primitiveName"], fieldPath0_1);
+      if (error !== null) return error;
+    }
+    const fieldPath0_2 = `${path}.typeName`;
+    if (_vdl.hasOwn(record0, "typeName") && record0["typeName"] !== void 0) {
+      if (typeof record0["typeName"] !== "string") return `${fieldPath0_2}: expected string, got ${_vdl.describeValue(record0["typeName"])}`;
+    }
+    const fieldPath0_3 = `${path}.enumName`;
+    if (_vdl.hasOwn(record0, "enumName") && record0["enumName"] !== void 0) {
+      if (typeof record0["enumName"] !== "string") return `${fieldPath0_3}: expected string, got ${_vdl.describeValue(record0["enumName"])}`;
+    }
+    const fieldPath0_4 = `${path}.enumType`;
+    if (_vdl.hasOwn(record0, "enumType") && record0["enumType"] !== void 0) {
+      const error = EnumValueType.validate(record0["enumType"], fieldPath0_4);
+      if (error !== null) return error;
+    }
+    const fieldPath0_5 = `${path}.arrayType`;
+    if (_vdl.hasOwn(record0, "arrayType") && record0["arrayType"] !== void 0) {
+      const error = TypeRef.validate(record0["arrayType"], fieldPath0_5);
+      if (error !== null) return error;
+    }
+    const fieldPath0_6 = `${path}.arrayDims`;
+    if (_vdl.hasOwn(record0, "arrayDims") && record0["arrayDims"] !== void 0) {
+      if (typeof record0["arrayDims"] !== "number" || !Number.isFinite(record0["arrayDims"])) return `${fieldPath0_6}: expected number, got ${_vdl.describeValue(record0["arrayDims"])}`;
+    }
+    const fieldPath0_7 = `${path}.mapType`;
+    if (_vdl.hasOwn(record0, "mapType") && record0["mapType"] !== void 0) {
+      const error = TypeRef.validate(record0["mapType"], fieldPath0_7);
+      if (error !== null) return error;
+    }
+    const fieldPath0_8 = `${path}.objectFields`;
+    if (_vdl.hasOwn(record0, "objectFields") && record0["objectFields"] !== void 0) {
+      if (!Array.isArray(record0["objectFields"])) return `${fieldPath0_8}: expected array, got ${_vdl.describeValue(record0["objectFields"])}`;
+      for (let index1 = 0; index1 < record0["objectFields"].length; index1 += 1) {
+        const itemPath1 = `${fieldPath0_8}[${index1}]`;
+        {
+          const error = Field.validate(record0["objectFields"][index1], itemPath1);
+          if (error !== null) return error;
+        }
+      }
+    }
+    return null;
+  },
+  hydrate(input) {
+    return _vdl.withOptional(_vdl.withOptional(_vdl.withOptional(_vdl.withOptional(_vdl.withOptional(_vdl.withOptional(_vdl.withOptional(_vdl.withOptional({ kind: TypeKind.hydrate(input.kind) }, "primitiveName", input.primitiveName === void 0 ? void 0 : PrimitiveType.hydrate(input.primitiveName)), "typeName", input.typeName === void 0 ? void 0 : input.typeName), "enumName", input.enumName === void 0 ? void 0 : input.enumName), "enumType", input.enumType === void 0 ? void 0 : EnumValueType.hydrate(input.enumType)), "arrayType", input.arrayType === void 0 ? void 0 : TypeRef.hydrate(input.arrayType)), "arrayDims", input.arrayDims === void 0 ? void 0 : input.arrayDims), "mapType", input.mapType === void 0 ? void 0 : TypeRef.hydrate(input.mapType)), "objectFields", input.objectFields === void 0 ? void 0 : input.objectFields.map((item1) => Field.hydrate(item1)));
+  }
+};
+var _vdl = {
+  parseJson(json) {
+    try {
+      return JSON.parse(json);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      throw new Error(`Invalid JSON input: ${message}`);
+    }
+  },
+  recordEntries(record) {
+    const entries = [];
+    for (const key in record) if (Object.prototype.hasOwnProperty.call(record, key)) {
+      const value = record[key];
+      entries.push([key, value]);
+    }
+    return entries;
+  },
+  mapRecord(record, mapValue) {
+    const output = {};
+    for (const key in record) if (Object.prototype.hasOwnProperty.call(record, key)) {
+      const value = record[key];
+      output[key] = mapValue(value);
+    }
+    return output;
+  },
+  withOptional(record, key, value) {
+    const mutable = record;
+    if (value !== void 0) mutable[key] = value;
+    return record;
+  },
+  isRecord(value) {
+    return typeof value === "object" && value !== null && !Array.isArray(value) && !(value instanceof Date);
+  },
+  hasOwn(record, key) {
+    return Object.prototype.hasOwnProperty.call(record, key);
+  },
+  describeValue(value) {
+    if (value === null) return "null";
+    if (Array.isArray(value)) return "array";
+    if (value instanceof Date) return "Date";
+    return typeof value;
+  },
+  isValidDateInput(value) {
+    if (value instanceof Date) return !Number.isNaN(value.getTime());
+    if (typeof value !== "string") return false;
+    return !Number.isNaN(new Date(value).getTime());
+  },
+  hydrateDateInput(value) {
+    return value instanceof Date ? new Date(value.getTime()) : new Date(value);
+  }
+};
 
 // node_modules/@varavel/vdl-plugin-sdk/dist/index.js
 function definePlugin(handler) {
@@ -211,65 +856,6 @@ var __require = /* @__PURE__ */ ((x) => typeof require !== "undefined" ? require
   if (typeof require !== "undefined") return require.apply(this, arguments);
   throw Error('Calling `require` for "' + x + "\" in an environment that doesn't expose the `require` function. See https://rolldown.rs/in-depth/bundling-cjs#require-external-modules for more details.");
 });
-
-// node_modules/@varavel/vdl-plugin-sdk/dist/objectSpread2-eK8xUo8N.js
-function _typeof(o) {
-  "@babel/helpers - typeof";
-  return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(o2) {
-    return typeof o2;
-  } : function(o2) {
-    return o2 && "function" == typeof Symbol && o2.constructor === Symbol && o2 !== Symbol.prototype ? "symbol" : typeof o2;
-  }, _typeof(o);
-}
-__name(_typeof, "_typeof");
-function toPrimitive(t, r2) {
-  if ("object" != _typeof(t) || !t) return t;
-  var e = t[Symbol.toPrimitive];
-  if (void 0 !== e) {
-    var i = e.call(t, r2 || "default");
-    if ("object" != _typeof(i)) return i;
-    throw new TypeError("@@toPrimitive must return a primitive value.");
-  }
-  return ("string" === r2 ? String : Number)(t);
-}
-__name(toPrimitive, "toPrimitive");
-function toPropertyKey(t) {
-  var i = toPrimitive(t, "string");
-  return "symbol" == _typeof(i) ? i : i + "";
-}
-__name(toPropertyKey, "toPropertyKey");
-function _defineProperty(e, r2, t) {
-  return (r2 = toPropertyKey(r2)) in e ? Object.defineProperty(e, r2, {
-    value: t,
-    enumerable: true,
-    configurable: true,
-    writable: true
-  }) : e[r2] = t, e;
-}
-__name(_defineProperty, "_defineProperty");
-function ownKeys(e, r2) {
-  var t = Object.keys(e);
-  if (Object.getOwnPropertySymbols) {
-    var o = Object.getOwnPropertySymbols(e);
-    r2 && (o = o.filter(function(r3) {
-      return Object.getOwnPropertyDescriptor(e, r3).enumerable;
-    })), t.push.apply(t, o);
-  }
-  return t;
-}
-__name(ownKeys, "ownKeys");
-function _objectSpread2(e) {
-  for (var r2 = 1; r2 < arguments.length; r2++) {
-    var t = null != arguments[r2] ? arguments[r2] : {};
-    r2 % 2 ? ownKeys(Object(t), true).forEach(function(r3) {
-      _defineProperty(e, r3, t[r3]);
-    }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function(r3) {
-      Object.defineProperty(e, r3, Object.getOwnPropertyDescriptor(t, r3));
-    });
-  }
-  return e;
-}
-__name(_objectSpread2, "_objectSpread2");
 
 // node_modules/@varavel/vdl-plugin-sdk/dist/utils/index.js
 function at$1(arr, indices) {
@@ -1145,7 +1731,7 @@ function pascalCase(str) {
 }
 __name(pascalCase, "pascalCase");
 function hoistAnonymousTypes(schema, nameFn) {
-  const output = hydrateIrSchema(schema);
+  const output = IrSchema.hydrate(schema);
   const usedNames = new Set(output.types.map((typeDef) => typeDef.name));
   const flatTypes = [];
   for (const typeDef of output.types) {
@@ -1287,403 +1873,6 @@ var misc_exports = /* @__PURE__ */ __exportAll({
   attempt: /* @__PURE__ */ __name(() => attempt, "attempt"),
   invariant: /* @__PURE__ */ __name(() => invariant, "invariant")
 });
-function isPrimitive$1(value) {
-  return value == null || typeof value !== "object" && typeof value !== "function";
-}
-__name(isPrimitive$1, "isPrimitive$1");
-function isTypedArray(x) {
-  return ArrayBuffer.isView(x) && !(x instanceof DataView);
-}
-__name(isTypedArray, "isTypedArray");
-function clone$1(obj) {
-  if (isPrimitive$1(obj)) return obj;
-  if (Array.isArray(obj) || isTypedArray(obj) || obj instanceof ArrayBuffer || typeof SharedArrayBuffer !== "undefined" && obj instanceof SharedArrayBuffer) return obj.slice(0);
-  const prototype = Object.getPrototypeOf(obj);
-  if (prototype == null) return Object.assign(Object.create(prototype), obj);
-  const Constructor = prototype.constructor;
-  if (obj instanceof Date || obj instanceof Map || obj instanceof Set) return new Constructor(obj);
-  if (obj instanceof RegExp) {
-    const newRegExp = new Constructor(obj);
-    newRegExp.lastIndex = obj.lastIndex;
-    return newRegExp;
-  }
-  if (obj instanceof DataView) return new Constructor(obj.buffer.slice(0));
-  if (obj instanceof Error) {
-    let newError;
-    if (obj instanceof AggregateError) newError = new Constructor(obj.errors, obj.message, { cause: obj.cause });
-    else newError = new Constructor(obj.message, { cause: obj.cause });
-    newError.stack = obj.stack;
-    Object.assign(newError, obj);
-    return newError;
-  }
-  if (typeof File !== "undefined" && obj instanceof File) return new Constructor([obj], obj.name, {
-    type: obj.type,
-    lastModified: obj.lastModified
-  });
-  if (typeof obj === "object") {
-    const newObject = Object.create(prototype);
-    return Object.assign(newObject, obj);
-  }
-  return obj;
-}
-__name(clone$1, "clone$1");
-function getSymbols(object) {
-  return Object.getOwnPropertySymbols(object).filter((symbol) => Object.prototype.propertyIsEnumerable.call(object, symbol));
-}
-__name(getSymbols, "getSymbols");
-function getTag(value) {
-  if (value == null) return value === void 0 ? "[object Undefined]" : "[object Null]";
-  return Object.prototype.toString.call(value);
-}
-__name(getTag, "getTag");
-var regexpTag = "[object RegExp]";
-var stringTag = "[object String]";
-var numberTag = "[object Number]";
-var booleanTag = "[object Boolean]";
-var argumentsTag = "[object Arguments]";
-var symbolTag = "[object Symbol]";
-var dateTag = "[object Date]";
-var mapTag = "[object Map]";
-var setTag = "[object Set]";
-var arrayTag = "[object Array]";
-var arrayBufferTag = "[object ArrayBuffer]";
-var objectTag = "[object Object]";
-var dataViewTag = "[object DataView]";
-var uint8ArrayTag = "[object Uint8Array]";
-var uint8ClampedArrayTag = "[object Uint8ClampedArray]";
-var uint16ArrayTag = "[object Uint16Array]";
-var uint32ArrayTag = "[object Uint32Array]";
-var int8ArrayTag = "[object Int8Array]";
-var int16ArrayTag = "[object Int16Array]";
-var int32ArrayTag = "[object Int32Array]";
-var float32ArrayTag = "[object Float32Array]";
-var float64ArrayTag = "[object Float64Array]";
-function cloneDeepWithImpl(valueToClone, keyToClone, objectToClone, stack = /* @__PURE__ */ new Map(), cloneValue = void 0) {
-  const cloned = cloneValue === null || cloneValue === void 0 ? void 0 : cloneValue(valueToClone, keyToClone, objectToClone, stack);
-  if (cloned !== void 0) return cloned;
-  if (isPrimitive$1(valueToClone)) return valueToClone;
-  if (stack.has(valueToClone)) return stack.get(valueToClone);
-  if (Array.isArray(valueToClone)) {
-    const result = new Array(valueToClone.length);
-    stack.set(valueToClone, result);
-    for (let i = 0; i < valueToClone.length; i++) result[i] = cloneDeepWithImpl(valueToClone[i], i, objectToClone, stack, cloneValue);
-    if (Object.hasOwn(valueToClone, "index")) result.index = valueToClone.index;
-    if (Object.hasOwn(valueToClone, "input")) result.input = valueToClone.input;
-    return result;
-  }
-  if (valueToClone instanceof Date) return new Date(valueToClone.getTime());
-  if (valueToClone instanceof RegExp) {
-    const result = new RegExp(valueToClone.source, valueToClone.flags);
-    result.lastIndex = valueToClone.lastIndex;
-    return result;
-  }
-  if (valueToClone instanceof Map) {
-    const result = /* @__PURE__ */ new Map();
-    stack.set(valueToClone, result);
-    for (const [key, value] of valueToClone) result.set(key, cloneDeepWithImpl(value, key, objectToClone, stack, cloneValue));
-    return result;
-  }
-  if (valueToClone instanceof Set) {
-    const result = /* @__PURE__ */ new Set();
-    stack.set(valueToClone, result);
-    for (const value of valueToClone) result.add(cloneDeepWithImpl(value, void 0, objectToClone, stack, cloneValue));
-    return result;
-  }
-  if (typeof Buffer !== "undefined" && Buffer.isBuffer(valueToClone)) return valueToClone.subarray();
-  if (isTypedArray(valueToClone)) {
-    const result = new (Object.getPrototypeOf(valueToClone)).constructor(valueToClone.length);
-    stack.set(valueToClone, result);
-    for (let i = 0; i < valueToClone.length; i++) result[i] = cloneDeepWithImpl(valueToClone[i], i, objectToClone, stack, cloneValue);
-    return result;
-  }
-  if (valueToClone instanceof ArrayBuffer || typeof SharedArrayBuffer !== "undefined" && valueToClone instanceof SharedArrayBuffer) return valueToClone.slice(0);
-  if (valueToClone instanceof DataView) {
-    const result = new DataView(valueToClone.buffer.slice(0), valueToClone.byteOffset, valueToClone.byteLength);
-    stack.set(valueToClone, result);
-    copyProperties(result, valueToClone, objectToClone, stack, cloneValue);
-    return result;
-  }
-  if (typeof File !== "undefined" && valueToClone instanceof File) {
-    const result = new File([valueToClone], valueToClone.name, { type: valueToClone.type });
-    stack.set(valueToClone, result);
-    copyProperties(result, valueToClone, objectToClone, stack, cloneValue);
-    return result;
-  }
-  if (typeof Blob !== "undefined" && valueToClone instanceof Blob) {
-    const result = new Blob([valueToClone], { type: valueToClone.type });
-    stack.set(valueToClone, result);
-    copyProperties(result, valueToClone, objectToClone, stack, cloneValue);
-    return result;
-  }
-  if (valueToClone instanceof Error) {
-    const result = structuredClone(valueToClone);
-    stack.set(valueToClone, result);
-    result.message = valueToClone.message;
-    result.name = valueToClone.name;
-    result.stack = valueToClone.stack;
-    result.cause = valueToClone.cause;
-    result.constructor = valueToClone.constructor;
-    copyProperties(result, valueToClone, objectToClone, stack, cloneValue);
-    return result;
-  }
-  if (valueToClone instanceof Boolean) {
-    const result = new Boolean(valueToClone.valueOf());
-    stack.set(valueToClone, result);
-    copyProperties(result, valueToClone, objectToClone, stack, cloneValue);
-    return result;
-  }
-  if (valueToClone instanceof Number) {
-    const result = new Number(valueToClone.valueOf());
-    stack.set(valueToClone, result);
-    copyProperties(result, valueToClone, objectToClone, stack, cloneValue);
-    return result;
-  }
-  if (valueToClone instanceof String) {
-    const result = new String(valueToClone.valueOf());
-    stack.set(valueToClone, result);
-    copyProperties(result, valueToClone, objectToClone, stack, cloneValue);
-    return result;
-  }
-  if (typeof valueToClone === "object" && isCloneableObject(valueToClone)) {
-    const result = Object.create(Object.getPrototypeOf(valueToClone));
-    stack.set(valueToClone, result);
-    copyProperties(result, valueToClone, objectToClone, stack, cloneValue);
-    return result;
-  }
-  return valueToClone;
-}
-__name(cloneDeepWithImpl, "cloneDeepWithImpl");
-function copyProperties(target, source, objectToClone = target, stack, cloneValue) {
-  const keys = [...Object.keys(source), ...getSymbols(source)];
-  for (let i = 0; i < keys.length; i++) {
-    const key = keys[i];
-    const descriptor = Object.getOwnPropertyDescriptor(target, key);
-    if (descriptor == null || descriptor.writable) target[key] = cloneDeepWithImpl(source[key], key, objectToClone, stack, cloneValue);
-  }
-}
-__name(copyProperties, "copyProperties");
-function isCloneableObject(object) {
-  switch (getTag(object)) {
-    case argumentsTag:
-    case arrayTag:
-    case arrayBufferTag:
-    case dataViewTag:
-    case booleanTag:
-    case dateTag:
-    case float32ArrayTag:
-    case float64ArrayTag:
-    case int8ArrayTag:
-    case int16ArrayTag:
-    case int32ArrayTag:
-    case mapTag:
-    case numberTag:
-    case objectTag:
-    case regexpTag:
-    case setTag:
-    case stringTag:
-    case symbolTag:
-    case uint8ArrayTag:
-    case uint8ClampedArrayTag:
-    case uint16ArrayTag:
-    case uint32ArrayTag:
-      return true;
-    default:
-      return false;
-  }
-}
-__name(isCloneableObject, "isCloneableObject");
-function cloneDeep$1(obj) {
-  return cloneDeepWithImpl(obj, void 0, obj, /* @__PURE__ */ new Map(), void 0);
-}
-__name(cloneDeep$1, "cloneDeep$1");
-function findKey$1(obj, predicate) {
-  return Object.keys(obj).find((key) => predicate(obj[key], key, obj));
-}
-__name(findKey$1, "findKey$1");
-function isPlainObject$1(value) {
-  if (!value || typeof value !== "object") return false;
-  const proto = Object.getPrototypeOf(value);
-  if (!(proto === null || proto === Object.prototype || Object.getPrototypeOf(proto) === null)) return false;
-  return Object.prototype.toString.call(value) === "[object Object]";
-}
-__name(isPlainObject$1, "isPlainObject$1");
-function flattenObject$1(object, { delimiter = "." } = {}) {
-  return flattenObjectImpl(object, "", delimiter);
-}
-__name(flattenObject$1, "flattenObject$1");
-function flattenObjectImpl(object, prefix, delimiter) {
-  const result = {};
-  const keys = Object.keys(object);
-  for (let i = 0; i < keys.length; i++) {
-    const key = keys[i];
-    const value = object[key];
-    const prefixedKey = prefix ? `${prefix}${delimiter}${key}` : key;
-    if (isPlainObject$1(value) && Object.keys(value).length > 0) {
-      Object.assign(result, flattenObjectImpl(value, prefixedKey, delimiter));
-      continue;
-    }
-    if (Array.isArray(value) && value.length > 0) {
-      Object.assign(result, flattenObjectImpl(value, prefixedKey, delimiter));
-      continue;
-    }
-    result[prefixedKey] = value;
-  }
-  return result;
-}
-__name(flattenObjectImpl, "flattenObjectImpl");
-function invert$1(obj) {
-  const result = {};
-  const keys = Object.keys(obj);
-  for (let i = 0; i < keys.length; i++) {
-    const key = keys[i];
-    const value = obj[key];
-    result[value] = key;
-  }
-  return result;
-}
-__name(invert$1, "invert$1");
-function mapKeys$1(object, getNewKey) {
-  const result = {};
-  const keys = Object.keys(object);
-  for (let i = 0; i < keys.length; i++) {
-    const key = keys[i];
-    const value = object[key];
-    result[getNewKey(value, key, object)] = value;
-  }
-  return result;
-}
-__name(mapKeys$1, "mapKeys$1");
-function mapValues$1(object, getNewValue) {
-  const result = {};
-  const keys = Object.keys(object);
-  for (let i = 0; i < keys.length; i++) {
-    const key = keys[i];
-    const value = object[key];
-    result[key] = getNewValue(value, key, object);
-  }
-  return result;
-}
-__name(mapValues$1, "mapValues$1");
-function isUnsafeProperty(key) {
-  return key === "__proto__";
-}
-__name(isUnsafeProperty, "isUnsafeProperty");
-function merge$1(target, source) {
-  const sourceKeys = Object.keys(source);
-  for (let i = 0; i < sourceKeys.length; i++) {
-    const key = sourceKeys[i];
-    if (isUnsafeProperty(key)) continue;
-    const sourceValue = source[key];
-    const targetValue = target[key];
-    if (isMergeableValue(sourceValue) && isMergeableValue(targetValue)) target[key] = merge$1(targetValue, sourceValue);
-    else if (Array.isArray(sourceValue)) target[key] = merge$1([], sourceValue);
-    else if (isPlainObject$1(sourceValue)) target[key] = merge$1({}, sourceValue);
-    else if (targetValue === void 0 || sourceValue !== void 0) target[key] = sourceValue;
-  }
-  return target;
-}
-__name(merge$1, "merge$1");
-function isMergeableValue(value) {
-  return isPlainObject$1(value) || Array.isArray(value);
-}
-__name(isMergeableValue, "isMergeableValue");
-function mergeWith$1(target, source, merge2) {
-  const sourceKeys = Object.keys(source);
-  for (let i = 0; i < sourceKeys.length; i++) {
-    const key = sourceKeys[i];
-    if (isUnsafeProperty(key)) continue;
-    const sourceValue = source[key];
-    const targetValue = target[key];
-    const merged = merge2(targetValue, sourceValue, key, target, source);
-    if (merged !== void 0) target[key] = merged;
-    else if (Array.isArray(sourceValue)) if (Array.isArray(targetValue)) target[key] = mergeWith$1(targetValue, sourceValue, merge2);
-    else target[key] = mergeWith$1([], sourceValue, merge2);
-    else if (isPlainObject$1(sourceValue)) if (isPlainObject$1(targetValue)) target[key] = mergeWith$1(targetValue, sourceValue, merge2);
-    else target[key] = mergeWith$1({}, sourceValue, merge2);
-    else if (targetValue === void 0 || sourceValue !== void 0) target[key] = sourceValue;
-  }
-  return target;
-}
-__name(mergeWith$1, "mergeWith$1");
-function omit$1(obj, keys) {
-  const result = _objectSpread2({}, obj);
-  for (let i = 0; i < keys.length; i++) {
-    const key = keys[i];
-    delete result[key];
-  }
-  return result;
-}
-__name(omit$1, "omit$1");
-function omitBy$1(obj, shouldOmit) {
-  const result = {};
-  const keys = Object.keys(obj);
-  for (let i = 0; i < keys.length; i++) {
-    const key = keys[i];
-    const value = obj[key];
-    if (!shouldOmit(value, key)) result[key] = value;
-  }
-  return result;
-}
-__name(omitBy$1, "omitBy$1");
-function pick$1(obj, keys) {
-  const result = {};
-  for (let i = 0; i < keys.length; i++) {
-    const key = keys[i];
-    if (Object.hasOwn(obj, key)) result[key] = obj[key];
-  }
-  return result;
-}
-__name(pick$1, "pick$1");
-function pickBy$1(obj, shouldPick) {
-  const result = {};
-  const keys = Object.keys(obj);
-  for (let i = 0; i < keys.length; i++) {
-    const key = keys[i];
-    const value = obj[key];
-    if (shouldPick(value, key)) result[key] = value;
-  }
-  return result;
-}
-__name(pickBy$1, "pickBy$1");
-function toMerged$1(target, source) {
-  return mergeWith$1(clone$1(target), source, /* @__PURE__ */ __name(function mergeRecursively(targetValue, sourceValue) {
-    if (Array.isArray(sourceValue)) if (Array.isArray(targetValue)) return mergeWith$1(clone$1(targetValue), sourceValue, mergeRecursively);
-    else return mergeWith$1([], sourceValue, mergeRecursively);
-    else if (isPlainObject$1(sourceValue)) if (isPlainObject$1(targetValue)) return mergeWith$1(clone$1(targetValue), sourceValue, mergeRecursively);
-    else return mergeWith$1({}, sourceValue, mergeRecursively);
-  }, "mergeRecursively"));
-}
-__name(toMerged$1, "toMerged$1");
-var clone = clone$1;
-var cloneDeep = cloneDeep$1;
-var findKey = findKey$1;
-var flattenObject = flattenObject$1;
-var invert = invert$1;
-var mapKeys = mapKeys$1;
-var mapValues = mapValues$1;
-var merge = merge$1;
-var mergeWith = mergeWith$1;
-var omit = omit$1;
-var omitBy = omitBy$1;
-var pick = pick$1;
-var pickBy = pickBy$1;
-var toMerged = toMerged$1;
-var objects_exports = /* @__PURE__ */ __exportAll({
-  clone: /* @__PURE__ */ __name(() => clone, "clone"),
-  cloneDeep: /* @__PURE__ */ __name(() => cloneDeep, "cloneDeep"),
-  findKey: /* @__PURE__ */ __name(() => findKey, "findKey"),
-  flattenObject: /* @__PURE__ */ __name(() => flattenObject, "flattenObject"),
-  invert: /* @__PURE__ */ __name(() => invert, "invert"),
-  mapKeys: /* @__PURE__ */ __name(() => mapKeys, "mapKeys"),
-  mapValues: /* @__PURE__ */ __name(() => mapValues, "mapValues"),
-  merge: /* @__PURE__ */ __name(() => merge, "merge"),
-  mergeWith: /* @__PURE__ */ __name(() => mergeWith, "mergeWith"),
-  omit: /* @__PURE__ */ __name(() => omit, "omit"),
-  omitBy: /* @__PURE__ */ __name(() => omitBy, "omitBy"),
-  pick: /* @__PURE__ */ __name(() => pick, "pick"),
-  pickBy: /* @__PURE__ */ __name(() => pickBy, "pickBy"),
-  toMerged: /* @__PURE__ */ __name(() => toMerged, "toMerged")
-});
 function getOptionArray(options, key, defaultValue = [], separator = ",") {
   const value = options === null || options === void 0 ? void 0 : options[key];
   if (value === void 0) return defaultValue;
@@ -1756,7 +1945,7 @@ function camelCase(str) {
   return parts.map((part, index) => index === 0 ? part.toLowerCase() : capitalize(part)).join("");
 }
 __name(camelCase, "camelCase");
-function ownKeys2(object, enumerableOnly) {
+function ownKeys(object, enumerableOnly) {
   var keys = Object.keys(object);
   if (Object.getOwnPropertySymbols) {
     var symbols = Object.getOwnPropertySymbols(object);
@@ -1766,20 +1955,20 @@ function ownKeys2(object, enumerableOnly) {
   }
   return keys;
 }
-__name(ownKeys2, "ownKeys");
+__name(ownKeys, "ownKeys");
 function _objectSpread(target) {
   for (var i = 1; i < arguments.length; i++) {
     var source = null != arguments[i] ? arguments[i] : {};
-    i % 2 ? ownKeys2(Object(source), true).forEach(function(key) {
-      _defineProperty2(target, key, source[key]);
-    }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys2(Object(source)).forEach(function(key) {
+    i % 2 ? ownKeys(Object(source), true).forEach(function(key) {
+      _defineProperty(target, key, source[key]);
+    }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function(key) {
       Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
     });
   }
   return target;
 }
 __name(_objectSpread, "_objectSpread");
-function _defineProperty2(obj, key, value) {
+function _defineProperty(obj, key, value) {
   key = _toPropertyKey(key);
   if (key in obj) Object.defineProperty(obj, key, {
     value,
@@ -1790,7 +1979,7 @@ function _defineProperty2(obj, key, value) {
   else obj[key] = value;
   return obj;
 }
-__name(_defineProperty2, "_defineProperty");
+__name(_defineProperty, "_defineProperty");
 function _toPropertyKey(arg) {
   var key = _toPrimitive(arg, "string");
   return typeof key === "symbol" ? key : String(key);
@@ -2885,41 +3074,6 @@ function renderConstInitializer(typeRef, literal, context, position) {
 }
 __name(renderConstInitializer, "renderConstInitializer");
 
-// src/shared/go-literals/metadata.ts
-function renderMetadataValueExpression(value) {
-  var _a4, _b;
-  if (!value) {
-    return "nil";
-  }
-  switch (value.kind) {
-    case "string":
-      return JSON.stringify(value.stringValue);
-    case "int":
-      return String(value.intValue);
-    case "float":
-      return String(value.floatValue);
-    case "bool":
-      return String(value.boolValue);
-    case "array":
-      return `[]any{${((_a4 = value.arrayItems) != null ? _a4 : []).map((item) => renderMetadataValueExpression(item)).join(", ")}}`;
-    case "object":
-      return `map[string]any{${getLastObjectEntries((_b = value.objectEntries) != null ? _b : []).map(
-        (entry) => `${JSON.stringify(entry.key)}: ${renderMetadataValueExpression(entry.value)}`
-      ).join(", ")}}`;
-    default:
-      return "nil";
-  }
-}
-__name(renderMetadataValueExpression, "renderMetadataValueExpression");
-function getLastObjectEntries(entries) {
-  const lastByKey = /* @__PURE__ */ new Map();
-  for (const entry of entries) {
-    lastByKey.set(entry.key, entry);
-  }
-  return [...lastByKey.values()];
-}
-__name(getLastObjectEntries, "getLastObjectEntries");
-
 // src/shared/go-literals/render.ts
 function renderTypedValueExpressionPretty(typeRef, literal, context, position, namedTypeGoName) {
   switch (typeRef.kind) {
@@ -3471,430 +3625,6 @@ function generateEnumsFile(context) {
   };
 }
 __name(generateEnumsFile, "generateEnumsFile");
-
-// src/stages/emit/files/metadata-annotations.ts
-function writeAnnotationSetField(g, annotations) {
-  if (annotations.length === 0) {
-    g.line("Annotations: VDLAnnotationSet{},");
-    return;
-  }
-  const byName = buildByNameEntries(annotations);
-  g.line("Annotations: VDLAnnotationSet{");
-  g.block(() => {
-    g.line("List: []VDLAnnotation{");
-    g.block(() => {
-      for (const annotation of annotations) {
-        g.line("VDLAnnotation{");
-        g.block(() => {
-          g.line(`Name: ${JSON.stringify(annotation.name)},`);
-          g.line(
-            `Value: ${renderMetadataValueExpression(annotation.argument)},`
-          );
-        });
-        g.line("},");
-      }
-    });
-    g.line("},");
-    g.line("ByName: map[string]any{");
-    g.block(() => {
-      for (const [name, value] of byName) {
-        g.line(`${JSON.stringify(name)}: ${value},`);
-      }
-    });
-    g.line("},");
-  });
-  g.line("},");
-}
-__name(writeAnnotationSetField, "writeAnnotationSetField");
-function buildByNameEntries(annotations) {
-  const grouped = arrays_exports.groupBy(annotations, (annotation) => annotation.name);
-  const byName = objects_exports.mapValues(
-    grouped,
-    (group) => {
-      var _a4;
-      return renderMetadataValueExpression((_a4 = group[group.length - 1]) == null ? void 0 : _a4.argument);
-    }
-  );
-  return Object.keys(byName).map((name) => {
-    var _a4;
-    return [name, (_a4 = byName[name]) != null ? _a4 : "nil"];
-  });
-}
-__name(buildByNameEntries, "buildByNameEntries");
-
-// src/stages/emit/files/metadata-runtime.ts
-function renderMetadataSupportTypes(g) {
-  g.line("// VDLAnnotation describes a single VDL annotation entry.");
-  g.line("type VDLAnnotation struct {");
-  g.block(() => {
-    g.line("Name string");
-    g.line("Value any");
-  });
-  g.line("}");
-  g.break();
-  g.line(
-    "// VDLAnnotationSet groups annotations in declaration order and by name."
-  );
-  g.line("type VDLAnnotationSet struct {");
-  g.block(() => {
-    g.line("List []VDLAnnotation");
-    g.line("ByName map[string]any");
-  });
-  g.line("}");
-  g.break();
-  g.line("// Has reports whether an annotation exists in the set.");
-  g.line("func (a VDLAnnotationSet) Has(name string) bool {");
-  g.block(() => {
-    g.line("_, ok := a.ByName[name]");
-    g.line("return ok");
-  });
-  g.line("}");
-  g.break();
-  g.line(
-    "// Get returns the latest value associated with the annotation name."
-  );
-  g.line("func (a VDLAnnotationSet) Get(name string) (any, bool) {");
-  g.block(() => {
-    g.line("value, ok := a.ByName[name]");
-    g.line("return value, ok");
-  });
-  g.line("}");
-  g.break();
-  g.line("// VDLTypeRef describes the recursive shape of a VDL type.");
-  g.line("type VDLTypeRef struct {");
-  g.block(() => {
-    g.line("Kind string");
-    g.line("Name string");
-    g.line("ArrayDims int");
-    g.line("Element *VDLTypeRef");
-    g.line("Fields map[string]VDLFieldMetadata");
-  });
-  g.line("}");
-  g.break();
-  g.line("// GetField looks up an object field by its generated Go name.");
-  g.line(
-    "func (r VDLTypeRef) GetField(name string) (VDLFieldMetadata, bool) {"
-  );
-  g.block(() => {
-    g.line("field, ok := r.Fields[name]");
-    g.line("return field, ok");
-  });
-  g.line("}");
-  g.break();
-  g.line("// VDLFieldMetadata describes a generated field.");
-  g.line("type VDLFieldMetadata struct {");
-  g.block(() => {
-    g.line("Name string");
-    g.line("JSONName string");
-    g.line("Optional bool");
-    g.line("Type VDLTypeRef");
-    g.line("Annotations VDLAnnotationSet");
-  });
-  g.line("}");
-  g.break();
-  g.line("// VDLTypeMetadata describes a generated type.");
-  g.line("type VDLTypeMetadata struct {");
-  g.block(() => {
-    g.line("Name string");
-    g.line("Annotations VDLAnnotationSet");
-    g.line("Type VDLTypeRef");
-  });
-  g.line("}");
-  g.break();
-  g.line("// GetField looks up a field by its generated Go name.");
-  g.line(
-    "func (m VDLTypeMetadata) GetField(name string) (VDLFieldMetadata, bool) {"
-  );
-  g.block(() => {
-    g.line("return m.Type.GetField(name)");
-  });
-  g.line("}");
-  g.break();
-  g.line("// VDLEnumMemberMetadata describes a generated enum value.");
-  g.line("type VDLEnumMemberMetadata struct {");
-  g.block(() => {
-    g.line("Name string");
-    g.line("Value any");
-    g.line("Annotations VDLAnnotationSet");
-  });
-  g.line("}");
-  g.break();
-  g.line("// VDLEnumMetadata describes a generated enum.");
-  g.line("type VDLEnumMetadata struct {");
-  g.block(() => {
-    g.line("Name string");
-    g.line("Annotations VDLAnnotationSet");
-    g.line("Members map[string]VDLEnumMemberMetadata");
-  });
-  g.line("}");
-  g.break();
-  g.line(
-    "// GetMember looks up an enum member by its generated Go suffix name."
-  );
-  g.line(
-    "func (m VDLEnumMetadata) GetMember(name string) (VDLEnumMemberMetadata, bool) {"
-  );
-  g.block(() => {
-    g.line("member, ok := m.Members[name]");
-    g.line("return member, ok");
-  });
-  g.line("}");
-  g.break();
-  g.line("// VDLConstantMetadata describes a generated constant value.");
-  g.line("type VDLConstantMetadata struct {");
-  g.block(() => {
-    g.line("Name string");
-    g.line("Annotations VDLAnnotationSet");
-    g.line("Type VDLTypeRef");
-  });
-  g.line("}");
-  g.break();
-  g.line(
-    "// VDLSchemaMetadata collects metadata for every generated declaration."
-  );
-  g.line("type VDLSchemaMetadata struct {");
-  g.block(() => {
-    g.line("Types map[string]VDLTypeMetadata");
-    g.line("Enums map[string]VDLEnumMetadata");
-    g.line("Constants map[string]VDLConstantMetadata");
-  });
-  g.line("}");
-  g.break();
-  g.line("// GetType looks up a type by its generated Go name.");
-  g.line(
-    "func (m VDLSchemaMetadata) GetType(name string) (VDLTypeMetadata, bool) {"
-  );
-  g.block(() => {
-    g.line("value, ok := m.Types[name]");
-    g.line("return value, ok");
-  });
-  g.line("}");
-  g.break();
-  g.line("// GetEnum looks up an enum by its generated Go name.");
-  g.line(
-    "func (m VDLSchemaMetadata) GetEnum(name string) (VDLEnumMetadata, bool) {"
-  );
-  g.block(() => {
-    g.line("value, ok := m.Enums[name]");
-    g.line("return value, ok");
-  });
-  g.line("}");
-  g.break();
-  g.line("// GetConstant looks up a constant by its generated Go name.");
-  g.line(
-    "func (m VDLSchemaMetadata) GetConstant(name string) (VDLConstantMetadata, bool) {"
-  );
-  g.block(() => {
-    g.line("value, ok := m.Constants[name]");
-    g.line("return value, ok");
-  });
-  g.line("}");
-}
-__name(renderMetadataSupportTypes, "renderMetadataSupportTypes");
-
-// src/stages/emit/files/metadata-types.ts
-function writeMetadataTypeField(g, typeRef, context) {
-  g.line("Type: VDLTypeRef{");
-  g.block(() => {
-    writeMetadataTypeRefBody(g, typeRef, context);
-  });
-  g.line("},");
-}
-__name(writeMetadataTypeField, "writeMetadataTypeField");
-function writeMetadataTypeRefBody(g, typeRef, context) {
-  var _a4, _b;
-  g.line(`Kind: ${JSON.stringify(typeRef.kind)},`);
-  switch (typeRef.kind) {
-    case "primitive":
-      g.line(
-        `Name: ${JSON.stringify(
-          expectValue(
-            typeRef.primitiveName,
-            "Encountered a primitive type reference without a primitive name."
-          )
-        )},`
-      );
-      return;
-    case "type": {
-      const typeName = expectValue(
-        typeRef.typeName,
-        "Encountered a named type reference without a type name."
-      );
-      g.line(
-        `Name: ${JSON.stringify(
-          expectValue(
-            context.typeGoNamesByVdlName.get(typeName),
-            `Unknown VDL type reference ${JSON.stringify(typeName)}.`
-          )
-        )},`
-      );
-      return;
-    }
-    case "enum": {
-      const enumName = expectValue(
-        typeRef.enumName,
-        "Encountered an enum reference without an enum name."
-      );
-      g.line(
-        `Name: ${JSON.stringify(
-          expectValue(
-            context.enumGoNamesByVdlName.get(enumName),
-            `Unknown VDL enum reference ${JSON.stringify(enumName)}.`
-          )
-        )},`
-      );
-      return;
-    }
-    case "array": {
-      g.line(`ArrayDims: ${String((_a4 = typeRef.arrayDims) != null ? _a4 : 1)},`);
-      g.line("Element: &VDLTypeRef{");
-      g.block(() => {
-        writeMetadataTypeRefBody(
-          g,
-          expectValue(
-            typeRef.arrayType,
-            "Encountered an array type reference without an element type."
-          ),
-          context
-        );
-      });
-      g.line("},");
-      return;
-    }
-    case "map": {
-      g.line("Element: &VDLTypeRef{");
-      g.block(() => {
-        writeMetadataTypeRefBody(
-          g,
-          expectValue(
-            typeRef.mapType,
-            "Encountered a map type reference without a value type."
-          ),
-          context
-        );
-      });
-      g.line("},");
-      return;
-    }
-    case "object": {
-      const fields = (_b = typeRef.objectFields) != null ? _b : [];
-      if (fields.length === 0) {
-        g.line("Fields: nil,");
-        return;
-      }
-      g.line("Fields: map[string]VDLFieldMetadata{");
-      g.block(() => {
-        for (const field of fields) {
-          writeMetadataFieldEntry(g, field, context);
-        }
-      });
-      g.line("},");
-      return;
-    }
-    default:
-      fail(`Unsupported VDL type kind ${JSON.stringify(typeRef.kind)}.`);
-  }
-}
-__name(writeMetadataTypeRefBody, "writeMetadataTypeRefBody");
-function writeMetadataFieldEntry(g, field, context) {
-  const goName = toGoFieldName(field.name);
-  g.line(`${JSON.stringify(goName)}: VDLFieldMetadata{`);
-  g.block(() => {
-    g.line(`Name: ${JSON.stringify(goName)},`);
-    g.line(`JSONName: ${JSON.stringify(field.name)},`);
-    g.line(`Optional: ${String(field.optional)},`);
-    writeMetadataTypeField(g, field.typeRef, context);
-    writeAnnotationSetField(g, field.annotations);
-  });
-  g.line("},");
-}
-__name(writeMetadataFieldEntry, "writeMetadataFieldEntry");
-
-// src/stages/emit/files/metadata.ts
-function generateMetadataFile(context) {
-  if (!context.options.genMeta) {
-    return void 0;
-  }
-  const g = newGenerator().withTabs();
-  renderMetadataSupportTypes(g);
-  g.break();
-  g.line("// VDLMetadata exposes generated metadata for the current schema.");
-  g.line("var VDLMetadata = VDLSchemaMetadata{");
-  g.block(() => {
-    g.line("Types: map[string]VDLTypeMetadata{");
-    g.block(() => {
-      for (const descriptor of context.namedTypes) {
-        writeTypeMetadataEntry(g, descriptor, context);
-      }
-    });
-    g.line("},");
-    g.line("Enums: map[string]VDLEnumMetadata{");
-    g.block(() => {
-      for (const enumDescriptor of context.enumDescriptors) {
-        writeEnumMetadataEntry(g, enumDescriptor.goName, () => {
-          g.line(`Name: ${JSON.stringify(enumDescriptor.goName)},`);
-          writeAnnotationSetField(g, enumDescriptor.def.annotations);
-          g.line("Members: map[string]VDLEnumMemberMetadata{");
-          g.block(() => {
-            for (const member of enumDescriptor.members) {
-              g.line(
-                `${JSON.stringify(member.goName)}: VDLEnumMemberMetadata{`
-              );
-              g.block(() => {
-                g.line(`Name: ${JSON.stringify(member.goName)},`);
-                g.line(
-                  `Value: ${renderMetadataValueExpression(member.def.value)},`
-                );
-                writeAnnotationSetField(g, member.def.annotations);
-              });
-              g.line("},");
-            }
-          });
-          g.line("},");
-        });
-      }
-    });
-    g.line("},");
-    g.line("Constants: map[string]VDLConstantMetadata{");
-    g.block(() => {
-      for (const constant of context.constantDescriptors) {
-        g.line(`${JSON.stringify(constant.goName)}: VDLConstantMetadata{`);
-        g.block(() => {
-          g.line(`Name: ${JSON.stringify(constant.goName)},`);
-          writeAnnotationSetField(g, constant.def.annotations);
-          writeMetadataTypeField(g, constant.typeRef, context);
-        });
-        g.line("},");
-      }
-    });
-    g.line("},");
-  });
-  g.line("}");
-  return {
-    path: "metadata.go",
-    content: renderGoFile({
-      packageName: context.options.packageName,
-      body: g.toString()
-    })
-  };
-}
-__name(generateMetadataFile, "generateMetadataFile");
-function writeTypeMetadataEntry(g, descriptor, context) {
-  g.line(`${JSON.stringify(descriptor.goName)}: VDLTypeMetadata{`);
-  g.block(() => {
-    g.line(`Name: ${JSON.stringify(descriptor.goName)},`);
-    writeAnnotationSetField(g, descriptor.annotations);
-    writeMetadataTypeField(g, descriptor.typeRef, context);
-  });
-  g.line("},");
-}
-__name(writeTypeMetadataEntry, "writeTypeMetadataEntry");
-function writeEnumMetadataEntry(g, enumGoName, writeBody) {
-  g.line(`${JSON.stringify(enumGoName)}: VDLEnumMetadata{`);
-  g.block(writeBody);
-  g.line("},");
-}
-__name(writeEnumMetadataEntry, "writeEnumMetadataEntry");
 
 // src/stages/emit/files/pointers.ts
 function generatePointersFile(context) {
@@ -4734,7 +4464,6 @@ function generateFiles(context) {
     generateEnumsFile(context),
     generateTypesFile(context),
     generateConstantsFile(context),
-    generateMetadataFile(context),
     generatePointersFile(context)
   ]);
 }
@@ -5210,21 +4939,7 @@ function appendInlineTypesFromTypeRef(options) {
 __name(appendInlineTypesFromTypeRef, "appendInlineTypesFromTypeRef");
 
 // src/stages/model/symbols.ts
-var RESERVED_PACKAGE_SCOPE_SYMBOLS = [
-  "Ptr",
-  "Val",
-  "Or",
-  "VDLAnnotation",
-  "VDLAnnotationSet",
-  "VDLTypeRef",
-  "VDLFieldMetadata",
-  "VDLTypeMetadata",
-  "VDLEnumMemberMetadata",
-  "VDLEnumMetadata",
-  "VDLConstantMetadata",
-  "VDLSchemaMetadata",
-  "VDLMetadata"
-];
+var RESERVED_PACKAGE_SCOPE_SYMBOLS = ["Ptr", "Val", "Or"];
 var _symbols;
 var _PackageScopeSymbolTable = class _PackageScopeSymbolTable {
   constructor() {
@@ -5294,7 +5009,6 @@ __name(createGeneratorContext, "createGeneratorContext");
 function resolveGeneratorOptions(input) {
   const packageName = options_exports.getOptionString(input.options, "package", "vdl");
   const genConsts = options_exports.getOptionBool(input.options, "genConsts", true);
-  const genMeta = options_exports.getOptionBool(input.options, "genMeta", true);
   const strict = options_exports.getOptionBool(input.options, "strict", true);
   const genPointerUtils = options_exports.getOptionBool(
     input.options,
@@ -5315,7 +5029,6 @@ function resolveGeneratorOptions(input) {
     options: {
       packageName,
       genConsts,
-      genMeta,
       strict,
       genPointerUtils
     }
