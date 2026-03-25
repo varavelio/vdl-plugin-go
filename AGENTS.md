@@ -56,7 +56,7 @@ When updating this document, do so with the context of the entire document in mi
   - `src/shared/literal-key.ts`: stable literal comparison keys used mainly for enum value matching.
   - `src/shared/go-types/*.ts`: Go type rendering, anonymous type expressions, import requirements, named-type resolution, and const eligibility.
   - `src/shared/go-literals/*.ts`: Go literal rendering for consts, typed values, and scalars.
-  - `src/shared/render/*.ts`: package/import wrappers for emitted Go files.
+  - `src/shared/render/go-file.ts`: package/import wrapper for emitted Go files. Standard-library imports are inferred from the rendered body so emitters do not track them manually.
 - **Tests in `src/`**:
   - Tests are colocated beside the modules they specify.
 
@@ -160,6 +160,7 @@ This order is intentional and covered by tests. Preserve it unless the test suit
 - Optional object fields in literals are wrapped with `Ptr(...)`.
 - Datetime types are supported, but datetime literals are currently not supported for const emission through the current SDK path.
 - Object literal validation is strict: required fields must be present and unexpected fields error.
+- Constant descriptors prefer synthetic `$Const...` helper types when present, but also fall back to lightweight literal-shape inference because the current CLI IR does not materialize them consistently.
 
 ### Object Field Semantics
 
