@@ -821,6 +821,45 @@ function definePlugin(handler) {
 }
 __name(definePlugin, "definePlugin");
 
+// src/shared/errors.ts
+var _GenerationError = class _GenerationError extends Error {
+  constructor(message, position) {
+    super(message);
+    this.name = "GenerationError";
+    this.position = position;
+  }
+};
+__name(_GenerationError, "GenerationError");
+var GenerationError = _GenerationError;
+function fail(message, position) {
+  throw new GenerationError(message, position);
+}
+__name(fail, "fail");
+function expectValue(value, message, position) {
+  if (value === null || value === void 0) {
+    throw new GenerationError(message, position);
+  }
+  return value;
+}
+__name(expectValue, "expectValue");
+function toPluginOutputError(error) {
+  if (error instanceof GenerationError) {
+    return {
+      message: error.message,
+      position: error.position
+    };
+  }
+  if (error instanceof Error) {
+    return {
+      message: error.message
+    };
+  }
+  return {
+    message: "An unknown generation error occurred."
+  };
+}
+__name(toPluginOutputError, "toPluginOutputError");
+
 // node_modules/@varavel/vdl-plugin-sdk/dist/chunk-YKewjYmz.js
 var __create = Object.create;
 var __defProp2 = Object.defineProperty;
@@ -1851,28 +1890,6 @@ var ir_exports = /* @__PURE__ */ __exportAll({
   hoistAnonymousTypes: /* @__PURE__ */ __name(() => hoistAnonymousTypes, "hoistAnonymousTypes"),
   unwrapLiteral: /* @__PURE__ */ __name(() => unwrapLiteral, "unwrapLiteral")
 });
-function attempt$1(func) {
-  try {
-    return [null, func()];
-  } catch (error) {
-    return [error, null];
-  }
-}
-__name(attempt$1, "attempt$1");
-function invariant$1(condition, message) {
-  if (condition) return;
-  if (typeof message === "string") throw new Error(message);
-  throw message;
-}
-__name(invariant$1, "invariant$1");
-var assert = invariant$1;
-var attempt = attempt$1;
-var invariant = invariant$1;
-var misc_exports = /* @__PURE__ */ __exportAll({
-  assert: /* @__PURE__ */ __name(() => assert, "assert"),
-  attempt: /* @__PURE__ */ __name(() => attempt, "attempt"),
-  invariant: /* @__PURE__ */ __name(() => invariant, "invariant")
-});
 function getOptionArray(options, key, defaultValue = [], separator = ",") {
   const value = options === null || options === void 0 ? void 0 : options[key];
   if (value === void 0) return defaultValue;
@@ -2520,47 +2537,6 @@ var strings_exports = /* @__PURE__ */ __exportAll({
   words: /* @__PURE__ */ __name(() => words, "words")
 });
 
-// src/shared/errors.ts
-var _GenerationError = class _GenerationError extends Error {
-  constructor(message, position) {
-    super(message);
-    this.name = "GenerationError";
-    this.position = position;
-  }
-};
-__name(_GenerationError, "GenerationError");
-var GenerationError = _GenerationError;
-function fail(message, position) {
-  throw new GenerationError(message, position);
-}
-__name(fail, "fail");
-function expectCondition(condition, message, position) {
-  misc_exports.invariant(condition, new GenerationError(message, position));
-}
-__name(expectCondition, "expectCondition");
-function expectValue(value, message, position) {
-  expectCondition(value !== null && value !== void 0, message, position);
-  return value;
-}
-__name(expectValue, "expectValue");
-function toPluginOutputError(error) {
-  if (error instanceof GenerationError) {
-    return {
-      message: error.message,
-      position: error.position
-    };
-  }
-  if (error instanceof Error) {
-    return {
-      message: error.message
-    };
-  }
-  return {
-    message: "An unknown generation error occurred."
-  };
-}
-__name(toPluginOutputError, "toPluginOutputError");
-
 // node_modules/@varavel/gen/dist/index.js
 var _a3;
 var Generator = (_a3 = class {
@@ -2679,9 +2655,25 @@ __name(newGenerator, "newGenerator");
 
 // src/shared/comments.ts
 var DEFAULT_DEPRECATED_MESSAGE = "This symbol is deprecated and should not be used in new code.";
+function writeDocComment(g, options) {
+  const lines = buildDocCommentLines(options);
+  if (lines.length === 0) return;
+  for (const line of lines) {
+    g.line(`// ${line}`.trim());
+  }
+}
+__name(writeDocComment, "writeDocComment");
+function buildDocCommentLines(options) {
+  var _a4, _b, _c;
+  const lines = (_c = (_b = (_a4 = options.doc) != null ? _a4 : options.fallback) == null ? void 0 : _b.split("\n")) != null ? _c : [];
+  const deprecatedMessage = getDeprecatedMessage(options.annotations);
+  if (!deprecatedMessage) return lines;
+  if (lines.length === 0) return [`Deprecated: ${deprecatedMessage}`];
+  return [...lines, "", `Deprecated: ${deprecatedMessage}`];
+}
+__name(buildDocCommentLines, "buildDocCommentLines");
 function getDeprecatedMessage(annotations) {
-  const deprecated = ir_exports.getAnnotation(annotations, "deprecated");
-  if (!deprecated) {
+  if (!ir_exports.getAnnotation(annotations, "deprecated")) {
     return void 0;
   }
   const argument = ir_exports.getAnnotationArg(annotations, "deprecated");
@@ -2694,22 +2686,6 @@ function getDeprecatedMessage(annotations) {
   return DEFAULT_DEPRECATED_MESSAGE;
 }
 __name(getDeprecatedMessage, "getDeprecatedMessage");
-function buildDocCommentLines(options) {
-  var _a4, _b, _c;
-  const lines = (_c = (_b = (_a4 = options.doc) != null ? _a4 : options.fallback) == null ? void 0 : _b.split("\n")) != null ? _c : [];
-  const deprecatedMessage = getDeprecatedMessage(options.annotations);
-  if (!deprecatedMessage) return lines;
-  if (lines.length === 0) return [`Deprecated: ${deprecatedMessage}`];
-  return [...lines, "", `Deprecated: ${deprecatedMessage}`];
-}
-__name(buildDocCommentLines, "buildDocCommentLines");
-function writeDocComment(g, lines) {
-  if (lines.length === 0) return;
-  for (const line of lines) {
-    g.line(`// ${line}`.trim());
-  }
-}
-__name(writeDocComment, "writeDocComment");
 
 // src/shared/go-types/resolve.ts
 function resolveNonTypeRef(typeRef, context, position, visited = /* @__PURE__ */ new Set()) {
@@ -2737,15 +2713,120 @@ function resolveNonTypeRef(typeRef, context, position, visited = /* @__PURE__ */
 }
 __name(resolveNonTypeRef, "resolveNonTypeRef");
 
-// src/shared/go-types/const-eligibility.ts
-function isConstEligibleType(typeRef, context, position) {
+// src/shared/go-literals/scalar.ts
+function resolveScalarTarget(typeRef, context, position) {
   const resolved = resolveNonTypeRef(typeRef, context, position);
-  if (resolved.kind === "enum") {
-    return true;
+  if (resolved.kind === "primitive") {
+    return resolved.primitiveName === "datetime" ? void 0 : { primitiveName: resolved.primitiveName };
   }
-  return resolved.kind === "primitive" && resolved.primitiveName !== "datetime";
+  if (resolved.kind === "enum") {
+    return {
+      enumDescriptor: resolveDirectEnumDescriptor(resolved, context, position)
+    };
+  }
+  return void 0;
 }
-__name(isConstEligibleType, "isConstEligibleType");
+__name(resolveScalarTarget, "resolveScalarTarget");
+function resolveDirectEnumDescriptor(typeRef, context, position) {
+  const enumName = expectValue(
+    typeRef.enumName,
+    "Encountered an enum reference without an enum name.",
+    position
+  );
+  return expectValue(
+    context.enumDescriptorsByVdlName.get(enumName),
+    `Unknown VDL enum reference ${JSON.stringify(enumName)}.`,
+    position
+  );
+}
+__name(resolveDirectEnumDescriptor, "resolveDirectEnumDescriptor");
+function renderDirectEnumExpression(enumDescriptor, literal, position) {
+  const member = enumDescriptor.memberByValue.get(crypto_exports.hash(literal));
+  if (!member) {
+    fail(
+      `Invalid literal for ${JSON.stringify(enumDescriptor.def.name)} enum. Expected one of its declared members.`,
+      position
+    );
+  }
+  return member.constName;
+}
+__name(renderDirectEnumExpression, "renderDirectEnumExpression");
+function renderRawScalarLiteral(literal, target, position) {
+  if (target.enumDescriptor) {
+    return renderEnumScalarLiteral(target.enumDescriptor, literal, position);
+  }
+  switch (target.primitiveName) {
+    case "string":
+      if (literal.kind !== "string") {
+        fail("Expected a string literal for a string type.", position);
+      }
+      return JSON.stringify(literal.stringValue);
+    case "int":
+      if (literal.kind !== "int") {
+        fail("Expected an int literal for an int type.", position);
+      }
+      return String(literal.intValue);
+    case "float":
+      if (literal.kind !== "float" && literal.kind !== "int") {
+        fail("Expected a float or int literal for a float type.", position);
+      }
+      return String(
+        literal.kind === "float" ? literal.floatValue : literal.intValue
+      );
+    case "bool":
+      if (literal.kind !== "bool") {
+        fail("Expected a bool literal for a bool type.", position);
+      }
+      return String(literal.boolValue);
+    case "datetime":
+    case void 0:
+      fail(
+        "Datetime literals are not supported by the current VDL plugin SDK.",
+        position
+      );
+  }
+}
+__name(renderRawScalarLiteral, "renderRawScalarLiteral");
+function renderEnumScalarLiteral(enumDescriptor, literal, position) {
+  if (!enumDescriptor.memberByValue.has(crypto_exports.hash(literal))) {
+    fail(
+      `Invalid literal for ${JSON.stringify(enumDescriptor.def.name)} enum. Expected one of its declared members.`,
+      position
+    );
+  }
+  if (enumDescriptor.def.enumType === "string") {
+    if (literal.kind !== "string") {
+      fail("Expected a string literal for a string enum value.", position);
+    }
+    return JSON.stringify(literal.stringValue);
+  }
+  if (literal.kind !== "int") {
+    fail("Expected an int literal for an int enum value.", position);
+  }
+  return String(literal.intValue);
+}
+__name(renderEnumScalarLiteral, "renderEnumScalarLiteral");
+
+// src/shared/go-literals/const.ts
+function renderConstInitializer(typeRef, literal, context, position) {
+  const scalarTarget = resolveScalarTarget(typeRef, context, position);
+  if (!scalarTarget) {
+    fail("Tried to render a non-constant value as a Go const.", position);
+  }
+  if (typeRef.kind === "enum") {
+    return renderDirectEnumExpression(
+      expectValue(
+        scalarTarget.enumDescriptor,
+        "Missing enum descriptor while rendering an enum literal.",
+        position
+      ),
+      literal,
+      position
+    );
+  }
+  return renderRawScalarLiteral(literal, scalarTarget, position);
+}
+__name(renderConstInitializer, "renderConstInitializer");
 
 // src/shared/naming.ts
 var GO_KEYWORDS = /* @__PURE__ */ new Set([
@@ -2959,121 +3040,6 @@ function indentMultiline(value) {
 }
 __name(indentMultiline, "indentMultiline");
 
-// src/shared/go-literals/scalar.ts
-function resolveScalarTarget(typeRef, context, position) {
-  const resolved = resolveNonTypeRef(typeRef, context, position);
-  if (resolved.kind === "primitive") {
-    return resolved.primitiveName === "datetime" ? void 0 : { primitiveName: resolved.primitiveName };
-  }
-  if (resolved.kind === "enum") {
-    return {
-      enumDescriptor: resolveDirectEnumDescriptor(resolved, context, position)
-    };
-  }
-  return void 0;
-}
-__name(resolveScalarTarget, "resolveScalarTarget");
-function resolveDirectEnumDescriptor(typeRef, context, position) {
-  const enumName = expectValue(
-    typeRef.enumName,
-    "Encountered an enum reference without an enum name.",
-    position
-  );
-  return expectValue(
-    context.enumDescriptorsByVdlName.get(enumName),
-    `Unknown VDL enum reference ${JSON.stringify(enumName)}.`,
-    position
-  );
-}
-__name(resolveDirectEnumDescriptor, "resolveDirectEnumDescriptor");
-function renderDirectEnumExpression(enumDescriptor, literal, position) {
-  const member = enumDescriptor.memberByValue.get(crypto_exports.hash(literal));
-  if (!member) {
-    fail(
-      `Invalid literal for ${JSON.stringify(enumDescriptor.def.name)} enum. Expected one of its declared members.`,
-      position
-    );
-  }
-  return member.constName;
-}
-__name(renderDirectEnumExpression, "renderDirectEnumExpression");
-function renderRawScalarLiteral(literal, target, position) {
-  if (target.enumDescriptor) {
-    return renderEnumScalarLiteral(target.enumDescriptor, literal, position);
-  }
-  switch (target.primitiveName) {
-    case "string":
-      if (literal.kind !== "string") {
-        fail("Expected a string literal for a string type.", position);
-      }
-      return JSON.stringify(literal.stringValue);
-    case "int":
-      if (literal.kind !== "int") {
-        fail("Expected an int literal for an int type.", position);
-      }
-      return String(literal.intValue);
-    case "float":
-      if (literal.kind !== "float" && literal.kind !== "int") {
-        fail("Expected a float or int literal for a float type.", position);
-      }
-      return String(
-        literal.kind === "float" ? literal.floatValue : literal.intValue
-      );
-    case "bool":
-      if (literal.kind !== "bool") {
-        fail("Expected a bool literal for a bool type.", position);
-      }
-      return String(literal.boolValue);
-    case "datetime":
-    case void 0:
-      fail(
-        "Datetime literals are not supported by the current VDL plugin SDK.",
-        position
-      );
-  }
-}
-__name(renderRawScalarLiteral, "renderRawScalarLiteral");
-function renderEnumScalarLiteral(enumDescriptor, literal, position) {
-  if (!enumDescriptor.memberByValue.has(crypto_exports.hash(literal))) {
-    fail(
-      `Invalid literal for ${JSON.stringify(enumDescriptor.def.name)} enum. Expected one of its declared members.`,
-      position
-    );
-  }
-  if (enumDescriptor.def.enumType === "string") {
-    if (literal.kind !== "string") {
-      fail("Expected a string literal for a string enum value.", position);
-    }
-    return JSON.stringify(literal.stringValue);
-  }
-  if (literal.kind !== "int") {
-    fail("Expected an int literal for an int enum value.", position);
-  }
-  return String(literal.intValue);
-}
-__name(renderEnumScalarLiteral, "renderEnumScalarLiteral");
-
-// src/shared/go-literals/const.ts
-function renderConstInitializer(typeRef, literal, context, position) {
-  const scalarTarget = resolveScalarTarget(typeRef, context, position);
-  if (!scalarTarget) {
-    fail("Tried to render a non-constant value as a Go const.", position);
-  }
-  if (typeRef.kind === "enum") {
-    return renderDirectEnumExpression(
-      expectValue(
-        scalarTarget.enumDescriptor,
-        "Missing enum descriptor while rendering an enum literal.",
-        position
-      ),
-      literal,
-      position
-    );
-  }
-  return renderRawScalarLiteral(literal, scalarTarget, position);
-}
-__name(renderConstInitializer, "renderConstInitializer");
-
 // src/shared/go-literals/render.ts
 function renderTypedValueExpressionPretty(typeRef, literal, context, position, namedTypeGoName) {
   switch (typeRef.kind) {
@@ -3278,16 +3244,31 @@ function indentBlock(value) {
 }
 __name(indentBlock, "indentBlock");
 
+// src/shared/go-types/const-eligibility.ts
+function isConstEligibleType(typeRef, context, position) {
+  const resolved = resolveNonTypeRef(typeRef, context, position);
+  if (resolved.kind === "enum") {
+    return true;
+  }
+  return resolved.kind === "primitive" && resolved.primitiveName !== "datetime";
+}
+__name(isConstEligibleType, "isConstEligibleType");
+
 // src/shared/render/go-file.ts
 function renderGoFile(options) {
-  var _a4, _b;
   const g = newGenerator().withTabs();
-  const imports = (_b = (_a4 = options.imports) == null ? void 0 : _a4.toArray()) != null ? _b : [];
   const body = options.body.trim();
+  const imports = getStandardImports(body);
   g.line(`package ${options.packageName}`);
-  if (imports.length > 0 && options.imports) {
+  if (imports.length > 0) {
     g.break();
-    options.imports.render(g);
+    g.line("import (");
+    g.block(() => {
+      for (const importPath of imports) {
+        g.line(JSON.stringify(importPath));
+      }
+    });
+    g.line(")");
   }
   if (body.length > 0) {
     g.break();
@@ -3297,82 +3278,38 @@ function renderGoFile(options) {
   return strings_exports.limitBlankLines(g.toString(), 1);
 }
 __name(renderGoFile, "renderGoFile");
-
-// src/shared/render/imports.ts
-var _paths;
-var _ImportSet = class _ImportSet {
-  constructor() {
-    __privateAdd(this, _paths, /* @__PURE__ */ new Set());
+function getStandardImports(body) {
+  const code = stripCommentsAndStrings(body);
+  const imports = [];
+  if (code.includes("json.")) {
+    imports.push("encoding/json");
   }
-  /**
-   * Adds an import path to the set.
-   *
-   * @param path - The import path to add.
-   */
-  add(path) {
-    if (path) {
-      __privateGet(this, _paths).add(path);
-    }
+  if (code.includes("fmt.")) {
+    imports.push("fmt");
   }
-  /**
-   * Merges another ImportSet into this one.
-   *
-   * @param other - The set to merge from.
-   */
-  merge(other) {
-    for (const path of other.toArray()) {
-      this.add(path);
-    }
+  if (code.includes("time.")) {
+    imports.push("time");
   }
-  /**
-   * Returns the import paths sorted alphabetically.
-   *
-   * @returns An array of sorted import path strings.
-   */
-  toArray() {
-    return [...__privateGet(this, _paths)].sort((left, right) => left.localeCompare(right));
-  }
-  /**
-   * Renders the import set as a Go `import ( ... )` block.
-   *
-   * If the set is empty, this function does nothing.
-   *
-   * @param g - The Go code generator.
-   */
-  render(g) {
-    const imports = this.toArray();
-    if (imports.length === 0) {
-      return;
-    }
-    g.line("import (");
-    g.block(() => {
-      for (const path of imports) {
-        g.line(JSON.stringify(path));
-      }
-    });
-    g.line(")");
-  }
-};
-_paths = new WeakMap();
-__name(_ImportSet, "ImportSet");
-var ImportSet = _ImportSet;
+  return imports.sort((left, right) => left.localeCompare(right));
+}
+__name(getStandardImports, "getStandardImports");
+function stripCommentsAndStrings(body) {
+  return body.replace(/`[^`]*`/g, "``").replace(/"(?:\\.|[^"\\])*"/g, '""').replace(/\/\/.*$/gm, "");
+}
+__name(stripCommentsAndStrings, "stripCommentsAndStrings");
 
 // src/stages/emit/files/constants.ts
 function generateConstantsFile(context) {
   if (!context.options.genConsts || context.constantDescriptors.length === 0) {
     return void 0;
   }
-  const imports = new ImportSet();
   const g = newGenerator().withTabs();
   for (const constant of context.constantDescriptors) {
-    writeDocComment(
-      g,
-      buildDocCommentLines({
-        doc: constant.def.doc,
-        annotations: constant.def.annotations,
-        fallback: `${constant.goName} holds a generated VDL constant.`
-      })
-    );
+    writeDocComment(g, {
+      doc: constant.def.doc,
+      annotations: constant.def.annotations,
+      fallback: `${constant.goName} holds a generated VDL constant.`
+    });
     if (isConstEligibleType(constant.typeRef, context, constant.def.position)) {
       renderConstDeclaration(g, constant.goName, constant, context);
     } else {
@@ -3386,16 +3323,11 @@ function generateConstantsFile(context) {
     }
     g.break();
   }
-  const body = g.toString();
-  if (body.includes("time.")) imports.add("time");
-  if (body.includes("json.")) imports.add("encoding/json");
-  if (body.includes("fmt.")) imports.add("fmt");
   return {
     path: "constants.go",
     content: renderGoFile({
       packageName: context.options.packageName,
-      imports,
-      body
+      body: g.toString()
     })
   };
 }
@@ -3415,14 +3347,11 @@ __name(renderConstDeclaration, "renderConstDeclaration");
 
 // src/stages/emit/files/enums-render.ts
 function renderEnum(g, enumDescriptor, strict) {
-  writeDocComment(
-    g,
-    buildDocCommentLines({
-      doc: enumDescriptor.def.doc,
-      annotations: enumDescriptor.def.annotations,
-      fallback: `${enumDescriptor.goName} defines a generated enum.`
-    })
-  );
+  writeDocComment(g, {
+    doc: enumDescriptor.def.doc,
+    annotations: enumDescriptor.def.annotations,
+    fallback: `${enumDescriptor.goName} defines a generated enum.`
+  });
   g.line(
     `type ${enumDescriptor.goName} ${enumDescriptor.def.enumType === "string" ? "string" : "int"}`
   );
@@ -3433,13 +3362,10 @@ function renderEnum(g, enumDescriptor, strict) {
   g.line("const (");
   g.block(() => {
     for (const member of enumDescriptor.members) {
-      writeDocComment(
-        g,
-        buildDocCommentLines({
-          doc: member.def.doc,
-          annotations: member.def.annotations
-        })
-      );
+      writeDocComment(g, {
+        doc: member.def.doc,
+        annotations: member.def.annotations
+      });
       g.line(
         `${member.constName} ${enumDescriptor.goName} = ${renderEnumMemberLiteral(enumDescriptor, member)}`
       );
@@ -3605,22 +3531,16 @@ function generateEnumsFile(context) {
   if (context.enumDescriptors.length === 0) {
     return void 0;
   }
-  const imports = new ImportSet();
   const g = newGenerator().withTabs();
   for (const enumDescriptor of context.enumDescriptors) {
     renderEnum(g, enumDescriptor, context.options.strict);
     g.break();
   }
-  const body = g.toString();
-  if (body.includes("time.")) imports.add("time");
-  if (body.includes("json.")) imports.add("encoding/json");
-  if (body.includes("fmt.")) imports.add("fmt");
   return {
     path: "enums.go",
     content: renderGoFile({
       packageName: context.options.packageName,
-      imports,
-      body
+      body: g.toString()
     })
   };
 }
@@ -4328,14 +4248,11 @@ __name(renderMapKeyPathAssignment, "renderMapKeyPathAssignment");
 // src/stages/emit/files/types-named-types.ts
 function renderNamedType(g, descriptor, context) {
   const fallback = descriptor.inline ? `${descriptor.goName} represents the inline object declared at ${descriptor.path}.` : descriptor.kind === "object" ? `${descriptor.goName} represents a VDL object.` : `${descriptor.goName} declares a VDL type alias.`;
-  writeDocComment(
-    g,
-    buildDocCommentLines({
-      doc: descriptor.doc,
-      annotations: descriptor.annotations,
-      fallback
-    })
-  );
+  writeDocComment(g, {
+    doc: descriptor.doc,
+    annotations: descriptor.annotations,
+    fallback
+  });
   if (descriptor.kind === "object") {
     renderStructType(g, descriptor);
     g.break();
@@ -4357,13 +4274,10 @@ function renderStructType(g, descriptor) {
   g.line(`type ${descriptor.goName} struct {`);
   g.block(() => {
     for (const field of descriptor.fields) {
-      const commentLines = buildDocCommentLines({
+      writeDocComment(g, {
         doc: field.def.doc,
         annotations: field.def.annotations
       });
-      if (commentLines.length > 0) {
-        writeDocComment(g, commentLines);
-      }
       const jsonTag = field.def.optional ? `json:${JSON.stringify(`${field.jsonName},omitempty`)}` : `json:${JSON.stringify(field.jsonName)}`;
       g.line(`${field.goName} ${field.goType} \`${jsonTag}\``);
     }
@@ -4437,22 +4351,16 @@ function generateTypesFile(context) {
   if (context.namedTypes.length === 0) {
     return void 0;
   }
-  const imports = new ImportSet();
   const g = newGenerator().withTabs();
   for (const namedType of context.namedTypes) {
     renderNamedType(g, namedType, context);
     g.break();
   }
-  const body = g.toString();
-  if (body.includes("time.")) imports.add("time");
-  if (body.includes("json.")) imports.add("encoding/json");
-  if (body.includes("fmt.")) imports.add("fmt");
   return {
     path: "types.go",
     content: renderGoFile({
       packageName: context.options.packageName,
-      imports,
-      body
+      body: g.toString()
     })
   };
 }
@@ -4471,35 +4379,16 @@ __name(generateFiles, "generateFiles");
 
 // src/stages/model/constants.ts
 function populateConstantDescriptors(context, packageScopeSymbols) {
+  var _a4;
   const errors = [];
-  const inferredTypeDefs = context.schema.types.filter(
-    (typeDef) => typeDef.name.startsWith("$Const") && typeDef.name.length > 6
-  );
-  const inferredTypeByConstName = new Map(
-    inferredTypeDefs.map((typeDef) => [typeDef.name.slice(6), typeDef.typeRef])
+  const typeByConstantName = new Map(
+    context.schema.types.filter((typeDef) => typeDef.name.startsWith("$Const")).map((typeDef) => [typeDef.name.slice("$Const".length), typeDef.typeRef])
   );
   for (const constantDef of context.schema.constants) {
-    const inferredType = inferredTypeByConstName.get(constantDef.name);
-    let typeRef = inferredType;
-    let inferenceError;
-    if (!typeRef) {
-      const inference = inferTypeRefFromLiteral(
-        constantDef.value,
-        constantDef.position
-      );
-      typeRef = inference.typeRef;
-      inferenceError = inference.error;
-    }
-    if (inferenceError) {
+    const inferred = (_a4 = typeByConstantName.get(constantDef.name)) != null ? _a4 : inferTypeRefFromLiteral(constantDef.value);
+    if (!inferred) {
       errors.push({
-        message: `Could not infer type for constant ${JSON.stringify(constantDef.name)}: ${inferenceError}`,
-        position: constantDef.position
-      });
-      continue;
-    }
-    if (!typeRef) {
-      errors.push({
-        message: `Could not infer type for constant ${JSON.stringify(constantDef.name)}.`,
+        message: `Could not infer a Go-compatible type for constant ${JSON.stringify(constantDef.name)}.`,
         position: constantDef.position
       });
       continue;
@@ -4507,7 +4396,7 @@ function populateConstantDescriptors(context, packageScopeSymbols) {
     const descriptor = {
       def: constantDef,
       goName: toGoConstName(constantDef.name),
-      typeRef
+      typeRef: inferred
     };
     context.constantDescriptors.push(descriptor);
     const symbolError = packageScopeSymbols.reserve(
@@ -4522,115 +4411,68 @@ function populateConstantDescriptors(context, packageScopeSymbols) {
   return errors;
 }
 __name(populateConstantDescriptors, "populateConstantDescriptors");
-function inferTypeRefFromLiteral(literal, _position) {
+function inferTypeRefFromLiteral(literal) {
   var _a4, _b;
   switch (literal.kind) {
     case "string":
-      return { typeRef: { kind: "primitive", primitiveName: "string" } };
+      return { kind: "primitive", primitiveName: "string" };
     case "int":
-      return { typeRef: { kind: "primitive", primitiveName: "int" } };
+      return { kind: "primitive", primitiveName: "int" };
     case "float":
-      return { typeRef: { kind: "primitive", primitiveName: "float" } };
+      return { kind: "primitive", primitiveName: "float" };
     case "bool":
-      return { typeRef: { kind: "primitive", primitiveName: "bool" } };
+      return { kind: "primitive", primitiveName: "bool" };
     case "array": {
       const items = (_a4 = literal.arrayItems) != null ? _a4 : [];
-      if (items.length === 0) {
-        return {
-          error: "array literals cannot be empty when no declared constant type is available"
-        };
-      }
       const firstItem = items[0];
       if (!firstItem) {
-        return { error: "encountered an undefined array item literal" };
+        return void 0;
       }
-      const elementInference = inferTypeRefFromLiteral(
-        firstItem,
-        firstItem.position
-      );
-      const elementType = elementInference.typeRef;
-      const elementError = elementInference.error;
-      if (elementError) {
-        return { error: elementError };
+      const itemType = inferTypeRefFromLiteral(firstItem);
+      if (!itemType) {
+        return void 0;
       }
-      if (!elementType) {
-        return { error: "could not infer array element type" };
-      }
-      for (let index = 1; index < items.length; index += 1) {
-        const item = items[index];
-        if (!item) {
-          return { error: "encountered an undefined array item literal" };
-        }
-        const candidateInference = inferTypeRefFromLiteral(item, item.position);
-        const candidate = candidateInference.typeRef;
-        const candidateError = candidateInference.error;
-        if (candidateError) {
-          return { error: candidateError };
-        }
-        if (!candidate) {
-          return { error: "could not infer array item type" };
-        }
-        if (!areTypeRefsEquivalent(elementType, candidate)) {
-          return {
-            error: `array literal item at index ${String(index)} does not match inferred element type`
-          };
+      for (const item of items.slice(1)) {
+        const candidate = inferTypeRefFromLiteral(item);
+        if (!candidate || !typeRefsMatch(itemType, candidate)) {
+          return void 0;
         }
       }
-      return {
-        typeRef: { kind: "array", arrayDims: 1, arrayType: elementType }
-      };
+      return { kind: "array", arrayDims: 1, arrayType: itemType };
     }
     case "object": {
-      const entries = (_b = literal.objectEntries) != null ? _b : [];
-      const fields = [];
-      for (const entry of getEffectiveObjectEntries(entries)) {
-        const fieldInference = inferTypeRefFromLiteral(
-          entry.value,
-          entry.position
-        );
-        const fieldType = fieldInference.typeRef;
-        const fieldError = fieldInference.error;
-        if (fieldError) {
-          return { error: fieldError };
-        }
+      const objectFields = [];
+      for (const entry of getEffectiveObjectEntries(
+        (_b = literal.objectEntries) != null ? _b : []
+      )) {
+        const fieldType = inferTypeRefFromLiteral(entry.value);
         if (!fieldType) {
-          return {
-            error: `could not infer object field type for ${JSON.stringify(entry.key)}`
-          };
+          return void 0;
         }
-        fields.push({
-          position: entry.position,
+        objectFields.push({
+          annotations: [],
           name: entry.key,
           optional: false,
-          annotations: [],
+          position: entry.position,
           typeRef: fieldType
         });
       }
-      return { typeRef: { kind: "object", objectFields: fields } };
+      return { kind: "object", objectFields };
     }
     default:
-      return { error: "unsupported literal kind" };
+      return void 0;
   }
 }
 __name(inferTypeRefFromLiteral, "inferTypeRefFromLiteral");
 function getEffectiveObjectEntries(entries) {
-  const fields = entries.map((entry) => ({
-    position: entry.position,
-    name: entry.key,
-    optional: false,
-    annotations: [],
-    typeRef: { kind: "primitive", primitiveName: "string" }
-  }));
-  const effectiveFields = fields != null ? fields : [];
-  const indexByName = new Map(
-    entries.map((entry, index) => [entry.key, index])
-  );
-  return effectiveFields.map(
-    (field) => entries[indexByName.get(field.name)]
-  );
+  const entryByKey = /* @__PURE__ */ new Map();
+  for (const entry of entries) {
+    entryByKey.set(entry.key, entry);
+  }
+  return [...entryByKey.values()];
 }
 __name(getEffectiveObjectEntries, "getEffectiveObjectEntries");
-function areTypeRefsEquivalent(left, right) {
+function typeRefsMatch(left, right) {
   var _a4, _b, _c, _d;
   if (left.kind !== right.kind) {
     return false;
@@ -4643,35 +4485,31 @@ function areTypeRefsEquivalent(left, right) {
     case "enum":
       return left.enumName === right.enumName && left.enumType === right.enumType;
     case "array":
-      return ((_a4 = left.arrayDims) != null ? _a4 : 1) === ((_b = right.arrayDims) != null ? _b : 1) && areTypeRefsEquivalent(
-        left.arrayType,
-        right.arrayType
-      );
+      if (!left.arrayType || !right.arrayType) {
+        return false;
+      }
+      return ((_a4 = left.arrayDims) != null ? _a4 : 1) === ((_b = right.arrayDims) != null ? _b : 1) && typeRefsMatch(left.arrayType, right.arrayType);
     case "map":
-      return areTypeRefsEquivalent(
-        left.mapType,
-        right.mapType
-      );
+      if (!left.mapType || !right.mapType) {
+        return false;
+      }
+      return typeRefsMatch(left.mapType, right.mapType);
     case "object": {
       const leftFields = (_c = left.objectFields) != null ? _c : [];
       const rightFields = (_d = right.objectFields) != null ? _d : [];
       if (leftFields.length !== rightFields.length) {
         return false;
       }
-      for (let index = 0; index < leftFields.length; index += 1) {
-        const leftField = leftFields[index];
-        const rightField = rightFields[index];
-        if (leftField.name !== rightField.name || leftField.optional !== rightField.optional || !areTypeRefsEquivalent(leftField.typeRef, rightField.typeRef)) {
-          return false;
-        }
-      }
-      return true;
+      return leftFields.every((field, index) => {
+        const otherField = rightFields[index];
+        return otherField !== void 0 && field.name === otherField.name && field.optional === otherField.optional && typeRefsMatch(field.typeRef, otherField.typeRef);
+      });
     }
     default:
       return false;
   }
 }
-__name(areTypeRefsEquivalent, "areTypeRefsEquivalent");
+__name(typeRefsMatch, "typeRefsMatch");
 
 // src/stages/model/enums.ts
 function populateEnumDescriptors(context, packageScopeSymbols) {
@@ -4747,22 +4585,6 @@ function buildEnumDescriptor(enumDef, context, errors) {
 }
 __name(buildEnumDescriptor, "buildEnumDescriptor");
 
-// src/stages/model/indexes.ts
-function buildDefinitionIndexes(schema) {
-  return {
-    typeDefsByVdlName: new Map(
-      schema.types.map((typeDef) => [typeDef.name, typeDef])
-    ),
-    typeGoNamesByVdlName: new Map(
-      schema.types.map((typeDef) => [typeDef.name, toGoTypeName(typeDef.name)])
-    ),
-    enumGoNamesByVdlName: new Map(
-      schema.enums.map((enumDef) => [enumDef.name, toGoTypeName(enumDef.name)])
-    )
-  };
-}
-__name(buildDefinitionIndexes, "buildDefinitionIndexes");
-
 // src/stages/model/fields.ts
 function buildFieldDescriptors(options) {
   const errors = [];
@@ -4803,11 +4625,12 @@ __name(buildFieldDescriptors, "buildFieldDescriptors");
 // src/stages/model/named-types.ts
 function populateNamedTypes(context, packageScopeSymbols) {
   const errors = [];
+  const seenGoNames = /* @__PURE__ */ new Set();
   for (const typeDef of context.schema.types) {
     appendNamedTypeDescriptor(
       context,
       buildTopLevelTypeDescriptor(typeDef, context, errors),
-      context.namedTypesByGoName,
+      seenGoNames,
       packageScopeSymbols,
       errors
     );
@@ -4852,7 +4675,6 @@ function buildInlineTypeDescriptor(options) {
     vdlName: options.fieldName,
     path: options.path,
     inline: true,
-    parentGoName: options.parentGoName,
     annotations: [],
     position: options.fieldPosition,
     kind: "object",
@@ -4861,15 +4683,15 @@ function buildInlineTypeDescriptor(options) {
   };
 }
 __name(buildInlineTypeDescriptor, "buildInlineTypeDescriptor");
-function appendNamedTypeDescriptor(context, descriptor, namedTypesByGoName, packageScopeSymbols, errors) {
-  if (namedTypesByGoName.has(descriptor.goName)) {
+function appendNamedTypeDescriptor(context, descriptor, seenGoNames, packageScopeSymbols, errors) {
+  if (seenGoNames.has(descriptor.goName)) {
     errors.push({
       message: `Generated Go type name ${JSON.stringify(descriptor.goName)} collides with another generated type.`,
       position: descriptor.position
     });
     return;
   }
-  namedTypesByGoName.set(descriptor.goName, descriptor);
+  seenGoNames.add(descriptor.goName);
   context.namedTypes.push(descriptor);
   const symbolError = packageScopeSymbols.reserve(
     descriptor.goName,
@@ -4886,7 +4708,7 @@ function appendNamedTypeDescriptor(context, descriptor, namedTypesByGoName, pack
       parentPath: descriptor.path,
       field: fieldDescriptor.def,
       typeRef: fieldDescriptor.def.typeRef,
-      namedTypesByGoName,
+      seenGoNames,
       packageScopeSymbols,
       errors
     });
@@ -4922,7 +4744,7 @@ function appendInlineTypesFromTypeRef(options) {
       appendNamedTypeDescriptor(
         options.context,
         descriptor,
-        options.namedTypesByGoName,
+        options.seenGoNames,
         options.packageScopeSymbols,
         options.errors
       );
@@ -4976,16 +4798,26 @@ var PackageScopeSymbolTable = _PackageScopeSymbolTable;
 
 // src/stages/model/build-context.ts
 function createGeneratorContext(options) {
-  const indexes = buildDefinitionIndexes(options.schema);
   const packageScopeSymbols = new PackageScopeSymbolTable();
   const context = {
     schema: options.schema,
     options: options.generatorOptions,
-    typeDefsByVdlName: indexes.typeDefsByVdlName,
-    typeGoNamesByVdlName: indexes.typeGoNamesByVdlName,
-    enumGoNamesByVdlName: indexes.enumGoNamesByVdlName,
+    typeDefsByVdlName: new Map(
+      options.schema.types.map((typeDef) => [typeDef.name, typeDef])
+    ),
+    typeGoNamesByVdlName: new Map(
+      options.schema.types.map((typeDef) => [
+        typeDef.name,
+        toGoTypeName(typeDef.name)
+      ])
+    ),
+    enumGoNamesByVdlName: new Map(
+      options.schema.enums.map((enumDef) => [
+        enumDef.name,
+        toGoTypeName(enumDef.name)
+      ])
+    ),
     namedTypes: [],
-    namedTypesByGoName: /* @__PURE__ */ new Map(),
     enumDescriptors: [],
     enumDescriptorsByVdlName: /* @__PURE__ */ new Map(),
     constantDescriptors: []
@@ -4993,7 +4825,7 @@ function createGeneratorContext(options) {
   const errors = [
     ...populateNamedTypes(context, packageScopeSymbols),
     ...populateEnumDescriptors(context, packageScopeSymbols),
-    ...populateConstantDescriptors(context, packageScopeSymbols)
+    ...context.options.genConsts ? populateConstantDescriptors(context, packageScopeSymbols) : []
   ];
   if (errors.length > 0) {
     return { errors };
