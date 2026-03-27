@@ -1,5 +1,5 @@
 import { newGenerator } from "@varavel/gen";
-import { irb } from "@varavel/vdl-plugin-sdk/testing";
+import * as irb from "@varavel/vdl-plugin-sdk/testing";
 import { describe, expect, it } from "vitest";
 import { writeDocComment } from "./comments";
 

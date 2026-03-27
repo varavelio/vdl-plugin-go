@@ -1,4 +1,4 @@
-import { irb } from "@varavel/vdl-plugin-sdk/testing";
+import * as irb from "@varavel/vdl-plugin-sdk/testing";
 import { describe, expect, it } from "vitest";
 import { resolveGeneratorOptions } from "./resolve";
 

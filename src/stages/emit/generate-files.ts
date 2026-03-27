@@ -1,5 +1,5 @@
 import type { PluginOutputFile } from "@varavel/vdl-plugin-sdk";
-import { arrays } from "@varavel/vdl-plugin-sdk/utils";
+import * as arrays from "@varavel/vdl-plugin-sdk/utils/arrays";
 import type { GeneratorContext } from "../model/types";
 import { generateConstantsFile } from "./files/constants";
 import { generateEnumsFile } from "./files/enums";

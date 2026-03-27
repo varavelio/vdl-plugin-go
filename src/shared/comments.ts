@@ -1,6 +1,6 @@
 import type { Generator } from "@varavel/gen";
 import type { Annotation } from "@varavel/vdl-plugin-sdk";
-import { ir } from "@varavel/vdl-plugin-sdk/utils";
+import * as ir from "@varavel/vdl-plugin-sdk/utils/ir";
 
 const DEFAULT_DEPRECATED_MESSAGE =
   "This symbol is deprecated and should not be used in new code.";

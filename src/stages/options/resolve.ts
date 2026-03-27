@@ -1,5 +1,5 @@
 import type { PluginInput, PluginOutputError } from "@varavel/vdl-plugin-sdk";
-import { options } from "@varavel/vdl-plugin-sdk/utils";
+import * as options from "@varavel/vdl-plugin-sdk/utils/options";
 import { isValidGoPackageName } from "../../shared/naming";
 import type { GeneratorOptions } from "../model/types";
 

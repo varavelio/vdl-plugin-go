@@ -1,4 +1,4 @@
-import { strings } from "@varavel/vdl-plugin-sdk/utils";
+import * as strings from "@varavel/vdl-plugin-sdk/utils/strings";
 
 const GO_KEYWORDS = new Set([
   "break",

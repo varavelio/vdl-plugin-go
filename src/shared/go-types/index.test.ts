@@ -1,4 +1,4 @@
-import { irb } from "@varavel/vdl-plugin-sdk/testing";
+import * as irb from "@varavel/vdl-plugin-sdk/testing";
 import { describe, expect, it } from "vitest";
 import { createGeneratorContext } from "../../stages/model/build-context";
 import { isConstEligibleType } from "./const-eligibility";

@@ -4,7 +4,7 @@ import type {
   PrimitiveType,
   TypeRef,
 } from "@varavel/vdl-plugin-sdk";
-import { crypto } from "@varavel/vdl-plugin-sdk/utils";
+import * as crypto from "@varavel/vdl-plugin-sdk/utils/crypto";
 import type {
   EnumDescriptor,
   GeneratorContext,
