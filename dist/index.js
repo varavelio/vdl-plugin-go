@@ -48,774 +48,7 @@ __export(index_exports, {
 });
 module.exports = __toCommonJS(index_exports);
 
-// node_modules/@varavel/vdl-plugin-sdk/dist/types-DqmMLTFd.js
-var EnumValueType = {
-  String: "string",
-  Int: "int",
-  values() {
-    return ["string", "int"];
-  },
-  parse(json) {
-    const input = _vdl$1.parseJson(json);
-    const error = EnumValueType.validate(input);
-    if (error !== null) throw new Error(error);
-    return EnumValueType.hydrate(input);
-  },
-  validate(input, path = "EnumValueType") {
-    if (!_vdl$1.arrayIncludes(EnumValueType.values(), input)) return `${path}: invalid value "${String(input)}" for EnumValueType enum`;
-    return null;
-  },
-  hydrate(input) {
-    return input;
-  }
-};
-var LiteralKind = {
-  String: "string",
-  Int: "int",
-  Float: "float",
-  Bool: "bool",
-  Object: "object",
-  Array: "array",
-  values() {
-    return [
-      "string",
-      "int",
-      "float",
-      "bool",
-      "object",
-      "array"
-    ];
-  },
-  parse(json) {
-    const input = _vdl$1.parseJson(json);
-    const error = LiteralKind.validate(input);
-    if (error !== null) throw new Error(error);
-    return LiteralKind.hydrate(input);
-  },
-  validate(input, path = "LiteralKind") {
-    if (!_vdl$1.arrayIncludes(LiteralKind.values(), input)) return `${path}: invalid value "${String(input)}" for LiteralKind enum`;
-    return null;
-  },
-  hydrate(input) {
-    return input;
-  }
-};
-var PrimitiveType = {
-  String: "string",
-  Int: "int",
-  Float: "float",
-  Bool: "bool",
-  Datetime: "datetime",
-  values() {
-    return [
-      "string",
-      "int",
-      "float",
-      "bool",
-      "datetime"
-    ];
-  },
-  parse(json) {
-    const input = _vdl$1.parseJson(json);
-    const error = PrimitiveType.validate(input);
-    if (error !== null) throw new Error(error);
-    return PrimitiveType.hydrate(input);
-  },
-  validate(input, path = "PrimitiveType") {
-    if (!_vdl$1.arrayIncludes(PrimitiveType.values(), input)) return `${path}: invalid value "${String(input)}" for PrimitiveType enum`;
-    return null;
-  },
-  hydrate(input) {
-    return input;
-  }
-};
-var TypeKind = {
-  Primitive: "primitive",
-  Type: "type",
-  Enum: "enum",
-  Array: "array",
-  Map: "map",
-  Object: "object",
-  values() {
-    return [
-      "primitive",
-      "type",
-      "enum",
-      "array",
-      "map",
-      "object"
-    ];
-  },
-  parse(json) {
-    const input = _vdl$1.parseJson(json);
-    const error = TypeKind.validate(input);
-    if (error !== null) throw new Error(error);
-    return TypeKind.hydrate(input);
-  },
-  validate(input, path = "TypeKind") {
-    if (!_vdl$1.arrayIncludes(TypeKind.values(), input)) return `${path}: invalid value "${String(input)}" for TypeKind enum`;
-    return null;
-  },
-  hydrate(input) {
-    return input;
-  }
-};
-var _vdl$1 = {
-  parseJson(json) {
-    try {
-      return JSON.parse(json);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      throw new Error(`Invalid JSON input: ${message}`);
-    }
-  },
-  arrayIncludes(values, value) {
-    for (let index = 0; index < values.length; index += 1) if (values[index] === value) return true;
-    return false;
-  }
-};
-var Annotation = {
-  parse(json) {
-    const input = _vdl.parseJson(json);
-    const error = Annotation.validate(input);
-    if (error !== null) throw new Error(error);
-    return Annotation.hydrate(input);
-  },
-  validate(input, path = "Annotation") {
-    if (!_vdl.isRecord(input)) return `${path}: expected object, got ${_vdl.describeValue(input)}`;
-    const record0 = input;
-    const fieldPath0_0 = `${path}.position`;
-    if (!_vdl.hasOwn(record0, "position") || record0["position"] === void 0) return `${fieldPath0_0}: required field is missing`;
-    {
-      const error = Position.validate(record0["position"], fieldPath0_0);
-      if (error !== null) return error;
-    }
-    const fieldPath0_1 = `${path}.name`;
-    if (!_vdl.hasOwn(record0, "name") || record0["name"] === void 0) return `${fieldPath0_1}: required field is missing`;
-    if (typeof record0["name"] !== "string") return `${fieldPath0_1}: expected string, got ${_vdl.describeValue(record0["name"])}`;
-    const fieldPath0_2 = `${path}.argument`;
-    if (_vdl.hasOwn(record0, "argument") && record0["argument"] !== void 0) {
-      const error = LiteralValue.validate(record0["argument"], fieldPath0_2);
-      if (error !== null) return error;
-    }
-    return null;
-  },
-  hydrate(input) {
-    return _vdl.withOptional({
-      position: Position.hydrate(input.position),
-      name: input.name
-    }, "argument", input.argument === void 0 ? void 0 : LiteralValue.hydrate(input.argument));
-  }
-};
-var ConstantDef = {
-  parse(json) {
-    const input = _vdl.parseJson(json);
-    const error = ConstantDef.validate(input);
-    if (error !== null) throw new Error(error);
-    return ConstantDef.hydrate(input);
-  },
-  validate(input, path = "ConstantDef") {
-    if (!_vdl.isRecord(input)) return `${path}: expected object, got ${_vdl.describeValue(input)}`;
-    const record0 = input;
-    const fieldPath0_0 = `${path}.position`;
-    if (!_vdl.hasOwn(record0, "position") || record0["position"] === void 0) return `${fieldPath0_0}: required field is missing`;
-    {
-      const error = Position.validate(record0["position"], fieldPath0_0);
-      if (error !== null) return error;
-    }
-    const fieldPath0_1 = `${path}.name`;
-    if (!_vdl.hasOwn(record0, "name") || record0["name"] === void 0) return `${fieldPath0_1}: required field is missing`;
-    if (typeof record0["name"] !== "string") return `${fieldPath0_1}: expected string, got ${_vdl.describeValue(record0["name"])}`;
-    const fieldPath0_2 = `${path}.doc`;
-    if (_vdl.hasOwn(record0, "doc") && record0["doc"] !== void 0) {
-      if (typeof record0["doc"] !== "string") return `${fieldPath0_2}: expected string, got ${_vdl.describeValue(record0["doc"])}`;
-    }
-    const fieldPath0_3 = `${path}.annotations`;
-    if (!_vdl.hasOwn(record0, "annotations") || record0["annotations"] === void 0) return `${fieldPath0_3}: required field is missing`;
-    if (!Array.isArray(record0["annotations"])) return `${fieldPath0_3}: expected array, got ${_vdl.describeValue(record0["annotations"])}`;
-    for (let index1 = 0; index1 < record0["annotations"].length; index1 += 1) {
-      const itemPath1 = `${fieldPath0_3}[${index1}]`;
-      {
-        const error = Annotation.validate(record0["annotations"][index1], itemPath1);
-        if (error !== null) return error;
-      }
-    }
-    const fieldPath0_4 = `${path}.value`;
-    if (!_vdl.hasOwn(record0, "value") || record0["value"] === void 0) return `${fieldPath0_4}: required field is missing`;
-    {
-      const error = LiteralValue.validate(record0["value"], fieldPath0_4);
-      if (error !== null) return error;
-    }
-    return null;
-  },
-  hydrate(input) {
-    return _vdl.withOptional({
-      position: Position.hydrate(input.position),
-      name: input.name,
-      annotations: input.annotations.map((item1) => Annotation.hydrate(item1)),
-      value: LiteralValue.hydrate(input.value)
-    }, "doc", input.doc === void 0 ? void 0 : input.doc);
-  }
-};
-var EnumDef = {
-  parse(json) {
-    const input = _vdl.parseJson(json);
-    const error = EnumDef.validate(input);
-    if (error !== null) throw new Error(error);
-    return EnumDef.hydrate(input);
-  },
-  validate(input, path = "EnumDef") {
-    if (!_vdl.isRecord(input)) return `${path}: expected object, got ${_vdl.describeValue(input)}`;
-    const record0 = input;
-    const fieldPath0_0 = `${path}.position`;
-    if (!_vdl.hasOwn(record0, "position") || record0["position"] === void 0) return `${fieldPath0_0}: required field is missing`;
-    {
-      const error = Position.validate(record0["position"], fieldPath0_0);
-      if (error !== null) return error;
-    }
-    const fieldPath0_1 = `${path}.name`;
-    if (!_vdl.hasOwn(record0, "name") || record0["name"] === void 0) return `${fieldPath0_1}: required field is missing`;
-    if (typeof record0["name"] !== "string") return `${fieldPath0_1}: expected string, got ${_vdl.describeValue(record0["name"])}`;
-    const fieldPath0_2 = `${path}.doc`;
-    if (_vdl.hasOwn(record0, "doc") && record0["doc"] !== void 0) {
-      if (typeof record0["doc"] !== "string") return `${fieldPath0_2}: expected string, got ${_vdl.describeValue(record0["doc"])}`;
-    }
-    const fieldPath0_3 = `${path}.annotations`;
-    if (!_vdl.hasOwn(record0, "annotations") || record0["annotations"] === void 0) return `${fieldPath0_3}: required field is missing`;
-    if (!Array.isArray(record0["annotations"])) return `${fieldPath0_3}: expected array, got ${_vdl.describeValue(record0["annotations"])}`;
-    for (let index1 = 0; index1 < record0["annotations"].length; index1 += 1) {
-      const itemPath1 = `${fieldPath0_3}[${index1}]`;
-      {
-        const error = Annotation.validate(record0["annotations"][index1], itemPath1);
-        if (error !== null) return error;
-      }
-    }
-    const fieldPath0_4 = `${path}.enumType`;
-    if (!_vdl.hasOwn(record0, "enumType") || record0["enumType"] === void 0) return `${fieldPath0_4}: required field is missing`;
-    {
-      const error = EnumValueType.validate(record0["enumType"], fieldPath0_4);
-      if (error !== null) return error;
-    }
-    const fieldPath0_5 = `${path}.members`;
-    if (!_vdl.hasOwn(record0, "members") || record0["members"] === void 0) return `${fieldPath0_5}: required field is missing`;
-    if (!Array.isArray(record0["members"])) return `${fieldPath0_5}: expected array, got ${_vdl.describeValue(record0["members"])}`;
-    for (let index1 = 0; index1 < record0["members"].length; index1 += 1) {
-      const itemPath1 = `${fieldPath0_5}[${index1}]`;
-      {
-        const error = EnumMember.validate(record0["members"][index1], itemPath1);
-        if (error !== null) return error;
-      }
-    }
-    return null;
-  },
-  hydrate(input) {
-    return _vdl.withOptional({
-      position: Position.hydrate(input.position),
-      name: input.name,
-      annotations: input.annotations.map((item1) => Annotation.hydrate(item1)),
-      enumType: EnumValueType.hydrate(input.enumType),
-      members: input.members.map((item1) => EnumMember.hydrate(item1))
-    }, "doc", input.doc === void 0 ? void 0 : input.doc);
-  }
-};
-var EnumMember = {
-  parse(json) {
-    const input = _vdl.parseJson(json);
-    const error = EnumMember.validate(input);
-    if (error !== null) throw new Error(error);
-    return EnumMember.hydrate(input);
-  },
-  validate(input, path = "EnumMember") {
-    if (!_vdl.isRecord(input)) return `${path}: expected object, got ${_vdl.describeValue(input)}`;
-    const record0 = input;
-    const fieldPath0_0 = `${path}.position`;
-    if (!_vdl.hasOwn(record0, "position") || record0["position"] === void 0) return `${fieldPath0_0}: required field is missing`;
-    {
-      const error = Position.validate(record0["position"], fieldPath0_0);
-      if (error !== null) return error;
-    }
-    const fieldPath0_1 = `${path}.name`;
-    if (!_vdl.hasOwn(record0, "name") || record0["name"] === void 0) return `${fieldPath0_1}: required field is missing`;
-    if (typeof record0["name"] !== "string") return `${fieldPath0_1}: expected string, got ${_vdl.describeValue(record0["name"])}`;
-    const fieldPath0_2 = `${path}.value`;
-    if (!_vdl.hasOwn(record0, "value") || record0["value"] === void 0) return `${fieldPath0_2}: required field is missing`;
-    {
-      const error = LiteralValue.validate(record0["value"], fieldPath0_2);
-      if (error !== null) return error;
-    }
-    const fieldPath0_3 = `${path}.doc`;
-    if (_vdl.hasOwn(record0, "doc") && record0["doc"] !== void 0) {
-      if (typeof record0["doc"] !== "string") return `${fieldPath0_3}: expected string, got ${_vdl.describeValue(record0["doc"])}`;
-    }
-    const fieldPath0_4 = `${path}.annotations`;
-    if (!_vdl.hasOwn(record0, "annotations") || record0["annotations"] === void 0) return `${fieldPath0_4}: required field is missing`;
-    if (!Array.isArray(record0["annotations"])) return `${fieldPath0_4}: expected array, got ${_vdl.describeValue(record0["annotations"])}`;
-    for (let index1 = 0; index1 < record0["annotations"].length; index1 += 1) {
-      const itemPath1 = `${fieldPath0_4}[${index1}]`;
-      {
-        const error = Annotation.validate(record0["annotations"][index1], itemPath1);
-        if (error !== null) return error;
-      }
-    }
-    return null;
-  },
-  hydrate(input) {
-    return _vdl.withOptional({
-      position: Position.hydrate(input.position),
-      name: input.name,
-      value: LiteralValue.hydrate(input.value),
-      annotations: input.annotations.map((item1) => Annotation.hydrate(item1))
-    }, "doc", input.doc === void 0 ? void 0 : input.doc);
-  }
-};
-var Field = {
-  parse(json) {
-    const input = _vdl.parseJson(json);
-    const error = Field.validate(input);
-    if (error !== null) throw new Error(error);
-    return Field.hydrate(input);
-  },
-  validate(input, path = "Field") {
-    if (!_vdl.isRecord(input)) return `${path}: expected object, got ${_vdl.describeValue(input)}`;
-    const record0 = input;
-    const fieldPath0_0 = `${path}.position`;
-    if (!_vdl.hasOwn(record0, "position") || record0["position"] === void 0) return `${fieldPath0_0}: required field is missing`;
-    {
-      const error = Position.validate(record0["position"], fieldPath0_0);
-      if (error !== null) return error;
-    }
-    const fieldPath0_1 = `${path}.name`;
-    if (!_vdl.hasOwn(record0, "name") || record0["name"] === void 0) return `${fieldPath0_1}: required field is missing`;
-    if (typeof record0["name"] !== "string") return `${fieldPath0_1}: expected string, got ${_vdl.describeValue(record0["name"])}`;
-    const fieldPath0_2 = `${path}.doc`;
-    if (_vdl.hasOwn(record0, "doc") && record0["doc"] !== void 0) {
-      if (typeof record0["doc"] !== "string") return `${fieldPath0_2}: expected string, got ${_vdl.describeValue(record0["doc"])}`;
-    }
-    const fieldPath0_3 = `${path}.optional`;
-    if (!_vdl.hasOwn(record0, "optional") || record0["optional"] === void 0) return `${fieldPath0_3}: required field is missing`;
-    if (typeof record0["optional"] !== "boolean") return `${fieldPath0_3}: expected boolean, got ${_vdl.describeValue(record0["optional"])}`;
-    const fieldPath0_4 = `${path}.annotations`;
-    if (!_vdl.hasOwn(record0, "annotations") || record0["annotations"] === void 0) return `${fieldPath0_4}: required field is missing`;
-    if (!Array.isArray(record0["annotations"])) return `${fieldPath0_4}: expected array, got ${_vdl.describeValue(record0["annotations"])}`;
-    for (let index1 = 0; index1 < record0["annotations"].length; index1 += 1) {
-      const itemPath1 = `${fieldPath0_4}[${index1}]`;
-      {
-        const error = Annotation.validate(record0["annotations"][index1], itemPath1);
-        if (error !== null) return error;
-      }
-    }
-    const fieldPath0_5 = `${path}.typeRef`;
-    if (!_vdl.hasOwn(record0, "typeRef") || record0["typeRef"] === void 0) return `${fieldPath0_5}: required field is missing`;
-    {
-      const error = TypeRef.validate(record0["typeRef"], fieldPath0_5);
-      if (error !== null) return error;
-    }
-    return null;
-  },
-  hydrate(input) {
-    return _vdl.withOptional({
-      position: Position.hydrate(input.position),
-      name: input.name,
-      optional: input.optional,
-      annotations: input.annotations.map((item1) => Annotation.hydrate(item1)),
-      typeRef: TypeRef.hydrate(input.typeRef)
-    }, "doc", input.doc === void 0 ? void 0 : input.doc);
-  }
-};
-var IrSchema = {
-  parse(json) {
-    const input = _vdl.parseJson(json);
-    const error = IrSchema.validate(input);
-    if (error !== null) throw new Error(error);
-    return IrSchema.hydrate(input);
-  },
-  validate(input, path = "IrSchema") {
-    if (!_vdl.isRecord(input)) return `${path}: expected object, got ${_vdl.describeValue(input)}`;
-    const record0 = input;
-    const fieldPath0_0 = `${path}.entryPoint`;
-    if (!_vdl.hasOwn(record0, "entryPoint") || record0["entryPoint"] === void 0) return `${fieldPath0_0}: required field is missing`;
-    if (typeof record0["entryPoint"] !== "string") return `${fieldPath0_0}: expected string, got ${_vdl.describeValue(record0["entryPoint"])}`;
-    const fieldPath0_1 = `${path}.constants`;
-    if (!_vdl.hasOwn(record0, "constants") || record0["constants"] === void 0) return `${fieldPath0_1}: required field is missing`;
-    if (!Array.isArray(record0["constants"])) return `${fieldPath0_1}: expected array, got ${_vdl.describeValue(record0["constants"])}`;
-    for (let index1 = 0; index1 < record0["constants"].length; index1 += 1) {
-      const itemPath1 = `${fieldPath0_1}[${index1}]`;
-      {
-        const error = ConstantDef.validate(record0["constants"][index1], itemPath1);
-        if (error !== null) return error;
-      }
-    }
-    const fieldPath0_2 = `${path}.enums`;
-    if (!_vdl.hasOwn(record0, "enums") || record0["enums"] === void 0) return `${fieldPath0_2}: required field is missing`;
-    if (!Array.isArray(record0["enums"])) return `${fieldPath0_2}: expected array, got ${_vdl.describeValue(record0["enums"])}`;
-    for (let index1 = 0; index1 < record0["enums"].length; index1 += 1) {
-      const itemPath1 = `${fieldPath0_2}[${index1}]`;
-      {
-        const error = EnumDef.validate(record0["enums"][index1], itemPath1);
-        if (error !== null) return error;
-      }
-    }
-    const fieldPath0_3 = `${path}.types`;
-    if (!_vdl.hasOwn(record0, "types") || record0["types"] === void 0) return `${fieldPath0_3}: required field is missing`;
-    if (!Array.isArray(record0["types"])) return `${fieldPath0_3}: expected array, got ${_vdl.describeValue(record0["types"])}`;
-    for (let index1 = 0; index1 < record0["types"].length; index1 += 1) {
-      const itemPath1 = `${fieldPath0_3}[${index1}]`;
-      {
-        const error = TypeDef.validate(record0["types"][index1], itemPath1);
-        if (error !== null) return error;
-      }
-    }
-    const fieldPath0_4 = `${path}.docs`;
-    if (!_vdl.hasOwn(record0, "docs") || record0["docs"] === void 0) return `${fieldPath0_4}: required field is missing`;
-    if (!Array.isArray(record0["docs"])) return `${fieldPath0_4}: expected array, got ${_vdl.describeValue(record0["docs"])}`;
-    for (let index1 = 0; index1 < record0["docs"].length; index1 += 1) {
-      const itemPath1 = `${fieldPath0_4}[${index1}]`;
-      {
-        const error = TopLevelDoc.validate(record0["docs"][index1], itemPath1);
-        if (error !== null) return error;
-      }
-    }
-    return null;
-  },
-  hydrate(input) {
-    return {
-      entryPoint: input.entryPoint,
-      constants: input.constants.map((item1) => ConstantDef.hydrate(item1)),
-      enums: input.enums.map((item1) => EnumDef.hydrate(item1)),
-      types: input.types.map((item1) => TypeDef.hydrate(item1)),
-      docs: input.docs.map((item1) => TopLevelDoc.hydrate(item1))
-    };
-  }
-};
-var LiteralValue = {
-  parse(json) {
-    const input = _vdl.parseJson(json);
-    const error = LiteralValue.validate(input);
-    if (error !== null) throw new Error(error);
-    return LiteralValue.hydrate(input);
-  },
-  validate(input, path = "LiteralValue") {
-    if (!_vdl.isRecord(input)) return `${path}: expected object, got ${_vdl.describeValue(input)}`;
-    const record0 = input;
-    const fieldPath0_0 = `${path}.position`;
-    if (!_vdl.hasOwn(record0, "position") || record0["position"] === void 0) return `${fieldPath0_0}: required field is missing`;
-    {
-      const error = Position.validate(record0["position"], fieldPath0_0);
-      if (error !== null) return error;
-    }
-    const fieldPath0_1 = `${path}.kind`;
-    if (!_vdl.hasOwn(record0, "kind") || record0["kind"] === void 0) return `${fieldPath0_1}: required field is missing`;
-    {
-      const error = LiteralKind.validate(record0["kind"], fieldPath0_1);
-      if (error !== null) return error;
-    }
-    const fieldPath0_2 = `${path}.stringValue`;
-    if (_vdl.hasOwn(record0, "stringValue") && record0["stringValue"] !== void 0) {
-      if (typeof record0["stringValue"] !== "string") return `${fieldPath0_2}: expected string, got ${_vdl.describeValue(record0["stringValue"])}`;
-    }
-    const fieldPath0_3 = `${path}.intValue`;
-    if (_vdl.hasOwn(record0, "intValue") && record0["intValue"] !== void 0) {
-      if (typeof record0["intValue"] !== "number" || !Number.isFinite(record0["intValue"])) return `${fieldPath0_3}: expected number, got ${_vdl.describeValue(record0["intValue"])}`;
-    }
-    const fieldPath0_4 = `${path}.floatValue`;
-    if (_vdl.hasOwn(record0, "floatValue") && record0["floatValue"] !== void 0) {
-      if (typeof record0["floatValue"] !== "number" || !Number.isFinite(record0["floatValue"])) return `${fieldPath0_4}: expected number, got ${_vdl.describeValue(record0["floatValue"])}`;
-    }
-    const fieldPath0_5 = `${path}.boolValue`;
-    if (_vdl.hasOwn(record0, "boolValue") && record0["boolValue"] !== void 0) {
-      if (typeof record0["boolValue"] !== "boolean") return `${fieldPath0_5}: expected boolean, got ${_vdl.describeValue(record0["boolValue"])}`;
-    }
-    const fieldPath0_6 = `${path}.objectEntries`;
-    if (_vdl.hasOwn(record0, "objectEntries") && record0["objectEntries"] !== void 0) {
-      if (!Array.isArray(record0["objectEntries"])) return `${fieldPath0_6}: expected array, got ${_vdl.describeValue(record0["objectEntries"])}`;
-      for (let index1 = 0; index1 < record0["objectEntries"].length; index1 += 1) {
-        const itemPath1 = `${fieldPath0_6}[${index1}]`;
-        {
-          const error = ObjectEntry.validate(record0["objectEntries"][index1], itemPath1);
-          if (error !== null) return error;
-        }
-      }
-    }
-    const fieldPath0_7 = `${path}.arrayItems`;
-    if (_vdl.hasOwn(record0, "arrayItems") && record0["arrayItems"] !== void 0) {
-      if (!Array.isArray(record0["arrayItems"])) return `${fieldPath0_7}: expected array, got ${_vdl.describeValue(record0["arrayItems"])}`;
-      for (let index1 = 0; index1 < record0["arrayItems"].length; index1 += 1) {
-        const itemPath1 = `${fieldPath0_7}[${index1}]`;
-        {
-          const error = LiteralValue.validate(record0["arrayItems"][index1], itemPath1);
-          if (error !== null) return error;
-        }
-      }
-    }
-    return null;
-  },
-  hydrate(input) {
-    return _vdl.withOptional(_vdl.withOptional(_vdl.withOptional(_vdl.withOptional(_vdl.withOptional(_vdl.withOptional({
-      position: Position.hydrate(input.position),
-      kind: LiteralKind.hydrate(input.kind)
-    }, "stringValue", input.stringValue === void 0 ? void 0 : input.stringValue), "intValue", input.intValue === void 0 ? void 0 : input.intValue), "floatValue", input.floatValue === void 0 ? void 0 : input.floatValue), "boolValue", input.boolValue === void 0 ? void 0 : input.boolValue), "objectEntries", input.objectEntries === void 0 ? void 0 : input.objectEntries.map((item1) => ObjectEntry.hydrate(item1))), "arrayItems", input.arrayItems === void 0 ? void 0 : input.arrayItems.map((item1) => LiteralValue.hydrate(item1)));
-  }
-};
-var ObjectEntry = {
-  parse(json) {
-    const input = _vdl.parseJson(json);
-    const error = ObjectEntry.validate(input);
-    if (error !== null) throw new Error(error);
-    return ObjectEntry.hydrate(input);
-  },
-  validate(input, path = "ObjectEntry") {
-    if (!_vdl.isRecord(input)) return `${path}: expected object, got ${_vdl.describeValue(input)}`;
-    const record0 = input;
-    const fieldPath0_0 = `${path}.position`;
-    if (!_vdl.hasOwn(record0, "position") || record0["position"] === void 0) return `${fieldPath0_0}: required field is missing`;
-    {
-      const error = Position.validate(record0["position"], fieldPath0_0);
-      if (error !== null) return error;
-    }
-    const fieldPath0_1 = `${path}.key`;
-    if (!_vdl.hasOwn(record0, "key") || record0["key"] === void 0) return `${fieldPath0_1}: required field is missing`;
-    if (typeof record0["key"] !== "string") return `${fieldPath0_1}: expected string, got ${_vdl.describeValue(record0["key"])}`;
-    const fieldPath0_2 = `${path}.value`;
-    if (!_vdl.hasOwn(record0, "value") || record0["value"] === void 0) return `${fieldPath0_2}: required field is missing`;
-    {
-      const error = LiteralValue.validate(record0["value"], fieldPath0_2);
-      if (error !== null) return error;
-    }
-    return null;
-  },
-  hydrate(input) {
-    return {
-      position: Position.hydrate(input.position),
-      key: input.key,
-      value: LiteralValue.hydrate(input.value)
-    };
-  }
-};
-var Position = {
-  parse(json) {
-    const input = _vdl.parseJson(json);
-    const error = Position.validate(input);
-    if (error !== null) throw new Error(error);
-    return Position.hydrate(input);
-  },
-  validate(input, path = "Position") {
-    if (!_vdl.isRecord(input)) return `${path}: expected object, got ${_vdl.describeValue(input)}`;
-    const record0 = input;
-    const fieldPath0_0 = `${path}.file`;
-    if (!_vdl.hasOwn(record0, "file") || record0["file"] === void 0) return `${fieldPath0_0}: required field is missing`;
-    if (typeof record0["file"] !== "string") return `${fieldPath0_0}: expected string, got ${_vdl.describeValue(record0["file"])}`;
-    const fieldPath0_1 = `${path}.line`;
-    if (!_vdl.hasOwn(record0, "line") || record0["line"] === void 0) return `${fieldPath0_1}: required field is missing`;
-    if (typeof record0["line"] !== "number" || !Number.isFinite(record0["line"])) return `${fieldPath0_1}: expected number, got ${_vdl.describeValue(record0["line"])}`;
-    const fieldPath0_2 = `${path}.column`;
-    if (!_vdl.hasOwn(record0, "column") || record0["column"] === void 0) return `${fieldPath0_2}: required field is missing`;
-    if (typeof record0["column"] !== "number" || !Number.isFinite(record0["column"])) return `${fieldPath0_2}: expected number, got ${_vdl.describeValue(record0["column"])}`;
-    return null;
-  },
-  hydrate(input) {
-    return {
-      file: input.file,
-      line: input.line,
-      column: input.column
-    };
-  }
-};
-var TopLevelDoc = {
-  parse(json) {
-    const input = _vdl.parseJson(json);
-    const error = TopLevelDoc.validate(input);
-    if (error !== null) throw new Error(error);
-    return TopLevelDoc.hydrate(input);
-  },
-  validate(input, path = "TopLevelDoc") {
-    if (!_vdl.isRecord(input)) return `${path}: expected object, got ${_vdl.describeValue(input)}`;
-    const record0 = input;
-    const fieldPath0_0 = `${path}.position`;
-    if (!_vdl.hasOwn(record0, "position") || record0["position"] === void 0) return `${fieldPath0_0}: required field is missing`;
-    {
-      const error = Position.validate(record0["position"], fieldPath0_0);
-      if (error !== null) return error;
-    }
-    const fieldPath0_1 = `${path}.content`;
-    if (!_vdl.hasOwn(record0, "content") || record0["content"] === void 0) return `${fieldPath0_1}: required field is missing`;
-    if (typeof record0["content"] !== "string") return `${fieldPath0_1}: expected string, got ${_vdl.describeValue(record0["content"])}`;
-    return null;
-  },
-  hydrate(input) {
-    return {
-      position: Position.hydrate(input.position),
-      content: input.content
-    };
-  }
-};
-var TypeDef = {
-  parse(json) {
-    const input = _vdl.parseJson(json);
-    const error = TypeDef.validate(input);
-    if (error !== null) throw new Error(error);
-    return TypeDef.hydrate(input);
-  },
-  validate(input, path = "TypeDef") {
-    if (!_vdl.isRecord(input)) return `${path}: expected object, got ${_vdl.describeValue(input)}`;
-    const record0 = input;
-    const fieldPath0_0 = `${path}.position`;
-    if (!_vdl.hasOwn(record0, "position") || record0["position"] === void 0) return `${fieldPath0_0}: required field is missing`;
-    {
-      const error = Position.validate(record0["position"], fieldPath0_0);
-      if (error !== null) return error;
-    }
-    const fieldPath0_1 = `${path}.name`;
-    if (!_vdl.hasOwn(record0, "name") || record0["name"] === void 0) return `${fieldPath0_1}: required field is missing`;
-    if (typeof record0["name"] !== "string") return `${fieldPath0_1}: expected string, got ${_vdl.describeValue(record0["name"])}`;
-    const fieldPath0_2 = `${path}.doc`;
-    if (_vdl.hasOwn(record0, "doc") && record0["doc"] !== void 0) {
-      if (typeof record0["doc"] !== "string") return `${fieldPath0_2}: expected string, got ${_vdl.describeValue(record0["doc"])}`;
-    }
-    const fieldPath0_3 = `${path}.annotations`;
-    if (!_vdl.hasOwn(record0, "annotations") || record0["annotations"] === void 0) return `${fieldPath0_3}: required field is missing`;
-    if (!Array.isArray(record0["annotations"])) return `${fieldPath0_3}: expected array, got ${_vdl.describeValue(record0["annotations"])}`;
-    for (let index1 = 0; index1 < record0["annotations"].length; index1 += 1) {
-      const itemPath1 = `${fieldPath0_3}[${index1}]`;
-      {
-        const error = Annotation.validate(record0["annotations"][index1], itemPath1);
-        if (error !== null) return error;
-      }
-    }
-    const fieldPath0_4 = `${path}.typeRef`;
-    if (!_vdl.hasOwn(record0, "typeRef") || record0["typeRef"] === void 0) return `${fieldPath0_4}: required field is missing`;
-    {
-      const error = TypeRef.validate(record0["typeRef"], fieldPath0_4);
-      if (error !== null) return error;
-    }
-    return null;
-  },
-  hydrate(input) {
-    return _vdl.withOptional({
-      position: Position.hydrate(input.position),
-      name: input.name,
-      annotations: input.annotations.map((item1) => Annotation.hydrate(item1)),
-      typeRef: TypeRef.hydrate(input.typeRef)
-    }, "doc", input.doc === void 0 ? void 0 : input.doc);
-  }
-};
-var TypeRef = {
-  parse(json) {
-    const input = _vdl.parseJson(json);
-    const error = TypeRef.validate(input);
-    if (error !== null) throw new Error(error);
-    return TypeRef.hydrate(input);
-  },
-  validate(input, path = "TypeRef") {
-    if (!_vdl.isRecord(input)) return `${path}: expected object, got ${_vdl.describeValue(input)}`;
-    const record0 = input;
-    const fieldPath0_0 = `${path}.kind`;
-    if (!_vdl.hasOwn(record0, "kind") || record0["kind"] === void 0) return `${fieldPath0_0}: required field is missing`;
-    {
-      const error = TypeKind.validate(record0["kind"], fieldPath0_0);
-      if (error !== null) return error;
-    }
-    const fieldPath0_1 = `${path}.primitiveName`;
-    if (_vdl.hasOwn(record0, "primitiveName") && record0["primitiveName"] !== void 0) {
-      const error = PrimitiveType.validate(record0["primitiveName"], fieldPath0_1);
-      if (error !== null) return error;
-    }
-    const fieldPath0_2 = `${path}.typeName`;
-    if (_vdl.hasOwn(record0, "typeName") && record0["typeName"] !== void 0) {
-      if (typeof record0["typeName"] !== "string") return `${fieldPath0_2}: expected string, got ${_vdl.describeValue(record0["typeName"])}`;
-    }
-    const fieldPath0_3 = `${path}.enumName`;
-    if (_vdl.hasOwn(record0, "enumName") && record0["enumName"] !== void 0) {
-      if (typeof record0["enumName"] !== "string") return `${fieldPath0_3}: expected string, got ${_vdl.describeValue(record0["enumName"])}`;
-    }
-    const fieldPath0_4 = `${path}.enumType`;
-    if (_vdl.hasOwn(record0, "enumType") && record0["enumType"] !== void 0) {
-      const error = EnumValueType.validate(record0["enumType"], fieldPath0_4);
-      if (error !== null) return error;
-    }
-    const fieldPath0_5 = `${path}.arrayType`;
-    if (_vdl.hasOwn(record0, "arrayType") && record0["arrayType"] !== void 0) {
-      const error = TypeRef.validate(record0["arrayType"], fieldPath0_5);
-      if (error !== null) return error;
-    }
-    const fieldPath0_6 = `${path}.arrayDims`;
-    if (_vdl.hasOwn(record0, "arrayDims") && record0["arrayDims"] !== void 0) {
-      if (typeof record0["arrayDims"] !== "number" || !Number.isFinite(record0["arrayDims"])) return `${fieldPath0_6}: expected number, got ${_vdl.describeValue(record0["arrayDims"])}`;
-    }
-    const fieldPath0_7 = `${path}.mapType`;
-    if (_vdl.hasOwn(record0, "mapType") && record0["mapType"] !== void 0) {
-      const error = TypeRef.validate(record0["mapType"], fieldPath0_7);
-      if (error !== null) return error;
-    }
-    const fieldPath0_8 = `${path}.objectFields`;
-    if (_vdl.hasOwn(record0, "objectFields") && record0["objectFields"] !== void 0) {
-      if (!Array.isArray(record0["objectFields"])) return `${fieldPath0_8}: expected array, got ${_vdl.describeValue(record0["objectFields"])}`;
-      for (let index1 = 0; index1 < record0["objectFields"].length; index1 += 1) {
-        const itemPath1 = `${fieldPath0_8}[${index1}]`;
-        {
-          const error = Field.validate(record0["objectFields"][index1], itemPath1);
-          if (error !== null) return error;
-        }
-      }
-    }
-    return null;
-  },
-  hydrate(input) {
-    return _vdl.withOptional(_vdl.withOptional(_vdl.withOptional(_vdl.withOptional(_vdl.withOptional(_vdl.withOptional(_vdl.withOptional(_vdl.withOptional({ kind: TypeKind.hydrate(input.kind) }, "primitiveName", input.primitiveName === void 0 ? void 0 : PrimitiveType.hydrate(input.primitiveName)), "typeName", input.typeName === void 0 ? void 0 : input.typeName), "enumName", input.enumName === void 0 ? void 0 : input.enumName), "enumType", input.enumType === void 0 ? void 0 : EnumValueType.hydrate(input.enumType)), "arrayType", input.arrayType === void 0 ? void 0 : TypeRef.hydrate(input.arrayType)), "arrayDims", input.arrayDims === void 0 ? void 0 : input.arrayDims), "mapType", input.mapType === void 0 ? void 0 : TypeRef.hydrate(input.mapType)), "objectFields", input.objectFields === void 0 ? void 0 : input.objectFields.map((item1) => Field.hydrate(item1)));
-  }
-};
-var _vdl = {
-  parseJson(json) {
-    try {
-      return JSON.parse(json);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      throw new Error(`Invalid JSON input: ${message}`);
-    }
-  },
-  recordEntries(record) {
-    const entries = [];
-    for (const key in record) if (Object.prototype.hasOwnProperty.call(record, key)) {
-      const value = record[key];
-      entries.push([key, value]);
-    }
-    return entries;
-  },
-  mapRecord(record, mapValue) {
-    const output = {};
-    for (const key in record) if (Object.prototype.hasOwnProperty.call(record, key)) {
-      const value = record[key];
-      output[key] = mapValue(value);
-    }
-    return output;
-  },
-  withOptional(record, key, value) {
-    const mutable = record;
-    if (value !== void 0) mutable[key] = value;
-    return record;
-  },
-  isRecord(value) {
-    return typeof value === "object" && value !== null && !Array.isArray(value) && !(value instanceof Date);
-  },
-  hasOwn(record, key) {
-    return Object.prototype.hasOwnProperty.call(record, key);
-  },
-  describeValue(value) {
-    if (value === null) return "null";
-    if (Array.isArray(value)) return "array";
-    if (value instanceof Date) return "Date";
-    return typeof value;
-  },
-  isValidDateInput(value) {
-    if (value instanceof Date) return !Number.isNaN(value.getTime());
-    if (typeof value !== "string") return false;
-    return !Number.isNaN(new Date(value).getTime());
-  },
-  hydrateDateInput(value) {
-    return value instanceof Date ? new Date(value.getTime()) : new Date(value);
-  }
-};
-
-// node_modules/@varavel/vdl-plugin-sdk/dist/index.js
+// node_modules/@varavel/vdl-plugin-sdk/dist/core/define-plugin.js
 function definePlugin(handler) {
   return handler;
 }
@@ -860,68 +93,8 @@ function toPluginOutputError(error) {
 }
 __name(toPluginOutputError, "toPluginOutputError");
 
-// node_modules/@varavel/vdl-plugin-sdk/dist/chunk-YKewjYmz.js
-var __create = Object.create;
-var __defProp2 = Object.defineProperty;
-var __getOwnPropDesc2 = Object.getOwnPropertyDescriptor;
-var __getOwnPropNames2 = Object.getOwnPropertyNames;
-var __getProtoOf = Object.getPrototypeOf;
-var __hasOwnProp2 = Object.prototype.hasOwnProperty;
-var __commonJSMin = /* @__PURE__ */ __name((cb, mod) => () => (mod || cb((mod = { exports: {} }).exports, mod), mod.exports), "__commonJSMin");
-var __exportAll = /* @__PURE__ */ __name((all, no_symbols) => {
-  let target = {};
-  for (var name in all) __defProp2(target, name, {
-    get: all[name],
-    enumerable: true
-  });
-  if (!no_symbols) __defProp2(target, Symbol.toStringTag, { value: "Module" });
-  return target;
-}, "__exportAll");
-var __copyProps2 = /* @__PURE__ */ __name((to, from, except, desc) => {
-  if (from && typeof from === "object" || typeof from === "function") for (var keys = __getOwnPropNames2(from), i = 0, n = keys.length, key; i < n; i++) {
-    key = keys[i];
-    if (!__hasOwnProp2.call(to, key) && key !== except) __defProp2(to, key, {
-      get: ((k2) => from[k2]).bind(null, key),
-      enumerable: !(desc = __getOwnPropDesc2(from, key)) || desc.enumerable
-    });
-  }
-  return to;
-}, "__copyProps");
-var __toESM = /* @__PURE__ */ __name((mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps2(isNodeMode || !mod || !mod.__esModule ? __defProp2(target, "default", {
-  value: mod,
-  enumerable: true
-}) : target, mod)), "__toESM");
-var __require = /* @__PURE__ */ ((x) => typeof require !== "undefined" ? require : typeof Proxy !== "undefined" ? new Proxy(x, { get: /* @__PURE__ */ __name((a, b) => (typeof require !== "undefined" ? require : a)[b], "get") }) : x)(function(x) {
-  if (typeof require !== "undefined") return require.apply(this, arguments);
-  throw Error('Calling `require` for "' + x + "\" in an environment that doesn't expose the `require` function. See https://rolldown.rs/in-depth/bundling-cjs#require-external-modules for more details.");
-});
-
-// node_modules/@varavel/vdl-plugin-sdk/dist/utils/index.js
-function at$1(arr, indices) {
-  const result = new Array(indices.length);
-  const length = arr.length;
-  for (let i = 0; i < indices.length; i++) {
-    let index = indices[i];
-    index = Number.isInteger(index) ? index : Math.trunc(index) || 0;
-    if (index < 0) index += length;
-    result[i] = arr[index];
-  }
-  return result;
-}
-__name(at$1, "at$1");
-function chunk$1(arr, size) {
-  if (!Number.isInteger(size) || size <= 0) throw new Error("Size must be an integer greater than zero.");
-  const chunkLength = Math.ceil(arr.length / size);
-  const result = Array(chunkLength);
-  for (let index = 0; index < chunkLength; index++) {
-    const start = index * size;
-    const end = start + size;
-    result[index] = arr.slice(start, end);
-  }
-  return result;
-}
-__name(chunk$1, "chunk$1");
-function compact$1(arr) {
+// node_modules/@varavel/vdl-plugin-sdk/dist/node_modules/es-toolkit/dist/array/compact.js
+function compact(arr) {
   const result = [];
   for (let i = 0; i < arr.length; i++) {
     const item = arr[i];
@@ -929,513 +102,250 @@ function compact$1(arr) {
   }
   return result;
 }
-__name(compact$1, "compact$1");
-function countBy$3(arr, mapper) {
-  const result = {};
-  for (let i = 0; i < arr.length; i++) {
-    var _result$key;
-    const item = arr[i];
-    const key = mapper(item, i, arr);
-    result[key] = ((_result$key = result[key]) !== null && _result$key !== void 0 ? _result$key : 0) + 1;
+__name(compact, "compact");
+
+// node_modules/@varavel/gen/dist/index.js
+var _a;
+var Generator = (_a = class {
+  constructor() {
+    this.chunks = [];
+    this.indentLevel = 0;
+    this.indentUnit = "  ";
+    this.atStartOfLine = true;
   }
-  return result;
-}
-__name(countBy$3, "countBy$3");
-function difference$1(firstArr, secondArr) {
-  const secondSet = new Set(secondArr);
-  return firstArr.filter((item) => !secondSet.has(item));
-}
-__name(difference$1, "difference$1");
-function differenceBy$1(firstArr, secondArr, mapper) {
-  const mappedSecondSet = new Set(secondArr.map((item) => mapper(item)));
-  return firstArr.filter((item) => {
-    return !mappedSecondSet.has(mapper(item));
-  });
-}
-__name(differenceBy$1, "differenceBy$1");
-function differenceWith$1(firstArr, secondArr, areItemsEqual) {
-  return firstArr.filter((firstItem) => {
-    return secondArr.every((secondItem) => {
-      return !areItemsEqual(firstItem, secondItem);
-    });
-  });
-}
-__name(differenceWith$1, "differenceWith$1");
-function drop$1(arr, itemsCount) {
-  itemsCount = Math.max(itemsCount, 0);
-  return arr.slice(itemsCount);
-}
-__name(drop$1, "drop$1");
-function dropRight$1(arr, itemsCount) {
-  itemsCount = Math.min(-itemsCount, 0);
-  if (itemsCount === 0) return arr.slice();
-  return arr.slice(0, itemsCount);
-}
-__name(dropRight$1, "dropRight$1");
-function dropRightWhile$1(arr, canContinueDropping) {
-  for (let i = arr.length - 1; i >= 0; i--) if (!canContinueDropping(arr[i], i, arr)) return arr.slice(0, i + 1);
-  return [];
-}
-__name(dropRightWhile$1, "dropRightWhile$1");
-function dropWhile$1(arr, canContinueDropping) {
-  const dropEndIndex = arr.findIndex((item, index, arr2) => !canContinueDropping(item, index, arr2));
-  if (dropEndIndex === -1) return [];
-  return arr.slice(dropEndIndex);
-}
-__name(dropWhile$1, "dropWhile$1");
-function flatten$1(arr, depth = 1) {
-  const result = [];
-  const flooredDepth = Math.floor(depth);
-  const recursive = /* @__PURE__ */ __name((arr2, currentDepth) => {
-    for (let i = 0; i < arr2.length; i++) {
-      const item = arr2[i];
-      if (Array.isArray(item) && currentDepth < flooredDepth) recursive(item, currentDepth + 1);
-      else result.push(item);
+  /**
+  * Uses spaces for one indent level.
+  *
+  * Example: `withSpaces(2)` makes each level equal to two spaces.
+  */
+  withSpaces(spaces) {
+    this.indentUnit = " ".repeat(Math.max(0, spaces));
+    return this;
+  }
+  /**
+  * Uses one tab character for each indent level.
+  */
+  withTabs() {
+    this.indentUnit = "	";
+    return this;
+  }
+  /**
+  * Moves one indentation level deeper for future writes.
+  */
+  indent() {
+    this.indentLevel++;
+    return this;
+  }
+  /**
+  * Moves one indentation level up for future writes.
+  *
+  * If already at zero, it stays at zero.
+  */
+  dedent() {
+    if (this.indentLevel > 0) this.indentLevel--;
+    return this;
+  }
+  /**
+  * Writes text exactly as given.
+  *
+  * It does not add indentation or newlines.
+  */
+  raw(content) {
+    if (content.length === 0) return this;
+    this.chunks.push(content);
+    this.atStartOfLine = content.endsWith("\n");
+    return this;
+  }
+  /**
+  * Writes exactly one newline character.
+  */
+  break() {
+    this.chunks.push("\n");
+    this.atStartOfLine = true;
+    return this;
+  }
+  /**
+  * Writes text on the current line.
+  *
+  * It adds indentation only when writing at the start of a line.
+  */
+  inline(content) {
+    if (content.length === 0) return this;
+    const sublines = content.split("\n");
+    for (let index = 0; index < sublines.length; index++) {
+      var _sublines$index;
+      const subline = (_sublines$index = sublines[index]) !== null && _sublines$index !== void 0 ? _sublines$index : "";
+      if (index > 0) {
+        this.chunks.push("\n");
+        this.atStartOfLine = true;
+      }
+      if (subline.length > 0) {
+        if (this.atStartOfLine) this.chunks.push(this.indentUnit.repeat(this.indentLevel));
+        this.chunks.push(subline);
+        this.atStartOfLine = false;
+      }
     }
-  }, "recursive");
-  recursive(arr, 0);
-  return result;
-}
-__name(flatten$1, "flatten$1");
-function flatMap$1(arr, iteratee, depth = 1) {
-  return flatten$1(arr.map((item, index) => iteratee(item, index, arr)), depth);
-}
-__name(flatMap$1, "flatMap$1");
-function flattenDeep$1(arr) {
-  return flatten$1(arr, Infinity);
-}
-__name(flattenDeep$1, "flattenDeep$1");
-function flatMapDeep$1(arr, iteratee) {
-  return flattenDeep$1(arr.map((item, index) => iteratee(item, index, arr)));
-}
-__name(flatMapDeep$1, "flatMapDeep$1");
-function groupBy$1(arr, getKeyFromItem) {
-  const result = {};
-  for (let i = 0; i < arr.length; i++) {
-    const item = arr[i];
-    const key = getKeyFromItem(item, i, arr);
-    if (!Object.hasOwn(result, key)) result[key] = [];
-    result[key].push(item);
+    if (content.endsWith("\n")) this.atStartOfLine = true;
+    return this;
   }
-  return result;
+  /**
+  * Same as `inline` but adds one newline at the end of the content.
+  */
+  line(content) {
+    this.inline(content);
+    this.break();
+    return this;
+  }
+  /**
+  * Runs a callback one level deeper, then restores the previous level.
+  */
+  block(run) {
+    this.indent();
+    try {
+      run();
+    } finally {
+      this.dedent();
+    }
+    return this;
+  }
+  /**
+  * Returns all generated content as a single string.
+  */
+  toString() {
+    return this.chunks.join("");
+  }
+}, __name(_a, "Generator"), _a);
+function newGenerator() {
+  return new Generator();
 }
-__name(groupBy$1, "groupBy$1");
-function head$1(arr) {
-  return arr[0];
+__name(newGenerator, "newGenerator");
+
+// node_modules/@varavel/vdl-plugin-sdk/dist/utils/ir/get-annotation.js
+function getAnnotation(annotations, name) {
+  if (!annotations) return void 0;
+  return annotations.find((anno) => anno.name === name);
 }
-__name(head$1, "head$1");
-function initial$1(arr) {
-  return arr.slice(0, -1);
+__name(getAnnotation, "getAnnotation");
+
+// node_modules/@varavel/vdl-plugin-sdk/dist/utils/ir/get-annotation-arg.js
+function getAnnotationArg(annotations, name) {
+  const anno = getAnnotation(annotations, name);
+  return anno === null || anno === void 0 ? void 0 : anno.argument;
 }
-__name(initial$1, "initial$1");
-function intersection$1(firstArr, secondArr) {
-  const secondSet = new Set(secondArr);
-  return firstArr.filter((item) => secondSet.has(item));
+__name(getAnnotationArg, "getAnnotationArg");
+
+// node_modules/@varavel/vdl-plugin-sdk/dist/utils/strings/words.js
+var ACRONYM_TO_CAPITALIZED_WORD_BOUNDARY_RE = /([A-Z]+)([A-Z][a-z])/g;
+var LOWERCASE_OR_DIGIT_TO_UPPERCASE_BOUNDARY_RE = /([a-z0-9])([A-Z])/g;
+var NON_ALPHANUMERIC_SEQUENCE_RE = /[^A-Za-z0-9]+/g;
+var WHITESPACE_SEQUENCE_RE = /\s+/;
+function words(str) {
+  const normalized = str.replace(ACRONYM_TO_CAPITALIZED_WORD_BOUNDARY_RE, "$1 $2").replace(LOWERCASE_OR_DIGIT_TO_UPPERCASE_BOUNDARY_RE, "$1 $2").replace(NON_ALPHANUMERIC_SEQUENCE_RE, " ").trim();
+  return normalized.length === 0 ? [] : normalized.split(WHITESPACE_SEQUENCE_RE);
 }
-__name(intersection$1, "intersection$1");
-function intersectionBy$1(firstArr, secondArr, mapper) {
-  const result = [];
-  const mappedSecondSet = new Set(secondArr.map(mapper));
-  for (let i = 0; i < firstArr.length; i++) {
-    const item = firstArr[i];
-    const mappedItem = mapper(item);
-    if (mappedSecondSet.has(mappedItem)) {
-      result.push(item);
-      mappedSecondSet.delete(mappedItem);
+__name(words, "words");
+
+// node_modules/@varavel/vdl-plugin-sdk/dist/utils/strings/pascal-case.js
+function capitalize(word) {
+  return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+}
+__name(capitalize, "capitalize");
+function pascalCase(str) {
+  return words(str).map(capitalize).join("");
+}
+__name(pascalCase, "pascalCase");
+
+// node_modules/@varavel/vdl-plugin-sdk/dist/utils/ir/unwrap-literal.js
+function unwrapLiteral(value) {
+  return unwrapLiteralValue(value);
+}
+__name(unwrapLiteral, "unwrapLiteral");
+function unwrapLiteralValue(value) {
+  switch (value.kind) {
+    case "string":
+      return value.stringValue;
+    case "int":
+      return value.intValue;
+    case "float":
+      return value.floatValue;
+    case "bool":
+      return value.boolValue;
+    case "object": {
+      var _value$objectEntries;
+      const resolvedObject = {};
+      const entries = (_value$objectEntries = value.objectEntries) !== null && _value$objectEntries !== void 0 ? _value$objectEntries : [];
+      for (const entry of entries) resolvedObject[entry.key] = unwrapLiteralValue(entry.value);
+      return resolvedObject;
+    }
+    case "array":
+      var _value$arrayItems;
+      return ((_value$arrayItems = value.arrayItems) !== null && _value$arrayItems !== void 0 ? _value$arrayItems : []).map((item) => unwrapLiteralValue(item));
+    default:
+      return null;
+  }
+}
+__name(unwrapLiteralValue, "unwrapLiteralValue");
+
+// src/shared/comments.ts
+var DEFAULT_DEPRECATED_MESSAGE = "This symbol is deprecated and should not be used in new code.";
+function writeDocComment(g, options) {
+  const lines = buildDocCommentLines(options);
+  if (lines.length === 0) return;
+  for (const line of lines) {
+    g.line(`// ${line}`.trim());
+  }
+}
+__name(writeDocComment, "writeDocComment");
+function buildDocCommentLines(options) {
+  var _a4, _b, _c;
+  const lines = (_c = (_b = (_a4 = options.doc) != null ? _a4 : options.fallback) == null ? void 0 : _b.split("\n")) != null ? _c : [];
+  const deprecatedMessage = getDeprecatedMessage(options.annotations);
+  if (!deprecatedMessage) return lines;
+  if (lines.length === 0) return [`Deprecated: ${deprecatedMessage}`];
+  return [...lines, "", `Deprecated: ${deprecatedMessage}`];
+}
+__name(buildDocCommentLines, "buildDocCommentLines");
+function getDeprecatedMessage(annotations) {
+  if (!getAnnotation(annotations, "deprecated")) {
+    return void 0;
+  }
+  const argument = getAnnotationArg(annotations, "deprecated");
+  if (argument) {
+    const unwrapped = unwrapLiteral(argument);
+    if (typeof unwrapped === "string" && unwrapped.trim().length > 0) {
+      return unwrapped;
     }
   }
-  return result;
+  return DEFAULT_DEPRECATED_MESSAGE;
 }
-__name(intersectionBy$1, "intersectionBy$1");
-function intersectionWith$1(firstArr, secondArr, areItemsEqual) {
-  return firstArr.filter((firstItem) => {
-    return secondArr.some((secondItem) => {
-      return areItemsEqual(firstItem, secondItem);
-    });
-  });
-}
-__name(intersectionWith$1, "intersectionWith$1");
-function isSubset$1(superset, subset) {
-  return difference$1(subset, superset).length === 0;
-}
-__name(isSubset$1, "isSubset$1");
-function isSubsetWith$1(superset, subset, areItemsEqual) {
-  return differenceWith$1(subset, superset, areItemsEqual).length === 0;
-}
-__name(isSubsetWith$1, "isSubsetWith$1");
-function keyBy$3(arr, getKeyFromItem) {
-  const result = {};
-  for (let i = 0; i < arr.length; i++) {
-    const item = arr[i];
-    const key = getKeyFromItem(item, i, arr);
-    result[key] = item;
-  }
-  return result;
-}
-__name(keyBy$3, "keyBy$3");
-function last$1(arr) {
-  return arr[arr.length - 1];
-}
-__name(last$1, "last$1");
-function maxBy$1(items, getValue) {
-  if (items.length === 0) return;
-  let maxElement = items[0];
-  let max = getValue(maxElement, 0, items);
-  for (let i = 1; i < items.length; i++) {
-    const element = items[i];
-    const value = getValue(element, i, items);
-    if (value > max) {
-      max = value;
-      maxElement = element;
-    }
-  }
-  return maxElement;
-}
-__name(maxBy$1, "maxBy$1");
-function minBy$1(items, getValue) {
-  if (items.length === 0) return;
-  let minElement = items[0];
-  let min = getValue(minElement, 0, items);
-  for (let i = 1; i < items.length; i++) {
-    const element = items[i];
-    const value = getValue(element, i, items);
-    if (value < min) {
-      min = value;
-      minElement = element;
-    }
-  }
-  return minElement;
-}
-__name(minBy$1, "minBy$1");
-function compareValues(a, b, order) {
-  if (a < b) return order === "asc" ? -1 : 1;
-  if (a > b) return order === "asc" ? 1 : -1;
-  return 0;
-}
-__name(compareValues, "compareValues");
-function orderBy$1(arr, criteria, orders) {
-  return arr.slice().sort((a, b) => {
-    const ordersLength = orders.length;
-    for (let i = 0; i < criteria.length; i++) {
-      const order = ordersLength > i ? orders[i] : orders[ordersLength - 1];
-      const criterion = criteria[i];
-      const criterionIsFunction = typeof criterion === "function";
-      const result = compareValues(criterionIsFunction ? criterion(a) : a[criterion], criterionIsFunction ? criterion(b) : b[criterion], order);
-      if (result !== 0) return result;
-    }
-    return 0;
-  });
-}
-__name(orderBy$1, "orderBy$1");
-function partition$1(arr, isInTruthy) {
-  const truthy = [];
-  const falsy = [];
-  for (let i = 0; i < arr.length; i++) {
-    const item = arr[i];
-    if (isInTruthy(item, i, arr)) truthy.push(item);
-    else falsy.push(item);
-  }
-  return [truthy, falsy];
-}
-__name(partition$1, "partition$1");
-function sortBy$1(arr, criteria) {
-  return orderBy$1(arr, criteria, ["asc"]);
-}
-__name(sortBy$1, "sortBy$1");
-function tail$1(arr) {
-  return arr.slice(1);
-}
-__name(tail$1, "tail$1");
-function isSymbol(value) {
-  return typeof value === "symbol" || value instanceof Symbol;
-}
-__name(isSymbol, "isSymbol");
-function toNumber(value) {
-  if (isSymbol(value)) return NaN;
-  return Number(value);
-}
-__name(toNumber, "toNumber");
-function toFinite(value) {
-  if (!value) return value === 0 ? value : 0;
-  value = toNumber(value);
-  if (value === Infinity || value === -Infinity) return (value < 0 ? -1 : 1) * Number.MAX_VALUE;
-  return value === value ? value : 0;
-}
-__name(toFinite, "toFinite");
-function toInteger(value) {
-  const finite = toFinite(value);
-  const remainder = finite % 1;
-  return remainder ? finite - remainder : finite;
-}
-__name(toInteger, "toInteger");
-function take$1(arr, count, guard) {
-  count = guard || count === void 0 ? 1 : toInteger(count);
-  return arr.slice(0, count);
-}
-__name(take$1, "take$1");
-function takeRight$1(arr, count, guard) {
-  count = guard || count === void 0 ? 1 : toInteger(count);
-  if (count <= 0 || arr.length === 0) return [];
-  return arr.slice(-count);
-}
-__name(takeRight$1, "takeRight$1");
-function takeRightWhile$1(arr, shouldContinueTaking) {
-  for (let i = arr.length - 1; i >= 0; i--) if (!shouldContinueTaking(arr[i], i, arr)) return arr.slice(i + 1);
-  return arr.slice();
-}
-__name(takeRightWhile$1, "takeRightWhile$1");
-function takeWhile$1(arr, shouldContinueTaking) {
-  const result = [];
-  for (let i = 0; i < arr.length; i++) {
-    const item = arr[i];
-    if (!shouldContinueTaking(item, i, arr)) break;
-    result.push(item);
-  }
-  return result;
-}
-__name(takeWhile$1, "takeWhile$1");
-function toFilled$1(arr, value, start = 0, end = arr.length) {
-  const length = arr.length;
-  const finalStart = Math.max(start >= 0 ? start : length + start, 0);
-  const finalEnd = Math.min(end >= 0 ? end : length + end, length);
-  const newArr = arr.slice();
-  for (let i = finalStart; i < finalEnd; i++) newArr[i] = value;
-  return newArr;
-}
-__name(toFilled$1, "toFilled$1");
-function uniq$1(arr) {
-  return [...new Set(arr)];
-}
-__name(uniq$1, "uniq$1");
-function union$1(arr1, arr2) {
-  return uniq$1(arr1.concat(arr2));
-}
-__name(union$1, "union$1");
-function uniqBy$1(arr, mapper) {
-  const map = /* @__PURE__ */ new Map();
-  for (let i = 0; i < arr.length; i++) {
-    const item = arr[i];
-    const key = mapper(item, i, arr);
-    if (!map.has(key)) map.set(key, item);
-  }
-  return Array.from(map.values());
-}
-__name(uniqBy$1, "uniqBy$1");
-function unionBy$1(arr1, arr2, mapper) {
-  return uniqBy$1(arr1.concat(arr2), mapper);
-}
-__name(unionBy$1, "unionBy$1");
-function uniqWith$1(arr, areItemsEqual) {
-  const result = [];
-  for (let i = 0; i < arr.length; i++) {
-    const item = arr[i];
-    if (result.every((v) => !areItemsEqual(v, item))) result.push(item);
-  }
-  return result;
-}
-__name(uniqWith$1, "uniqWith$1");
-function unionWith$1(arr1, arr2, areItemsEqual) {
-  return uniqWith$1(arr1.concat(arr2), areItemsEqual);
-}
-__name(unionWith$1, "unionWith$1");
-function unzip$1(zipped) {
-  let maxLen = 0;
-  for (let i = 0; i < zipped.length; i++) if (zipped[i].length > maxLen) maxLen = zipped[i].length;
-  const result = new Array(maxLen);
-  for (let i = 0; i < maxLen; i++) {
-    result[i] = new Array(zipped.length);
-    for (let j = 0; j < zipped.length; j++) result[i][j] = zipped[j][i];
-  }
-  return result;
-}
-__name(unzip$1, "unzip$1");
-function unzipWith$1(target, iteratee) {
-  const maxLength = Math.max(...target.map((innerArray) => innerArray.length));
-  const result = new Array(maxLength);
-  for (let i = 0; i < maxLength; i++) {
-    const group = new Array(target.length);
-    for (let j = 0; j < target.length; j++) group[j] = target[j][i];
-    result[i] = iteratee(...group);
-  }
-  return result;
-}
-__name(unzipWith$1, "unzipWith$1");
-function windowed$1(arr, size, step = 1, { partialWindows = false } = {}) {
-  if (size <= 0 || !Number.isInteger(size)) throw new Error("Size must be a positive integer.");
-  if (step <= 0 || !Number.isInteger(step)) throw new Error("Step must be a positive integer.");
-  const result = [];
-  const end = partialWindows ? arr.length : arr.length - size + 1;
-  for (let i = 0; i < end; i += step) result.push(arr.slice(i, i + size));
-  return result;
-}
-__name(windowed$1, "windowed$1");
-function without$1(array, ...values) {
-  return difference$1(array, values);
-}
-__name(without$1, "without$1");
-function xor$1(arr1, arr2) {
-  return difference$1(union$1(arr1, arr2), intersection$1(arr1, arr2));
-}
-__name(xor$1, "xor$1");
-function xorBy$1(arr1, arr2, mapper) {
-  return differenceBy$1(unionBy$1(arr1, arr2, mapper), intersectionBy$1(arr1, arr2, mapper), mapper);
-}
-__name(xorBy$1, "xorBy$1");
-function xorWith$1(arr1, arr2, areElementsEqual) {
-  return differenceWith$1(unionWith$1(arr1, arr2, areElementsEqual), intersectionWith$1(arr1, arr2, areElementsEqual), areElementsEqual);
-}
-__name(xorWith$1, "xorWith$1");
-function zip$1(...arrs) {
-  let rowCount = 0;
-  for (let i = 0; i < arrs.length; i++) if (arrs[i].length > rowCount) rowCount = arrs[i].length;
-  const columnCount = arrs.length;
-  const result = Array(rowCount);
-  for (let i = 0; i < rowCount; ++i) {
-    const row = Array(columnCount);
-    for (let j = 0; j < columnCount; ++j) row[j] = arrs[j][i];
-    result[i] = row;
-  }
-  return result;
-}
-__name(zip$1, "zip$1");
-function zipObject$1(keys, values) {
-  const result = {};
-  for (let i = 0; i < keys.length; i++) result[keys[i]] = values[i];
-  return result;
-}
-__name(zipObject$1, "zipObject$1");
-function zipWith$1(arr1, ...rest) {
-  const arrs = [arr1, ...rest.slice(0, -1)];
-  const combine = rest[rest.length - 1];
-  const maxIndex = Math.max(...arrs.map((arr) => arr.length));
-  const result = Array(maxIndex);
-  for (let i = 0; i < maxIndex; i++) result[i] = combine(...arrs.map((arr) => arr[i]), i);
-  return result;
-}
-__name(zipWith$1, "zipWith$1");
-var at = at$1;
-var chunk = chunk$1;
-var compact = compact$1;
-var countBy$2 = countBy$3;
-var difference = difference$1;
-var differenceBy = differenceBy$1;
-var differenceWith = differenceWith$1;
-var drop = drop$1;
-var dropRight = dropRight$1;
-var dropRightWhile = dropRightWhile$1;
-var dropWhile = dropWhile$1;
-var flatMap = flatMap$1;
-var flatMapDeep = flatMapDeep$1;
-var flatten = flatten$1;
-var flattenDeep = flattenDeep$1;
-var groupBy = groupBy$1;
-var head = head$1;
-var initial = initial$1;
-var intersection = intersection$1;
-var intersectionBy = intersectionBy$1;
-var intersectionWith = intersectionWith$1;
-var isSubset = isSubset$1;
-var isSubsetWith = isSubsetWith$1;
-var keyBy$2 = keyBy$3;
-var last = last$1;
-var maxBy = maxBy$1;
-var minBy = minBy$1;
-var orderBy = orderBy$1;
-var partition = partition$1;
-var sortBy = sortBy$1;
-var tail = tail$1;
-var take = take$1;
-var takeRight = takeRight$1;
-var takeRightWhile = takeRightWhile$1;
-var takeWhile = takeWhile$1;
-var toFilled = toFilled$1;
-var union = union$1;
-var unionBy = unionBy$1;
-var unionWith = unionWith$1;
-var uniq = uniq$1;
-var uniqBy = uniqBy$1;
-var uniqWith = uniqWith$1;
-var unzip = unzip$1;
-var unzipWith = unzipWith$1;
-var windowed = windowed$1;
-var without = without$1;
-var xor = xor$1;
-var xorBy = xorBy$1;
-var xorWith = xorWith$1;
-var zip = zip$1;
-var zipObject = zipObject$1;
-var zipWith = zipWith$1;
-var arrays_exports = /* @__PURE__ */ __exportAll({
-  at: /* @__PURE__ */ __name(() => at, "at"),
-  chunk: /* @__PURE__ */ __name(() => chunk, "chunk"),
-  compact: /* @__PURE__ */ __name(() => compact, "compact"),
-  countBy: /* @__PURE__ */ __name(() => countBy$2, "countBy"),
-  difference: /* @__PURE__ */ __name(() => difference, "difference"),
-  differenceBy: /* @__PURE__ */ __name(() => differenceBy, "differenceBy"),
-  differenceWith: /* @__PURE__ */ __name(() => differenceWith, "differenceWith"),
-  drop: /* @__PURE__ */ __name(() => drop, "drop"),
-  dropRight: /* @__PURE__ */ __name(() => dropRight, "dropRight"),
-  dropRightWhile: /* @__PURE__ */ __name(() => dropRightWhile, "dropRightWhile"),
-  dropWhile: /* @__PURE__ */ __name(() => dropWhile, "dropWhile"),
-  flatMap: /* @__PURE__ */ __name(() => flatMap, "flatMap"),
-  flatMapDeep: /* @__PURE__ */ __name(() => flatMapDeep, "flatMapDeep"),
-  flatten: /* @__PURE__ */ __name(() => flatten, "flatten"),
-  flattenDeep: /* @__PURE__ */ __name(() => flattenDeep, "flattenDeep"),
-  groupBy: /* @__PURE__ */ __name(() => groupBy, "groupBy"),
-  head: /* @__PURE__ */ __name(() => head, "head"),
-  initial: /* @__PURE__ */ __name(() => initial, "initial"),
-  intersection: /* @__PURE__ */ __name(() => intersection, "intersection"),
-  intersectionBy: /* @__PURE__ */ __name(() => intersectionBy, "intersectionBy"),
-  intersectionWith: /* @__PURE__ */ __name(() => intersectionWith, "intersectionWith"),
-  isSubset: /* @__PURE__ */ __name(() => isSubset, "isSubset"),
-  isSubsetWith: /* @__PURE__ */ __name(() => isSubsetWith, "isSubsetWith"),
-  keyBy: /* @__PURE__ */ __name(() => keyBy$2, "keyBy"),
-  last: /* @__PURE__ */ __name(() => last, "last"),
-  maxBy: /* @__PURE__ */ __name(() => maxBy, "maxBy"),
-  minBy: /* @__PURE__ */ __name(() => minBy, "minBy"),
-  orderBy: /* @__PURE__ */ __name(() => orderBy, "orderBy"),
-  partition: /* @__PURE__ */ __name(() => partition, "partition"),
-  sortBy: /* @__PURE__ */ __name(() => sortBy, "sortBy"),
-  tail: /* @__PURE__ */ __name(() => tail, "tail"),
-  take: /* @__PURE__ */ __name(() => take, "take"),
-  takeRight: /* @__PURE__ */ __name(() => takeRight, "takeRight"),
-  takeRightWhile: /* @__PURE__ */ __name(() => takeRightWhile, "takeRightWhile"),
-  takeWhile: /* @__PURE__ */ __name(() => takeWhile, "takeWhile"),
-  toFilled: /* @__PURE__ */ __name(() => toFilled, "toFilled"),
-  union: /* @__PURE__ */ __name(() => union, "union"),
-  unionBy: /* @__PURE__ */ __name(() => unionBy, "unionBy"),
-  unionWith: /* @__PURE__ */ __name(() => unionWith, "unionWith"),
-  uniq: /* @__PURE__ */ __name(() => uniq, "uniq"),
-  uniqBy: /* @__PURE__ */ __name(() => uniqBy, "uniqBy"),
-  uniqWith: /* @__PURE__ */ __name(() => uniqWith, "uniqWith"),
-  unzip: /* @__PURE__ */ __name(() => unzip, "unzip"),
-  unzipWith: /* @__PURE__ */ __name(() => unzipWith, "unzipWith"),
-  windowed: /* @__PURE__ */ __name(() => windowed, "windowed"),
-  without: /* @__PURE__ */ __name(() => without, "without"),
-  xor: /* @__PURE__ */ __name(() => xor, "xor"),
-  xorBy: /* @__PURE__ */ __name(() => xorBy, "xorBy"),
-  xorWith: /* @__PURE__ */ __name(() => xorWith, "xorWith"),
-  zip: /* @__PURE__ */ __name(() => zip, "zip"),
-  zipObject: /* @__PURE__ */ __name(() => zipObject, "zipObject"),
-  zipWith: /* @__PURE__ */ __name(() => zipWith, "zipWith")
-});
+__name(getDeprecatedMessage, "getDeprecatedMessage");
+
+// node_modules/@varavel/vdl-plugin-sdk/dist/_virtual/_@oxc-project_runtime@0.115.0/helpers/checkPrivateRedeclaration.js
 function _checkPrivateRedeclaration(e, t) {
   if (t.has(e)) throw new TypeError("Cannot initialize the same private elements twice on an object");
 }
 __name(_checkPrivateRedeclaration, "_checkPrivateRedeclaration");
+
+// node_modules/@varavel/vdl-plugin-sdk/dist/_virtual/_@oxc-project_runtime@0.115.0/helpers/classPrivateFieldInitSpec.js
 function _classPrivateFieldInitSpec(e, t, a) {
   _checkPrivateRedeclaration(e, t), t.set(e, a);
 }
 __name(_classPrivateFieldInitSpec, "_classPrivateFieldInitSpec");
+
+// node_modules/@varavel/vdl-plugin-sdk/dist/_virtual/_@oxc-project_runtime@0.115.0/helpers/assertClassBrand.js
 function _assertClassBrand(e, t, n) {
   if ("function" == typeof e ? e === t : e.has(t)) return arguments.length < 3 ? t : n;
   throw new TypeError("Private element is not present on this object");
 }
 __name(_assertClassBrand, "_assertClassBrand");
+
+// node_modules/@varavel/vdl-plugin-sdk/dist/_virtual/_@oxc-project_runtime@0.115.0/helpers/classPrivateFieldGet2.js
 function _classPrivateFieldGet2(s, a) {
   return s.get(_assertClassBrand(s, a));
 }
 __name(_classPrivateFieldGet2, "_classPrivateFieldGet2");
+
+// node_modules/@varavel/vdl-plugin-sdk/dist/node_modules/ohash/dist/shared/ohash.D__AXeF1.js
 function serialize(o) {
   return typeof o == "string" ? `'${o}'` : new c().serialize(o);
 }
@@ -1547,6 +457,8 @@ var c = /* @__PURE__ */ (function() {
   };
   return o;
 })();
+
+// node_modules/@varavel/vdl-plugin-sdk/dist/node_modules/ohash/dist/crypto/js/index.js
 var z = [
   1779033703,
   -1150833019,
@@ -1625,8 +537,8 @@ var R = [
 ];
 var S = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
 var r = [];
-var _a;
-var k = (_a = class {
+var _a2;
+var k = (_a2 = class {
   constructor() {
     this._data = new l();
     this._hash = new l([...z]);
@@ -1665,16 +577,16 @@ var k = (_a = class {
     }
     return new l(s, o);
   }
-}, __name(_a, "k"), _a);
-var _a2;
-var l = (_a2 = class {
+}, __name(_a2, "k"), _a2);
+var _a3;
+var l = (_a3 = class {
   constructor(e, s) {
     e = this.words = e || [], this.sigBytes = s === void 0 ? e.length * 4 : s;
   }
   static fromUtf8(e) {
     const s = unescape(encodeURIComponent(e)), t = s.length, i = [];
     for (let o = 0; o < t; o++) i[o >>> 2] |= (s.charCodeAt(o) & 255) << 24 - o % 4 * 8;
-    return new _a2(i, t);
+    return new _a3(i, t);
   }
   toBase64() {
     const e = [];
@@ -1692,1000 +604,23 @@ var l = (_a2 = class {
     else for (let s = 0; s < e.sigBytes; s += 4) this.words[this.sigBytes + s >>> 2] = e.words[s >>> 2];
     this.sigBytes += e.sigBytes;
   }
-}, __name(_a2, "l"), _a2);
+}, __name(_a3, "l"), _a3);
 function digest(_) {
   return new k().finalize(_).toBase64();
 }
 __name(digest, "digest");
-function hash$1(input) {
+
+// node_modules/@varavel/vdl-plugin-sdk/dist/node_modules/ohash/dist/index.js
+function hash(input) {
   return digest(serialize(input));
 }
-__name(hash$1, "hash$1");
-var crypto_exports = /* @__PURE__ */ __exportAll({ hash: /* @__PURE__ */ __name(() => hash, "hash") });
-function hash(input) {
-  return hash$1(input);
-}
 __name(hash, "hash");
-function partial$1(func, ...partialArgs) {
-  return partialImpl(func, placeholderSymbol$1, ...partialArgs);
-}
-__name(partial$1, "partial$1");
-function partialImpl(func, placeholder, ...partialArgs) {
-  const partialed = /* @__PURE__ */ __name(function(...providedArgs) {
-    let providedArgsIndex = 0;
-    const substitutedArgs = partialArgs.slice().map((arg) => arg === placeholder ? providedArgs[providedArgsIndex++] : arg);
-    const remainingArgs = providedArgs.slice(providedArgsIndex);
-    return func.apply(this, substitutedArgs.concat(remainingArgs));
-  }, "partialed");
-  if (func.prototype) partialed.prototype = Object.create(func.prototype);
-  return partialed;
-}
-__name(partialImpl, "partialImpl");
-var placeholderSymbol$1 = /* @__PURE__ */ Symbol("partial.placeholder");
-partial$1.placeholder = placeholderSymbol$1;
-function partialRight$1(func, ...partialArgs) {
-  return partialRightImpl(func, placeholderSymbol, ...partialArgs);
-}
-__name(partialRight$1, "partialRight$1");
-function partialRightImpl(func, placeholder, ...partialArgs) {
-  const partialedRight = /* @__PURE__ */ __name(function(...providedArgs) {
-    const placeholderLength = partialArgs.filter((arg) => arg === placeholder).length;
-    const rangeLength = Math.max(providedArgs.length - placeholderLength, 0);
-    const remainingArgs = providedArgs.slice(0, rangeLength);
-    let providedArgsIndex = rangeLength;
-    const substitutedArgs = partialArgs.slice().map((arg) => arg === placeholder ? providedArgs[providedArgsIndex++] : arg);
-    return func.apply(this, remainingArgs.concat(substitutedArgs));
-  }, "partialedRight");
-  if (func.prototype) partialedRight.prototype = Object.create(func.prototype);
-  return partialedRight;
-}
-__name(partialRightImpl, "partialRightImpl");
-var placeholderSymbol = /* @__PURE__ */ Symbol("partialRight.placeholder");
-partialRight$1.placeholder = placeholderSymbol;
-function getAnnotation(annotations, name) {
-  if (!annotations) return void 0;
-  return annotations.find((anno) => anno.name === name);
-}
-__name(getAnnotation, "getAnnotation");
-function getAnnotationArg(annotations, name) {
-  const anno = getAnnotation(annotations, name);
-  return anno === null || anno === void 0 ? void 0 : anno.argument;
-}
-__name(getAnnotationArg, "getAnnotationArg");
-var ACRONYM_TO_CAPITALIZED_WORD_BOUNDARY_RE = /([A-Z]+)([A-Z][a-z])/g;
-var LOWERCASE_OR_DIGIT_TO_UPPERCASE_BOUNDARY_RE = /([a-z0-9])([A-Z])/g;
-var NON_ALPHANUMERIC_SEQUENCE_RE = /[^A-Za-z0-9]+/g;
-var WHITESPACE_SEQUENCE_RE = /\s+/;
-function words(str) {
-  const normalized = str.replace(ACRONYM_TO_CAPITALIZED_WORD_BOUNDARY_RE, "$1 $2").replace(LOWERCASE_OR_DIGIT_TO_UPPERCASE_BOUNDARY_RE, "$1 $2").replace(NON_ALPHANUMERIC_SEQUENCE_RE, " ").trim();
-  return normalized.length === 0 ? [] : normalized.split(WHITESPACE_SEQUENCE_RE);
-}
-__name(words, "words");
-function capitalize$1(word) {
-  return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-}
-__name(capitalize$1, "capitalize$1");
-function pascalCase(str) {
-  return words(str).map(capitalize$1).join("");
-}
-__name(pascalCase, "pascalCase");
-function hoistAnonymousTypes(schema, nameFn) {
-  const output = IrSchema.hydrate(schema);
-  const usedNames = new Set(output.types.map((typeDef) => typeDef.name));
-  const flatTypes = [];
-  for (const typeDef of output.types) {
-    const hoisted = [];
-    typeDef.typeRef = visitTypeRef(typeDef.typeRef, [typeDef.name], typeDef.name, typeDef.position, hoisted, usedNames, nameFn, false);
-    flatTypes.push(typeDef, ...hoisted);
-  }
-  output.types = flatTypes;
-  return output;
-}
-__name(hoistAnonymousTypes, "hoistAnonymousTypes");
-function visitField(field, parts, parentName, hoisted, usedNames, nameFn) {
-  field.typeRef = visitTypeRef(field.typeRef, [...parts, field.name], parentName, field.position, hoisted, usedNames, nameFn, true);
-  return field;
-}
-__name(visitField, "visitField");
-function visitTypeRef(typeRef, parts, parentName, position, hoisted, usedNames, nameFn, shouldHoistObject) {
-  switch (typeRef.kind) {
-    case "array":
-      if (typeRef.arrayType) typeRef.arrayType = visitTypeRef(typeRef.arrayType, [...parts, "Item"], parentName, position, hoisted, usedNames, nameFn, true);
-      return typeRef;
-    case "map":
-      if (typeRef.mapType) typeRef.mapType = visitTypeRef(typeRef.mapType, [...parts, "Value"], parentName, position, hoisted, usedNames, nameFn, true);
-      return typeRef;
-    case "object":
-      var _typeRef$objectFields;
-      if (shouldHoistObject) return hoistObject(typeRef, parts, parentName, position, hoisted, usedNames, nameFn);
-      typeRef.objectFields = (_typeRef$objectFields = typeRef.objectFields) === null || _typeRef$objectFields === void 0 ? void 0 : _typeRef$objectFields.map((field) => visitField(field, parts, parentName, hoisted, usedNames, nameFn));
-      return typeRef;
-    default:
-      return typeRef;
-  }
-}
-__name(visitTypeRef, "visitTypeRef");
-function hoistObject(typeRef, parts, parentName, position, hoisted, usedNames, nameFn) {
-  var _nameFn, _typeRef$objectFields2;
-  const defaultName = pascalCase(parts.join(" "));
-  const baseName = ((_nameFn = nameFn === null || nameFn === void 0 ? void 0 : nameFn({
-    parts: [...parts],
-    parentName,
-    defaultName
-  })) !== null && _nameFn !== void 0 ? _nameFn : defaultName).trim();
-  if (baseName === "") throw new Error(`hoistAnonymousTypes could not generate a name for '${parts.join(".")}'.`);
-  const name = makeUniqueName(baseName, usedNames);
-  const generated = {
-    position: copyPosition(position),
-    name,
-    annotations: [],
-    typeRef: {
-      kind: "object",
-      objectFields: []
-    }
-  };
-  hoisted.push(generated);
-  generated.typeRef.objectFields = (_typeRef$objectFields2 = typeRef.objectFields) === null || _typeRef$objectFields2 === void 0 ? void 0 : _typeRef$objectFields2.map((field) => visitField(field, parts, name, hoisted, usedNames, nameFn));
-  return {
-    kind: "type",
-    typeName: name
-  };
-}
-__name(hoistObject, "hoistObject");
-function makeUniqueName(baseName, usedNames) {
-  if (!usedNames.has(baseName)) {
-    usedNames.add(baseName);
-    return baseName;
-  }
-  let index = 2;
-  let name = `${baseName}${index}`;
-  while (usedNames.has(name)) {
-    index += 1;
-    name = `${baseName}${index}`;
-  }
-  usedNames.add(name);
-  return name;
-}
-__name(makeUniqueName, "makeUniqueName");
-function copyPosition(position) {
-  return {
-    file: position.file,
-    line: position.line,
-    column: position.column
-  };
-}
-__name(copyPosition, "copyPosition");
-function unwrapLiteral(value) {
-  return unwrapLiteralValue(value);
-}
-__name(unwrapLiteral, "unwrapLiteral");
-function unwrapLiteralValue(value) {
-  switch (value.kind) {
-    case "string":
-      return value.stringValue;
-    case "int":
-      return value.intValue;
-    case "float":
-      return value.floatValue;
-    case "bool":
-      return value.boolValue;
-    case "object": {
-      var _value$objectEntries;
-      const resolvedObject = {};
-      const entries = (_value$objectEntries = value.objectEntries) !== null && _value$objectEntries !== void 0 ? _value$objectEntries : [];
-      for (const entry of entries) resolvedObject[entry.key] = unwrapLiteralValue(entry.value);
-      return resolvedObject;
-    }
-    case "array":
-      var _value$arrayItems;
-      return ((_value$arrayItems = value.arrayItems) !== null && _value$arrayItems !== void 0 ? _value$arrayItems : []).map((item) => unwrapLiteralValue(item));
-    default:
-      return null;
-  }
-}
-__name(unwrapLiteralValue, "unwrapLiteralValue");
-var ir_exports = /* @__PURE__ */ __exportAll({
-  getAnnotation: /* @__PURE__ */ __name(() => getAnnotation, "getAnnotation"),
-  getAnnotationArg: /* @__PURE__ */ __name(() => getAnnotationArg, "getAnnotationArg"),
-  hoistAnonymousTypes: /* @__PURE__ */ __name(() => hoistAnonymousTypes, "hoistAnonymousTypes"),
-  unwrapLiteral: /* @__PURE__ */ __name(() => unwrapLiteral, "unwrapLiteral")
-});
-function getOptionArray(options, key, defaultValue = [], separator = ",") {
-  const value = options === null || options === void 0 ? void 0 : options[key];
-  if (value === void 0) return defaultValue;
-  const trimmedValue = value.trim();
-  if (trimmedValue === "") return [];
-  return trimmedValue.split(separator).map((item) => item.trim()).filter((item) => item.length > 0);
-}
-__name(getOptionArray, "getOptionArray");
-function getOptionBool(options, key, defaultValue) {
-  const value = options === null || options === void 0 ? void 0 : options[key];
-  if (value === void 0) return defaultValue;
-  switch (value.trim().toLowerCase()) {
-    case "true":
-    case "1":
-    case "yes":
-    case "on":
-    case "enable":
-    case "enabled":
-    case "y":
-      return true;
-    case "false":
-    case "0":
-    case "no":
-    case "off":
-    case "disable":
-    case "disabled":
-    case "n":
-      return false;
-    default:
-      return defaultValue;
-  }
-}
-__name(getOptionBool, "getOptionBool");
-function getOptionEnum(options, key, allowedValues, defaultValue) {
-  const value = options === null || options === void 0 ? void 0 : options[key];
-  if (value === void 0) return defaultValue;
-  const trimmedValue = value.trim();
-  if (trimmedValue === "") return defaultValue;
-  return allowedValues.includes(trimmedValue) ? trimmedValue : defaultValue;
-}
-__name(getOptionEnum, "getOptionEnum");
-function getOptionNumber(options, key, defaultValue) {
-  const value = options === null || options === void 0 ? void 0 : options[key];
-  if (value === void 0) return defaultValue;
-  const trimmedValue = value.trim();
-  if (trimmedValue === "") return defaultValue;
-  const parsedValue = Number(trimmedValue);
-  return Number.isFinite(parsedValue) ? parsedValue : defaultValue;
-}
-__name(getOptionNumber, "getOptionNumber");
-function getOptionString(options, key, defaultValue) {
-  const value = options === null || options === void 0 ? void 0 : options[key];
-  return value === void 0 ? defaultValue : value;
-}
-__name(getOptionString, "getOptionString");
-var options_exports = /* @__PURE__ */ __exportAll({
-  getOptionArray: /* @__PURE__ */ __name(() => getOptionArray, "getOptionArray"),
-  getOptionBool: /* @__PURE__ */ __name(() => getOptionBool, "getOptionBool"),
-  getOptionEnum: /* @__PURE__ */ __name(() => getOptionEnum, "getOptionEnum"),
-  getOptionNumber: /* @__PURE__ */ __name(() => getOptionNumber, "getOptionNumber"),
-  getOptionString: /* @__PURE__ */ __name(() => getOptionString, "getOptionString")
-});
-function capitalize(word) {
-  return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-}
-__name(capitalize, "capitalize");
-function camelCase(str) {
-  const parts = words(str);
-  if (parts.length === 0) return "";
-  return parts.map((part, index) => index === 0 ? part.toLowerCase() : capitalize(part)).join("");
-}
-__name(camelCase, "camelCase");
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    enumerableOnly && (symbols = symbols.filter(function(sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    })), keys.push.apply(keys, symbols);
-  }
-  return keys;
-}
-__name(ownKeys, "ownKeys");
-function _objectSpread(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = null != arguments[i] ? arguments[i] : {};
-    i % 2 ? ownKeys(Object(source), true).forEach(function(key) {
-      _defineProperty(target, key, source[key]);
-    }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function(key) {
-      Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-    });
-  }
-  return target;
-}
-__name(_objectSpread, "_objectSpread");
-function _defineProperty(obj, key, value) {
-  key = _toPropertyKey(key);
-  if (key in obj) Object.defineProperty(obj, key, {
-    value,
-    enumerable: true,
-    configurable: true,
-    writable: true
-  });
-  else obj[key] = value;
-  return obj;
-}
-__name(_defineProperty, "_defineProperty");
-function _toPropertyKey(arg) {
-  var key = _toPrimitive(arg, "string");
-  return typeof key === "symbol" ? key : String(key);
-}
-__name(_toPropertyKey, "_toPropertyKey");
-function _toPrimitive(input, hint) {
-  if (typeof input !== "object" || input === null) return input;
-  var prim = input[Symbol.toPrimitive];
-  if (prim !== void 0) {
-    var res = prim.call(input, hint || "default");
-    if (typeof res !== "object") return res;
-    throw new TypeError("@@toPrimitive must return a primitive value.");
-  }
-  return (hint === "string" ? String : Number)(input);
-}
-__name(_toPrimitive, "_toPrimitive");
-var dedent$1 = createDedent({});
-function createDedent(options) {
-  dedent2.withOptions = (newOptions) => createDedent(_objectSpread(_objectSpread({}, options), newOptions));
-  return dedent2;
-  function dedent2(strings, ...values) {
-    const raw = typeof strings === "string" ? [strings] : strings.raw;
-    const { alignValues = false, escapeSpecialCharacters = Array.isArray(strings), trimWhitespace = true } = options;
-    let result = "";
-    for (let i = 0; i < raw.length; i++) {
-      let next = raw[i];
-      if (escapeSpecialCharacters) next = next.replace(/\\\n[ \t]*/g, "").replace(/\\`/g, "`").replace(/\\\$/g, "$").replace(/\\\{/g, "{");
-      result += next;
-      if (i < values.length) {
-        const value = alignValues ? alignValue(values[i], result) : values[i];
-        result += value;
-      }
-    }
-    const lines = result.split("\n");
-    let mindent = null;
-    for (const l2 of lines) {
-      const m = l2.match(/^(\s+)\S+/);
-      if (m) {
-        const indent = m[1].length;
-        if (!mindent) mindent = indent;
-        else mindent = Math.min(mindent, indent);
-      }
-    }
-    if (mindent !== null) {
-      const m = mindent;
-      result = lines.map((l2) => l2[0] === " " || l2[0] === "	" ? l2.slice(m) : l2).join("\n");
-    }
-    if (trimWhitespace) result = result.trim();
-    if (escapeSpecialCharacters) result = result.replace(/\\n/g, "\n").replace(/\\t/g, "	").replace(/\\r/g, "\r").replace(/\\v/g, "\v").replace(/\\b/g, "\b").replace(/\\f/g, "\f").replace(/\\0/g, "\0").replace(/\\x([\da-fA-F]{2})/g, (_, h) => String.fromCharCode(parseInt(h, 16))).replace(/\\u\{([\da-fA-F]{1,6})\}/g, (_, h) => String.fromCodePoint(parseInt(h, 16))).replace(/\\u([\da-fA-F]{4})/g, (_, h) => String.fromCharCode(parseInt(h, 16)));
-    if (typeof Bun !== "undefined") result = result.replace(/\\u(?:\{([\da-fA-F]{1,6})\}|([\da-fA-F]{4}))/g, (_, braced, unbraced) => {
-      var _ref;
-      const hex = (_ref = braced !== null && braced !== void 0 ? braced : unbraced) !== null && _ref !== void 0 ? _ref : "";
-      return String.fromCodePoint(parseInt(hex, 16));
-    });
-    return result;
-  }
-  __name(dedent2, "dedent");
-}
-__name(createDedent, "createDedent");
-function alignValue(value, precedingText) {
-  if (typeof value !== "string" || !value.includes("\n")) return value;
-  const indentMatch = precedingText.slice(precedingText.lastIndexOf("\n") + 1).match(/^(\s+)/);
-  if (indentMatch) {
-    const indent = indentMatch[1];
-    return value.replace(/\n/g, `
-${indent}`);
-  }
-  return value;
-}
-__name(alignValue, "alignValue");
-function dedent(input) {
-  return dedent$1(input);
-}
-__name(dedent, "dedent");
-function ensurePrefix(str, prefix) {
-  if (str.startsWith(prefix)) return str;
-  return prefix + str;
-}
-__name(ensurePrefix, "ensurePrefix");
-function ensureSuffix(str, suffix) {
-  if (str.endsWith(suffix)) return str;
-  return str + suffix;
-}
-__name(ensureSuffix, "ensureSuffix");
-function kebabCase(str, upperCase2 = false) {
-  return words(str).map((part) => upperCase2 ? part.toUpperCase() : part.toLowerCase()).join("-");
-}
-__name(kebabCase, "kebabCase");
-var cache = /* @__PURE__ */ new Map();
-function limitBlankLines(str, maxConsecutive = 0) {
-  const limit = Math.max(0, maxConsecutive);
-  let regex = cache.get(limit);
-  if (!regex) {
-    regex = new RegExp(`(\\r?\\n\\s*){${limit + 2},}`, "g");
-    cache.set(limit, regex);
-  }
-  return str.replace(regex, "\n".repeat(limit + 1));
-}
-__name(limitBlankLines, "limitBlankLines");
-function lowerCase(str) {
-  return words(str).map((part) => part.toLowerCase()).join(" ");
-}
-__name(lowerCase, "lowerCase");
-function toLength(value) {
-  if (!Number.isFinite(value)) return;
-  return Math.trunc(value);
-}
-__name(toLength, "toLength");
-function createPadding(length, chars) {
-  if (length <= 0) return "";
-  const paddingCharacters = Array.from(chars);
-  if (paddingCharacters.length === 0) return "";
-  const result = [];
-  while (result.length < length) result.push(...paddingCharacters);
-  return result.slice(0, length).join("");
-}
-__name(createPadding, "createPadding");
-function getPaddingTargetLength(str, length) {
-  const currentLength = Array.from(str).length;
-  const targetLength = toLength(length);
-  if (targetLength === void 0 || targetLength <= currentLength) return;
-  return {
-    currentLength,
-    targetLength
-  };
-}
-__name(getPaddingTargetLength, "getPaddingTargetLength");
-function buildPadding(length, chars) {
-  return createPadding(length, chars !== null && chars !== void 0 ? chars : " ");
-}
-__name(buildPadding, "buildPadding");
-function pad(str, length, chars) {
-  const target = getPaddingTargetLength(str, length);
-  if (target === void 0) return str;
-  const totalPadding = target.targetLength - target.currentLength;
-  const leftPaddingLength = Math.floor(totalPadding / 2);
-  const rightPaddingLength = totalPadding - leftPaddingLength;
-  const leftPadding = buildPadding(leftPaddingLength, chars);
-  const rightPadding = buildPadding(rightPaddingLength, chars);
-  if (leftPaddingLength > 0 && leftPadding.length === 0) return str;
-  if (rightPaddingLength > 0 && rightPadding.length === 0) return str;
-  return `${leftPadding}${str}${rightPadding}`;
-}
-__name(pad, "pad");
-function padLeft(str, length, chars) {
-  const target = getPaddingTargetLength(str, length);
-  if (target === void 0) return str;
-  const padding = buildPadding(target.targetLength - target.currentLength, chars);
-  return padding.length === 0 ? str : `${padding}${str}`;
-}
-__name(padLeft, "padLeft");
-function padRight(str, length, chars) {
-  const target = getPaddingTargetLength(str, length);
-  if (target === void 0) return str;
-  const padding = buildPadding(target.targetLength - target.currentLength, chars);
-  return padding.length === 0 ? str : `${str}${padding}`;
-}
-__name(padRight, "padRight");
-var import_pluralize = /* @__PURE__ */ __toESM((/* @__PURE__ */ __commonJSMin(((exports, module2) => {
-  (function(root, pluralize2) {
-    if (typeof __require === "function" && typeof exports === "object" && typeof module2 === "object") module2.exports = pluralize2();
-    else if (typeof define === "function" && define.amd) define(function() {
-      return pluralize2();
-    });
-    else root.pluralize = pluralize2();
-  })(exports, function() {
-    var pluralRules = [];
-    var singularRules = [];
-    var uncountables = {};
-    var irregularPlurals = {};
-    var irregularSingles = {};
-    function sanitizeRule(rule) {
-      if (typeof rule === "string") return new RegExp("^" + rule + "$", "i");
-      return rule;
-    }
-    __name(sanitizeRule, "sanitizeRule");
-    function restoreCase(word, token) {
-      if (word === token) return token;
-      if (word === word.toLowerCase()) return token.toLowerCase();
-      if (word === word.toUpperCase()) return token.toUpperCase();
-      if (word[0] === word[0].toUpperCase()) return token.charAt(0).toUpperCase() + token.substr(1).toLowerCase();
-      return token.toLowerCase();
-    }
-    __name(restoreCase, "restoreCase");
-    function interpolate(str, args) {
-      return str.replace(/\$(\d{1,2})/g, function(match, index) {
-        return args[index] || "";
-      });
-    }
-    __name(interpolate, "interpolate");
-    function replace(word, rule) {
-      return word.replace(rule[0], function(match, index) {
-        var result = interpolate(rule[1], arguments);
-        if (match === "") return restoreCase(word[index - 1], result);
-        return restoreCase(match, result);
-      });
-    }
-    __name(replace, "replace");
-    function sanitizeWord(token, word, rules) {
-      if (!token.length || uncountables.hasOwnProperty(token)) return word;
-      var len = rules.length;
-      while (len--) {
-        var rule = rules[len];
-        if (rule[0].test(word)) return replace(word, rule);
-      }
-      return word;
-    }
-    __name(sanitizeWord, "sanitizeWord");
-    function replaceWord(replaceMap, keepMap, rules) {
-      return function(word) {
-        var token = word.toLowerCase();
-        if (keepMap.hasOwnProperty(token)) return restoreCase(word, token);
-        if (replaceMap.hasOwnProperty(token)) return restoreCase(word, replaceMap[token]);
-        return sanitizeWord(token, word, rules);
-      };
-    }
-    __name(replaceWord, "replaceWord");
-    function checkWord(replaceMap, keepMap, rules, bool) {
-      return function(word) {
-        var token = word.toLowerCase();
-        if (keepMap.hasOwnProperty(token)) return true;
-        if (replaceMap.hasOwnProperty(token)) return false;
-        return sanitizeWord(token, token, rules) === token;
-      };
-    }
-    __name(checkWord, "checkWord");
-    function pluralize2(word, count, inclusive) {
-      var pluralized = count === 1 ? pluralize2.singular(word) : pluralize2.plural(word);
-      return (inclusive ? count + " " : "") + pluralized;
-    }
-    __name(pluralize2, "pluralize");
-    pluralize2.plural = replaceWord(irregularSingles, irregularPlurals, pluralRules);
-    pluralize2.isPlural = checkWord(irregularSingles, irregularPlurals, pluralRules);
-    pluralize2.singular = replaceWord(irregularPlurals, irregularSingles, singularRules);
-    pluralize2.isSingular = checkWord(irregularPlurals, irregularSingles, singularRules);
-    pluralize2.addPluralRule = function(rule, replacement) {
-      pluralRules.push([sanitizeRule(rule), replacement]);
-    };
-    pluralize2.addSingularRule = function(rule, replacement) {
-      singularRules.push([sanitizeRule(rule), replacement]);
-    };
-    pluralize2.addUncountableRule = function(word) {
-      if (typeof word === "string") {
-        uncountables[word.toLowerCase()] = true;
-        return;
-      }
-      pluralize2.addPluralRule(word, "$0");
-      pluralize2.addSingularRule(word, "$0");
-    };
-    pluralize2.addIrregularRule = function(single, plural) {
-      plural = plural.toLowerCase();
-      single = single.toLowerCase();
-      irregularSingles[single] = plural;
-      irregularPlurals[plural] = single;
-    };
-    [
-      ["I", "we"],
-      ["me", "us"],
-      ["he", "they"],
-      ["she", "they"],
-      ["them", "them"],
-      ["myself", "ourselves"],
-      ["yourself", "yourselves"],
-      ["itself", "themselves"],
-      ["herself", "themselves"],
-      ["himself", "themselves"],
-      ["themself", "themselves"],
-      ["is", "are"],
-      ["was", "were"],
-      ["has", "have"],
-      ["this", "these"],
-      ["that", "those"],
-      ["echo", "echoes"],
-      ["dingo", "dingoes"],
-      ["volcano", "volcanoes"],
-      ["tornado", "tornadoes"],
-      ["torpedo", "torpedoes"],
-      ["genus", "genera"],
-      ["viscus", "viscera"],
-      ["stigma", "stigmata"],
-      ["stoma", "stomata"],
-      ["dogma", "dogmata"],
-      ["lemma", "lemmata"],
-      ["schema", "schemata"],
-      ["anathema", "anathemata"],
-      ["ox", "oxen"],
-      ["axe", "axes"],
-      ["die", "dice"],
-      ["yes", "yeses"],
-      ["foot", "feet"],
-      ["eave", "eaves"],
-      ["goose", "geese"],
-      ["tooth", "teeth"],
-      ["quiz", "quizzes"],
-      ["human", "humans"],
-      ["proof", "proofs"],
-      ["carve", "carves"],
-      ["valve", "valves"],
-      ["looey", "looies"],
-      ["thief", "thieves"],
-      ["groove", "grooves"],
-      ["pickaxe", "pickaxes"],
-      ["passerby", "passersby"]
-    ].forEach(function(rule) {
-      return pluralize2.addIrregularRule(rule[0], rule[1]);
-    });
-    [
-      [/s?$/i, "s"],
-      [/[^\u0000-\u007F]$/i, "$0"],
-      [/([^aeiou]ese)$/i, "$1"],
-      [/(ax|test)is$/i, "$1es"],
-      [/(alias|[^aou]us|t[lm]as|gas|ris)$/i, "$1es"],
-      [/(e[mn]u)s?$/i, "$1s"],
-      [/([^l]ias|[aeiou]las|[ejzr]as|[iu]am)$/i, "$1"],
-      [/(alumn|syllab|vir|radi|nucle|fung|cact|stimul|termin|bacill|foc|uter|loc|strat)(?:us|i)$/i, "$1i"],
-      [/(alumn|alg|vertebr)(?:a|ae)$/i, "$1ae"],
-      [/(seraph|cherub)(?:im)?$/i, "$1im"],
-      [/(her|at|gr)o$/i, "$1oes"],
-      [/(agend|addend|millenni|dat|extrem|bacteri|desiderat|strat|candelabr|errat|ov|symposi|curricul|automat|quor)(?:a|um)$/i, "$1a"],
-      [/(apheli|hyperbat|periheli|asyndet|noumen|phenomen|criteri|organ|prolegomen|hedr|automat)(?:a|on)$/i, "$1a"],
-      [/sis$/i, "ses"],
-      [/(?:(kni|wi|li)fe|(ar|l|ea|eo|oa|hoo)f)$/i, "$1$2ves"],
-      [/([^aeiouy]|qu)y$/i, "$1ies"],
-      [/([^ch][ieo][ln])ey$/i, "$1ies"],
-      [/(x|ch|ss|sh|zz)$/i, "$1es"],
-      [/(matr|cod|mur|sil|vert|ind|append)(?:ix|ex)$/i, "$1ices"],
-      [/\b((?:tit)?m|l)(?:ice|ouse)$/i, "$1ice"],
-      [/(pe)(?:rson|ople)$/i, "$1ople"],
-      [/(child)(?:ren)?$/i, "$1ren"],
-      [/eaux$/i, "$0"],
-      [/m[ae]n$/i, "men"],
-      ["thou", "you"]
-    ].forEach(function(rule) {
-      return pluralize2.addPluralRule(rule[0], rule[1]);
-    });
-    [
-      [/s$/i, ""],
-      [/(ss)$/i, "$1"],
-      [/(wi|kni|(?:after|half|high|low|mid|non|night|[^\w]|^)li)ves$/i, "$1fe"],
-      [/(ar|(?:wo|[ae])l|[eo][ao])ves$/i, "$1f"],
-      [/ies$/i, "y"],
-      [/\b([pl]|zomb|(?:neck|cross)?t|coll|faer|food|gen|goon|group|lass|talk|goal|cut)ies$/i, "$1ie"],
-      [/\b(mon|smil)ies$/i, "$1ey"],
-      [/\b((?:tit)?m|l)ice$/i, "$1ouse"],
-      [/(seraph|cherub)im$/i, "$1"],
-      [/(x|ch|ss|sh|zz|tto|go|cho|alias|[^aou]us|t[lm]as|gas|(?:her|at|gr)o|[aeiou]ris)(?:es)?$/i, "$1"],
-      [/(analy|diagno|parenthe|progno|synop|the|empha|cri|ne)(?:sis|ses)$/i, "$1sis"],
-      [/(movie|twelve|abuse|e[mn]u)s$/i, "$1"],
-      [/(test)(?:is|es)$/i, "$1is"],
-      [/(alumn|syllab|vir|radi|nucle|fung|cact|stimul|termin|bacill|foc|uter|loc|strat)(?:us|i)$/i, "$1us"],
-      [/(agend|addend|millenni|dat|extrem|bacteri|desiderat|strat|candelabr|errat|ov|symposi|curricul|quor)a$/i, "$1um"],
-      [/(apheli|hyperbat|periheli|asyndet|noumen|phenomen|criteri|organ|prolegomen|hedr|automat)a$/i, "$1on"],
-      [/(alumn|alg|vertebr)ae$/i, "$1a"],
-      [/(cod|mur|sil|vert|ind)ices$/i, "$1ex"],
-      [/(matr|append)ices$/i, "$1ix"],
-      [/(pe)(rson|ople)$/i, "$1rson"],
-      [/(child)ren$/i, "$1"],
-      [/(eau)x?$/i, "$1"],
-      [/men$/i, "man"]
-    ].forEach(function(rule) {
-      return pluralize2.addSingularRule(rule[0], rule[1]);
-    });
-    [
-      "adulthood",
-      "advice",
-      "agenda",
-      "aid",
-      "aircraft",
-      "alcohol",
-      "ammo",
-      "analytics",
-      "anime",
-      "athletics",
-      "audio",
-      "bison",
-      "blood",
-      "bream",
-      "buffalo",
-      "butter",
-      "carp",
-      "cash",
-      "chassis",
-      "chess",
-      "clothing",
-      "cod",
-      "commerce",
-      "cooperation",
-      "corps",
-      "debris",
-      "diabetes",
-      "digestion",
-      "elk",
-      "energy",
-      "equipment",
-      "excretion",
-      "expertise",
-      "firmware",
-      "flounder",
-      "fun",
-      "gallows",
-      "garbage",
-      "graffiti",
-      "hardware",
-      "headquarters",
-      "health",
-      "herpes",
-      "highjinks",
-      "homework",
-      "housework",
-      "information",
-      "jeans",
-      "justice",
-      "kudos",
-      "labour",
-      "literature",
-      "machinery",
-      "mackerel",
-      "mail",
-      "media",
-      "mews",
-      "moose",
-      "music",
-      "mud",
-      "manga",
-      "news",
-      "only",
-      "personnel",
-      "pike",
-      "plankton",
-      "pliers",
-      "police",
-      "pollution",
-      "premises",
-      "rain",
-      "research",
-      "rice",
-      "salmon",
-      "scissors",
-      "series",
-      "sewage",
-      "shambles",
-      "shrimp",
-      "software",
-      "species",
-      "staff",
-      "swine",
-      "tennis",
-      "traffic",
-      "transportation",
-      "trout",
-      "tuna",
-      "wealth",
-      "welfare",
-      "whiting",
-      "wildebeest",
-      "wildlife",
-      "you",
-      /pok[eé]mon$/i,
-      /[^aeiou]ese$/i,
-      /deer$/i,
-      /fish$/i,
-      /measles$/i,
-      /o[iu]s$/i,
-      /pox$/i,
-      /sheep$/i
-    ].forEach(pluralize2.addUncountableRule);
-    return pluralize2;
-  });
-})))(), 1);
-function pluralize(word, count, inclusive) {
-  return (0, import_pluralize.default)(word, count, inclusive);
-}
-__name(pluralize, "pluralize");
-function snakeCase(str, upperCase2 = false) {
-  return words(str).map((part) => upperCase2 ? part.toUpperCase() : part.toLowerCase()).join("_");
-}
-__name(snakeCase, "snakeCase");
-function toTrimCharacterSet(chars) {
-  const values = Array.isArray(chars) ? chars : [chars];
-  const characterSet = /* @__PURE__ */ new Set();
-  for (const value of values) for (const character of Array.from(value)) characterSet.add(character);
-  return characterSet;
-}
-__name(toTrimCharacterSet, "toTrimCharacterSet");
-function trimWithCharacters(str, chars, mode) {
-  if (chars === void 0) switch (mode) {
-    case "start":
-      return str.replace(/^\s+/, "");
-    case "end":
-      return str.replace(/\s+$/, "");
-    default:
-      return str.trim();
-  }
-  const trimCharacters = toTrimCharacterSet(chars);
-  if (trimCharacters.size === 0) return str;
-  const characters = Array.from(str);
-  let start = 0;
-  let end = characters.length;
-  if (mode === "start" || mode === "both") while (start < end && trimCharacters.has(characters[start])) start += 1;
-  if (mode === "end" || mode === "both") while (end > start && trimCharacters.has(characters[end - 1])) end -= 1;
-  return characters.slice(start, end).join("");
-}
-__name(trimWithCharacters, "trimWithCharacters");
-function trim(str, chars) {
-  return trimWithCharacters(str, chars, "both");
-}
-__name(trim, "trim");
-function trimEnd(str, chars) {
-  return trimWithCharacters(str, chars, "end");
-}
-__name(trimEnd, "trimEnd");
-function trimStart(str, chars) {
-  return trimWithCharacters(str, chars, "start");
-}
-__name(trimStart, "trimStart");
-function upperCase(str) {
-  return words(str).map((part) => part.toUpperCase()).join(" ");
-}
-__name(upperCase, "upperCase");
-var strings_exports = /* @__PURE__ */ __exportAll({
-  camelCase: /* @__PURE__ */ __name(() => camelCase, "camelCase"),
-  dedent: /* @__PURE__ */ __name(() => dedent, "dedent"),
-  ensurePrefix: /* @__PURE__ */ __name(() => ensurePrefix, "ensurePrefix"),
-  ensureSuffix: /* @__PURE__ */ __name(() => ensureSuffix, "ensureSuffix"),
-  kebabCase: /* @__PURE__ */ __name(() => kebabCase, "kebabCase"),
-  limitBlankLines: /* @__PURE__ */ __name(() => limitBlankLines, "limitBlankLines"),
-  lowerCase: /* @__PURE__ */ __name(() => lowerCase, "lowerCase"),
-  pad: /* @__PURE__ */ __name(() => pad, "pad"),
-  padLeft: /* @__PURE__ */ __name(() => padLeft, "padLeft"),
-  padRight: /* @__PURE__ */ __name(() => padRight, "padRight"),
-  pascalCase: /* @__PURE__ */ __name(() => pascalCase, "pascalCase"),
-  pluralize: /* @__PURE__ */ __name(() => pluralize, "pluralize"),
-  snakeCase: /* @__PURE__ */ __name(() => snakeCase, "snakeCase"),
-  trim: /* @__PURE__ */ __name(() => trim, "trim"),
-  trimEnd: /* @__PURE__ */ __name(() => trimEnd, "trimEnd"),
-  trimStart: /* @__PURE__ */ __name(() => trimStart, "trimStart"),
-  upperCase: /* @__PURE__ */ __name(() => upperCase, "upperCase"),
-  words: /* @__PURE__ */ __name(() => words, "words")
-});
 
-// node_modules/@varavel/gen/dist/index.js
-var _a3;
-var Generator = (_a3 = class {
-  constructor() {
-    this.chunks = [];
-    this.indentLevel = 0;
-    this.indentUnit = "  ";
-    this.atStartOfLine = true;
-  }
-  /**
-  * Uses spaces for one indent level.
-  *
-  * Example: `withSpaces(2)` makes each level equal to two spaces.
-  */
-  withSpaces(spaces) {
-    this.indentUnit = " ".repeat(Math.max(0, spaces));
-    return this;
-  }
-  /**
-  * Uses one tab character for each indent level.
-  */
-  withTabs() {
-    this.indentUnit = "	";
-    return this;
-  }
-  /**
-  * Moves one indentation level deeper for future writes.
-  */
-  indent() {
-    this.indentLevel++;
-    return this;
-  }
-  /**
-  * Moves one indentation level up for future writes.
-  *
-  * If already at zero, it stays at zero.
-  */
-  dedent() {
-    if (this.indentLevel > 0) this.indentLevel--;
-    return this;
-  }
-  /**
-  * Writes text exactly as given.
-  *
-  * It does not add indentation or newlines.
-  */
-  raw(content) {
-    if (content.length === 0) return this;
-    this.chunks.push(content);
-    this.atStartOfLine = content.endsWith("\n");
-    return this;
-  }
-  /**
-  * Writes exactly one newline character.
-  */
-  break() {
-    this.chunks.push("\n");
-    this.atStartOfLine = true;
-    return this;
-  }
-  /**
-  * Writes text on the current line.
-  *
-  * It adds indentation only when writing at the start of a line.
-  */
-  inline(content) {
-    if (content.length === 0) return this;
-    const sublines = content.split("\n");
-    for (let index = 0; index < sublines.length; index++) {
-      var _sublines$index;
-      const subline = (_sublines$index = sublines[index]) !== null && _sublines$index !== void 0 ? _sublines$index : "";
-      if (index > 0) {
-        this.chunks.push("\n");
-        this.atStartOfLine = true;
-      }
-      if (subline.length > 0) {
-        if (this.atStartOfLine) this.chunks.push(this.indentUnit.repeat(this.indentLevel));
-        this.chunks.push(subline);
-        this.atStartOfLine = false;
-      }
-    }
-    if (content.endsWith("\n")) this.atStartOfLine = true;
-    return this;
-  }
-  /**
-  * Same as `inline` but adds one newline at the end of the content.
-  */
-  line(content) {
-    this.inline(content);
-    this.break();
-    return this;
-  }
-  /**
-  * Runs a callback one level deeper, then restores the previous level.
-  */
-  block(run) {
-    this.indent();
-    try {
-      run();
-    } finally {
-      this.dedent();
-    }
-    return this;
-  }
-  /**
-  * Returns all generated content as a single string.
-  */
-  toString() {
-    return this.chunks.join("");
-  }
-}, __name(_a3, "Generator"), _a3);
-function newGenerator() {
-  return new Generator();
+// node_modules/@varavel/vdl-plugin-sdk/dist/utils/crypto/index.js
+function hash2(input) {
+  return hash(input);
 }
-__name(newGenerator, "newGenerator");
-
-// src/shared/comments.ts
-var DEFAULT_DEPRECATED_MESSAGE = "This symbol is deprecated and should not be used in new code.";
-function writeDocComment(g, options) {
-  const lines = buildDocCommentLines(options);
-  if (lines.length === 0) return;
-  for (const line of lines) {
-    g.line(`// ${line}`.trim());
-  }
-}
-__name(writeDocComment, "writeDocComment");
-function buildDocCommentLines(options) {
-  var _a4, _b, _c;
-  const lines = (_c = (_b = (_a4 = options.doc) != null ? _a4 : options.fallback) == null ? void 0 : _b.split("\n")) != null ? _c : [];
-  const deprecatedMessage = getDeprecatedMessage(options.annotations);
-  if (!deprecatedMessage) return lines;
-  if (lines.length === 0) return [`Deprecated: ${deprecatedMessage}`];
-  return [...lines, "", `Deprecated: ${deprecatedMessage}`];
-}
-__name(buildDocCommentLines, "buildDocCommentLines");
-function getDeprecatedMessage(annotations) {
-  if (!ir_exports.getAnnotation(annotations, "deprecated")) {
-    return void 0;
-  }
-  const argument = ir_exports.getAnnotationArg(annotations, "deprecated");
-  if (argument) {
-    const unwrapped = ir_exports.unwrapLiteral(argument);
-    if (typeof unwrapped === "string" && unwrapped.trim().length > 0) {
-      return unwrapped;
-    }
-  }
-  return DEFAULT_DEPRECATED_MESSAGE;
-}
-__name(getDeprecatedMessage, "getDeprecatedMessage");
+__name(hash2, "hash");
 
 // src/shared/go-types/resolve.ts
 function resolveNonTypeRef(typeRef, context, position, visited = /* @__PURE__ */ new Set()) {
@@ -2741,7 +676,7 @@ function resolveDirectEnumDescriptor(typeRef, context, position) {
 }
 __name(resolveDirectEnumDescriptor, "resolveDirectEnumDescriptor");
 function renderDirectEnumExpression(enumDescriptor, literal, position) {
-  const member = enumDescriptor.memberByValue.get(crypto_exports.hash(literal));
+  const member = enumDescriptor.memberByValue.get(hash2(literal));
   if (!member) {
     fail(
       `Invalid literal for ${JSON.stringify(enumDescriptor.def.name)} enum. Expected one of its declared members.`,
@@ -2788,7 +723,7 @@ function renderRawScalarLiteral(literal, target, position) {
 }
 __name(renderRawScalarLiteral, "renderRawScalarLiteral");
 function renderEnumScalarLiteral(enumDescriptor, literal, position) {
-  if (!enumDescriptor.memberByValue.has(crypto_exports.hash(literal))) {
+  if (!enumDescriptor.memberByValue.has(hash2(literal))) {
     fail(
       `Invalid literal for ${JSON.stringify(enumDescriptor.def.name)} enum. Expected one of its declared members.`,
       position
@@ -2828,6 +763,19 @@ function renderConstInitializer(typeRef, literal, context, position) {
 }
 __name(renderConstInitializer, "renderConstInitializer");
 
+// node_modules/@varavel/vdl-plugin-sdk/dist/utils/strings/limit-blank-lines.js
+var cache = /* @__PURE__ */ new Map();
+function limitBlankLines(str, maxConsecutive = 0) {
+  const limit = Math.max(0, maxConsecutive);
+  let regex = cache.get(limit);
+  if (!regex) {
+    regex = new RegExp(`(\\r?\\n\\s*){${limit + 2},}`, "g");
+    cache.set(limit, regex);
+  }
+  return str.replace(regex, "\n".repeat(limit + 1));
+}
+__name(limitBlankLines, "limitBlankLines");
+
 // src/shared/naming.ts
 var GO_KEYWORDS = /* @__PURE__ */ new Set([
   "break",
@@ -2866,19 +814,19 @@ function isValidGoPackageName(value) {
 }
 __name(isValidGoPackageName, "isValidGoPackageName");
 function toGoTypeName(value) {
-  return escapeGoIdentifier(strings_exports.pascalCase(value));
+  return escapeGoIdentifier(pascalCase(value));
 }
 __name(toGoTypeName, "toGoTypeName");
 function toGoConstName(value) {
-  return escapeGoIdentifier(strings_exports.pascalCase(value));
+  return escapeGoIdentifier(pascalCase(value));
 }
 __name(toGoConstName, "toGoConstName");
 function toGoFieldName(value) {
-  return escapeGoIdentifier(strings_exports.pascalCase(value));
+  return escapeGoIdentifier(pascalCase(value));
 }
 __name(toGoFieldName, "toGoFieldName");
 function toGoEnumMemberName(value) {
-  return escapeGoIdentifier(strings_exports.pascalCase(value));
+  return escapeGoIdentifier(pascalCase(value));
 }
 __name(toGoEnumMemberName, "toGoEnumMemberName");
 function toInlineTypeName(parentTypeName, fieldName) {
@@ -3275,7 +1223,7 @@ function renderGoFile(options) {
     g.raw(body);
     g.break();
   }
-  return strings_exports.limitBlankLines(g.toString(), 1);
+  return limitBlankLines(g.toString(), 1);
 }
 __name(renderGoFile, "renderGoFile");
 function getStandardImports(body) {
@@ -4368,7 +2316,7 @@ __name(generateTypesFile, "generateTypesFile");
 
 // src/stages/emit/generate-files.ts
 function generateFiles(context) {
-  return arrays_exports.compact([
+  return compact([
     generateEnumsFile(context),
     generateTypesFile(context),
     generateConstantsFile(context),
@@ -4568,7 +2516,7 @@ function buildEnumDescriptor(enumDef, context, errors) {
       def: member,
       goName: memberGoName,
       constName: `${goName}${memberGoName}`,
-      valueKey: crypto_exports.hash(member.value)
+      valueKey: hash2(member.value)
     };
     members.push(descriptor);
     if (!memberByValue.has(descriptor.valueKey)) {
@@ -4837,12 +2785,46 @@ function createGeneratorContext(options) {
 }
 __name(createGeneratorContext, "createGeneratorContext");
 
+// node_modules/@varavel/vdl-plugin-sdk/dist/utils/options/get-option-bool.js
+function getOptionBool(options, key, defaultValue) {
+  const value = options === null || options === void 0 ? void 0 : options[key];
+  if (value === void 0) return defaultValue;
+  switch (value.trim().toLowerCase()) {
+    case "true":
+    case "1":
+    case "yes":
+    case "on":
+    case "enable":
+    case "enabled":
+    case "y":
+      return true;
+    case "false":
+    case "0":
+    case "no":
+    case "off":
+    case "disable":
+    case "disabled":
+    case "n":
+      return false;
+    default:
+      return defaultValue;
+  }
+}
+__name(getOptionBool, "getOptionBool");
+
+// node_modules/@varavel/vdl-plugin-sdk/dist/utils/options/get-option-string.js
+function getOptionString(options, key, defaultValue) {
+  const value = options === null || options === void 0 ? void 0 : options[key];
+  return value === void 0 ? defaultValue : value;
+}
+__name(getOptionString, "getOptionString");
+
 // src/stages/options/resolve.ts
 function resolveGeneratorOptions(input) {
-  const packageName = options_exports.getOptionString(input.options, "package", "vdl");
-  const genConsts = options_exports.getOptionBool(input.options, "genConsts", true);
-  const strict = options_exports.getOptionBool(input.options, "strict", true);
-  const genPointerUtils = options_exports.getOptionBool(
+  const packageName = getOptionString(input.options, "package", "vdl");
+  const genConsts = getOptionBool(input.options, "genConsts", true);
+  const strict = getOptionBool(input.options, "strict", true);
+  const genPointerUtils = getOptionBool(
     input.options,
     "genPointerUtils",
     true
