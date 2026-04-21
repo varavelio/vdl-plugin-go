@@ -12,6 +12,15 @@
   Generate Go <strong>types</strong>, <strong>enums</strong>, <strong>constants</strong>, and <strong>pointer helpers</strong> from VDL.
 </p>
 
+<p align="center">
+  <a href="https://varavel.com">
+    <img src="https://cdn.jsdelivr.net/gh/varavelio/brand@1.0.0/dist/badges/project.svg" alt="A Varavel project"/>
+  </a>
+  <a href="https://varavel.com/vdl">
+    <img src="https://cdn.jsdelivr.net/gh/varavelio/brand@1.0.0/dist/badges/vdl-plugin.svg" alt="VDL Plugin"/>
+  </a>
+</p>
+
 This plugin is focused on data models only.
 
 ## Quick Start
