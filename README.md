@@ -59,12 +59,13 @@ Depending on your schema and options, you may get:
 
 All options are optional.
 
-| Option            | Type      | Default  | What it changes                                                                                 |
-| ----------------- | --------- | -------- | ----------------------------------------------------------------------------------------------- |
-| `package`         | `string`  | `"vdl"`  | Sets the Go package name used in generated files. It must be a valid lowercase Go package name. |
-| `genConsts`       | `boolean` | `"true"` | Generates `constants.go` when your schema has constants.                                        |
-| `strict`          | `boolean` | `"true"` | Adds stricter JSON validation for objects and enums.                                            |
-| `genPointerUtils` | `boolean` | `"true"` | Generates `pointers.go` with `Ptr`, `Val`, and `Or` helper functions.                           |
+| Option            | Type      | Default           | What it changes                                                                                 |
+| ----------------- | --------- | ----------------- | ----------------------------------------------------------------------------------------------- |
+| `package`         | `string`  | `"vdl"`           | Sets the Go package name used in generated files. It must be a valid lowercase Go package name. |
+| `genConsts`       | `boolean` | `"true"`          | Generates `constants.go` when your schema has constants.                                        |
+| `strict`          | `boolean` | `"true"`          | Adds stricter JSON validation for objects and enums.                                            |
+| `genPointerUtils` | `boolean` | `"true"`          | Generates `pointers.go` with `Ptr`, `Val`, and `Or` helper functions.                           |
+| `jsonPackage`     | `string`  | `"encoding/json"` | Sets the Go package used for JSON marshal/unmarshal. It is always imported as `json "..."`.     |
 
 Example with all options:
 
@@ -81,6 +82,7 @@ const config = {
         genConsts "true"
         strict "true"
         genPointerUtils "true"
+        jsonPackage "github.com/goccy/go-json"
       }
     }
   ]
