@@ -108,6 +108,7 @@ function buildContext() {
       genConsts: true,
       strict: true,
       genPointerUtils: true,
+      jsonPackage: "encoding/json",
     },
   });
 

@@ -20,6 +20,7 @@ describe("type-ref", () => {
         genConsts: true,
         strict: true,
         genPointerUtils: true,
+        jsonPackage: "encoding/json",
       },
     });
 
@@ -61,6 +62,7 @@ describe("type-ref", () => {
         genConsts: true,
         strict: true,
         genPointerUtils: true,
+        jsonPackage: "encoding/json",
       },
     });
 
@@ -106,6 +108,7 @@ describe("type-ref", () => {
         genConsts: true,
         strict: true,
         genPointerUtils: true,
+        jsonPackage: "encoding/json",
       },
     });
 

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { renderGoFile } from "./go-file";
 
 describe("renderGoFile", () => {
-  it("infers standard imports from code", () => {
+  it("infers standard imports from code with aliased json", () => {
     const content = renderGoFile({
       packageName: "vdl",
       body: [
@@ -16,8 +16,22 @@ describe("renderGoFile", () => {
     });
 
     expect(content).toContain(
-      'import (\n\t"encoding/json"\n\t"fmt"\n\t"time"\n)',
+      'import (\n\tjson "encoding/json"\n\t"fmt"\n\t"time"\n)',
     );
+  });
+
+  it("uses custom jsonPackage when provided", () => {
+    const content = renderGoFile({
+      packageName: "vdl",
+      body: [
+        "func decode(data []byte) error {",
+        "\treturn json.Unmarshal(data, nil)",
+        "}",
+      ].join("\n"),
+      jsonPackage: "github.com/goccy/go-json",
+    });
+
+    expect(content).toContain('import (\n\tjson "github.com/goccy/go-json"\n)');
   });
 
   it("ignores import-like text inside comments and strings", () => {

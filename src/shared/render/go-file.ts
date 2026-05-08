@@ -1,6 +1,11 @@
 import { newGenerator } from "@varavel/gen";
 import * as strings from "@varavel/vdl-plugin-sdk/utils/strings";
 
+interface GoImport {
+  alias?: string;
+  path: string;
+}
+
 /**
  * Renders a complete Go source file with a package declaration, imports, and a body.
  *
@@ -11,15 +16,21 @@ import * as strings from "@varavel/vdl-plugin-sdk/utils/strings";
  * @param options - The file rendering options.
  * @param options.packageName - The name of the Go package.
  * @param options.body - The main content of the file (types, functions, constants, etc.).
+ * @param options.jsonPackage - The Go import path for the JSON package.
+ *   Defaults to "encoding/json". The import is always aliased as `json`.
  * @returns The full Go source code as a string.
  */
 export function renderGoFile(options: {
   packageName: string;
   body: string;
+  jsonPackage?: string;
 }): string {
   const g = newGenerator().withTabs();
   const body = options.body.trim();
-  const imports = getStandardImports(body);
+  const imports = getStandardImports(
+    body,
+    options.jsonPackage ?? "encoding/json",
+  );
 
   g.line(`package ${options.packageName}`);
 
@@ -27,8 +38,12 @@ export function renderGoFile(options: {
     g.break();
     g.line("import (");
     g.block(() => {
-      for (const importPath of imports) {
-        g.line(JSON.stringify(importPath));
+      for (const imp of imports) {
+        if (imp.alias) {
+          g.line(`${imp.alias} ${JSON.stringify(imp.path)}`);
+        } else {
+          g.line(JSON.stringify(imp.path));
+        }
       }
     });
     g.line(")");
@@ -44,32 +59,36 @@ export function renderGoFile(options: {
 }
 
 /**
- * Collects the standard library imports referenced by generated code.
+ * Collects the imports referenced by generated code.
  *
  * The generator only emits a small, fixed set of standard imports, so deriving
  * them from the rendered body keeps file emitters simple and avoids import
  * bookkeeping spread across the codebase.
  *
+ * The JSON import is always aliased as `json` so users can plug in any
+ * encoding/json-compatible package (e.g. "github.com/goccy/go-json").
+ *
  * @param body - The rendered Go declarations for a single file.
- * @returns The sorted import paths required by the body.
+ * @param jsonPackage - The Go import path for the JSON package.
+ * @returns The sorted imports required by the body.
  */
-function getStandardImports(body: string): string[] {
+function getStandardImports(body: string, jsonPackage: string): GoImport[] {
   const code = stripCommentsAndStrings(body);
-  const imports: string[] = [];
+  const imports: GoImport[] = [];
 
   if (code.includes("json.")) {
-    imports.push("encoding/json");
+    imports.push({ alias: "json", path: jsonPackage });
   }
 
   if (code.includes("fmt.")) {
-    imports.push("fmt");
+    imports.push({ path: "fmt" });
   }
 
   if (code.includes("time.")) {
-    imports.push("time");
+    imports.push({ path: "time" });
   }
 
-  return imports.sort((left, right) => left.localeCompare(right));
+  return imports.sort((left, right) => left.path.localeCompare(right.path));
 }
 
 /**
