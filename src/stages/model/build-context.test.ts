@@ -35,6 +35,7 @@ describe("build-context", () => {
         genConsts: true,
         strict: true,
         genPointerUtils: true,
+        jsonPackage: "encoding/json",
       },
     });
 
@@ -67,6 +68,7 @@ describe("build-context", () => {
         genConsts: true,
         strict: true,
         genPointerUtils: true,
+        jsonPackage: "encoding/json",
       },
     });
 
@@ -90,6 +92,7 @@ describe("build-context", () => {
         genConsts: true,
         strict: true,
         genPointerUtils: true,
+        jsonPackage: "encoding/json",
       },
     });
 
@@ -110,6 +113,7 @@ describe("build-context", () => {
         genConsts: true,
         strict: true,
         genPointerUtils: true,
+        jsonPackage: "encoding/json",
       },
     });
 

@@ -17,6 +17,7 @@ import type { GeneratorOptions } from "../model/types";
  * - `genConsts`: Whether to emit top-level constants (default: true).
  * - `strict`: Whether to generate strict JSON validation logic (default: true).
  * - `genPointerUtils`: Whether to include the Ptr/Val/Or helpers in pointers.go (default: true).
+ * - `jsonPackage`: The Go import path used for JSON marshal/unmarshal operations (default: "encoding/json").
  *
  * @param input - The raw plugin input containing the options map.
  * @returns An object containing the resolved options or a list of validation errors.
@@ -33,6 +34,12 @@ export function resolveGeneratorOptions(input: PluginInput): {
     "genPointerUtils",
     true,
   );
+  const jsonPackage = options.getOptionString(
+    input.options,
+    "jsonPackage",
+    "encoding/json",
+  );
+  const resolvedJsonPackage = jsonPackage.trim() || "encoding/json";
 
   if (!isValidGoPackageName(packageName)) {
     return {
@@ -51,6 +58,7 @@ export function resolveGeneratorOptions(input: PluginInput): {
       genConsts,
       strict,
       genPointerUtils,
+      jsonPackage: resolvedJsonPackage,
     },
   };
 }

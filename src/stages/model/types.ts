@@ -23,6 +23,12 @@ export interface GeneratorOptions {
   genPointerUtils: boolean;
   /** Whether to generate strict JSON validation logic. */
   strict: boolean;
+  /**
+   * The Go import path for the JSON package used for marshal/unmarshal operations.
+   * Defaults to "encoding/json". The import is always aliased as `json` in generated code,
+   * so any package that is compatible with encoding/json can be used (e.g. "github.com/goccy/go-json").
+   */
+  jsonPackage: string;
 }
 
 /**

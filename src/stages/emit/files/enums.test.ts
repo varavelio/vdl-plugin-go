@@ -12,6 +12,7 @@ describe("generateEnumsFile", () => {
         genConsts: true,
         genPointerUtils: true,
         strict: true,
+        jsonPackage: "encoding/json",
       },
     });
 
@@ -55,6 +56,7 @@ describe("generateEnumsFile", () => {
         genConsts: true,
         strict: true,
         genPointerUtils: true,
+        jsonPackage: "encoding/json",
       },
     });
 
@@ -92,6 +94,7 @@ describe("generateEnumsFile", () => {
         genConsts: true,
         strict: false,
         genPointerUtils: true,
+        jsonPackage: "encoding/json",
       },
     });
 

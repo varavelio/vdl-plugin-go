@@ -249,7 +249,7 @@ describe("generate", () => {
 
     const types = fileContent(result, "types.go");
     expect(types).toContain(
-      'import (\n\t"encoding/json"\n\t"fmt"\n\t"time"\n)',
+      'import (\n\tjson "encoding/json"\n\t"fmt"\n\t"time"\n)',
     );
     expect(types).toContain("CreatedAt time.Time");
     expect(types).toContain("Events []TimelineEvents");

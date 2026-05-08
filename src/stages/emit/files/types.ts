@@ -38,6 +38,7 @@ export function generateTypesFile(
     content: renderGoFile({
       packageName: context.options.packageName,
       body: g.toString(),
+      jsonPackage: context.options.jsonPackage,
     }),
   };
 }

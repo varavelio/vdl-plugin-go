@@ -12,6 +12,7 @@ describe("generateConstantsFile", () => {
         genConsts: true,
         strict: true,
         genPointerUtils: true,
+        jsonPackage: "encoding/json",
       },
     });
     const disabled = createGeneratorContext({
@@ -23,6 +24,7 @@ describe("generateConstantsFile", () => {
         genConsts: false,
         strict: true,
         genPointerUtils: true,
+        jsonPackage: "encoding/json",
       },
     });
 
@@ -65,6 +67,7 @@ describe("generateConstantsFile", () => {
         genConsts: true,
         strict: true,
         genPointerUtils: true,
+        jsonPackage: "encoding/json",
       },
     });
 

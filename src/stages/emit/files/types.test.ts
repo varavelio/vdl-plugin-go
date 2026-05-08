@@ -12,6 +12,7 @@ describe("generateTypesFile", () => {
         genConsts: true,
         strict: true,
         genPointerUtils: true,
+        jsonPackage: "encoding/json",
       },
     });
 
@@ -43,6 +44,7 @@ describe("generateTypesFile", () => {
         genConsts: true,
         strict: true,
         genPointerUtils: true,
+        jsonPackage: "encoding/json",
       },
     });
 
@@ -92,6 +94,7 @@ describe("generateTypesFile", () => {
         genConsts: true,
         strict: true,
         genPointerUtils: true,
+        jsonPackage: "encoding/json",
       },
     });
 
@@ -146,6 +149,7 @@ describe("generateTypesFile", () => {
         genConsts: true,
         strict: true,
         genPointerUtils: true,
+        jsonPackage: "encoding/json",
       },
     });
 
@@ -179,6 +183,7 @@ describe("generateTypesFile", () => {
         genConsts: true,
         strict: false,
         genPointerUtils: true,
+        jsonPackage: "encoding/json",
       },
     });
 
