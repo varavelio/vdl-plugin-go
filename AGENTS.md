@@ -43,7 +43,7 @@ When updating this document, do so with the context of the entire document in mi
   - `src/index.ts`: SDK-facing plugin export. Keep it thin.
   - `src/generate.ts`: pure orchestration that resolves options, builds context, emits files, and converts thrown failures into plugin errors.
 - **Stage Layout**:
-- `src/stages/options/resolve.ts`: parses plugin options. Current options are `package`, `genConsts`, `strict`, and `genPointerUtils`.
+- `src/stages/options/resolve.ts`: parses plugin options. Current options are `package`, `genConsts`, `strict`, `genPointerUtils`, and `jsonPackage`.
   - `src/stages/model/build-context.ts`: builds the shared generation context and aggregates stage errors.
   - `src/stages/model/*.ts`: indexes schema definitions, derives Go names, discovers inline object types recursively, builds descriptors, and validates Go-specific symbol collisions.
   - `src/stages/emit/generate-files.ts`: emits files in fixed order.
@@ -56,7 +56,7 @@ When updating this document, do so with the context of the entire document in mi
   - `src/shared/literal-key.ts`: stable literal comparison keys used mainly for enum value matching.
   - `src/shared/go-types/*.ts`: Go type rendering, anonymous type expressions, import requirements, named-type resolution, and const eligibility.
   - `src/shared/go-literals/*.ts`: Go literal rendering for consts, typed values, and scalars.
-  - `src/shared/render/go-file.ts`: package/import wrapper for emitted Go files. Standard-library imports are inferred from the rendered body so emitters do not track them manually.
+  - `src/shared/render/go-file.ts`: package/import wrapper for emitted Go files. Standard-library imports are inferred from the rendered body so emitters do not track them manually. The JSON import is always aliased as `json` (e.g. `json "encoding/json"`) via the `jsonPackage` option, allowing users to substitute any encoding/json-compatible package.
 - **Tests in `src/`**:
   - Tests are colocated beside the modules they specify.
 
@@ -203,6 +203,7 @@ This order is intentional and covered by tests. Preserve it unless the test suit
 - `genConsts` option behavior.
 - `strict` option behavior.
 - `genPointerUtils` option behavior.
+- `jsonPackage` option behavior.
 - Runtime helper name collision reporting.
 - Last duplicate object field wins.
 - Optional fields use pointers and `omitempty`.
