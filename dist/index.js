@@ -1204,16 +1204,24 @@ __name(isConstEligibleType, "isConstEligibleType");
 
 // src/shared/render/go-file.ts
 function renderGoFile(options) {
+  var _a4;
   const g = newGenerator().withTabs();
   const body = options.body.trim();
-  const imports = getStandardImports(body);
+  const imports = getStandardImports(
+    body,
+    (_a4 = options.jsonPackage) != null ? _a4 : "encoding/json"
+  );
   g.line(`package ${options.packageName}`);
   if (imports.length > 0) {
     g.break();
     g.line("import (");
     g.block(() => {
-      for (const importPath of imports) {
-        g.line(JSON.stringify(importPath));
+      for (const imp of imports) {
+        if (imp.alias) {
+          g.line(`${imp.alias} ${JSON.stringify(imp.path)}`);
+        } else {
+          g.line(JSON.stringify(imp.path));
+        }
       }
     });
     g.line(")");
@@ -1226,19 +1234,19 @@ function renderGoFile(options) {
   return limitBlankLines(g.toString(), 1);
 }
 __name(renderGoFile, "renderGoFile");
-function getStandardImports(body) {
+function getStandardImports(body, jsonPackage) {
   const code = stripCommentsAndStrings(body);
   const imports = [];
   if (code.includes("json.")) {
-    imports.push("encoding/json");
+    imports.push({ alias: "json", path: jsonPackage });
   }
   if (code.includes("fmt.")) {
-    imports.push("fmt");
+    imports.push({ path: "fmt" });
   }
   if (code.includes("time.")) {
-    imports.push("time");
+    imports.push({ path: "time" });
   }
-  return imports.sort((left, right) => left.localeCompare(right));
+  return imports.sort((left, right) => left.path.localeCompare(right.path));
 }
 __name(getStandardImports, "getStandardImports");
 function stripCommentsAndStrings(body) {
@@ -1275,7 +1283,8 @@ function generateConstantsFile(context) {
     path: "constants.go",
     content: renderGoFile({
       packageName: context.options.packageName,
-      body: g.toString()
+      body: g.toString(),
+      jsonPackage: context.options.jsonPackage
     })
   };
 }
@@ -1488,7 +1497,8 @@ function generateEnumsFile(context) {
     path: "enums.go",
     content: renderGoFile({
       packageName: context.options.packageName,
-      body: g.toString()
+      body: g.toString(),
+      jsonPackage: context.options.jsonPackage
     })
   };
 }
@@ -1539,7 +1549,8 @@ function generatePointersFile(context) {
     path: "pointers.go",
     content: renderGoFile({
       packageName: context.options.packageName,
-      body: g.toString()
+      body: g.toString(),
+      jsonPackage: context.options.jsonPackage
     })
   };
 }
@@ -2308,7 +2319,8 @@ function generateTypesFile(context) {
     path: "types.go",
     content: renderGoFile({
       packageName: context.options.packageName,
-      body: g.toString()
+      body: g.toString(),
+      jsonPackage: context.options.jsonPackage
     })
   };
 }
@@ -2829,6 +2841,12 @@ function resolveGeneratorOptions(input) {
     "genPointerUtils",
     true
   );
+  const jsonPackage = getOptionString(
+    input.options,
+    "jsonPackage",
+    "encoding/json"
+  );
+  const resolvedJsonPackage = jsonPackage.trim() || "encoding/json";
   if (!isValidGoPackageName(packageName)) {
     return {
       errors: [
@@ -2844,7 +2862,8 @@ function resolveGeneratorOptions(input) {
       packageName,
       genConsts,
       strict,
-      genPointerUtils
+      genPointerUtils,
+      jsonPackage: resolvedJsonPackage
     }
   };
 }
