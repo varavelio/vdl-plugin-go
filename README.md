@@ -1,6 +1,6 @@
 <p align="center">
   <img
-    src="https://raw.githubusercontent.com/varavelio/vdl/9cb8432f972f986ba91ffa1e4fe82220a8aa373f/assets/png/vdl.png"
+    src="https://cdn.jsdelivr.net/gh/varavelio/vdl@9cb843/assets/png/vdl.png"
     alt="VDL logo"
     width="130"
   />
@@ -32,7 +32,7 @@ const config = {
   version 1
   plugins [
     {
-      src "varavelio/vdl-plugin-go@v0.1.3"
+      src "varavelio/vdl-plugin-go@<version>" // Use a version from releases
       schema "./schema.vdl"
       outDir "./gen"
     }
@@ -59,13 +59,13 @@ Depending on your schema and options, you may get:
 
 All options are optional.
 
-| Option            | Type      | Default           | What it changes                                                                                 |
-| ----------------- | --------- | ----------------- | ----------------------------------------------------------------------------------------------- |
-| `package`         | `string`  | `"vdl"`           | Sets the Go package name used in generated files. It must be a valid lowercase Go package name. |
-| `genConsts`       | `boolean` | `"true"`          | Generates `constants.go` when your schema has constants.                                        |
-| `strict`          | `boolean` | `"true"`          | Adds stricter JSON validation for objects and enums.                                            |
-| `genPointerUtils` | `boolean` | `"true"`          | Generates `pointers.go` with `Ptr`, `Val`, and `Or` helper functions.                           |
-| `jsonPackage`     | `string`  | `"encoding/json"` | Sets the Go package used for JSON marshal/unmarshal. It is always imported as `json "..."`.     |
+| Option            | Type      | Default           | What it changes                                                                                                             |
+| ----------------- | --------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `package`         | `string`  | `"vdl"`           | Sets the Go package name used in generated files. It must be a valid lowercase Go package name.                             |
+| `genConsts`       | `boolean` | `"true"`          | Generates `constants.go` when your schema has constants.                                                                    |
+| `strict`          | `boolean` | `"true"`          | Adds stricter JSON validation for objects and enums.                                                                        |
+| `genPointerUtils` | `boolean` | `"true"`          | Generates `pointers.go` with `Ptr`, `Val`, and `Or` helper functions.                                                       |
+| `jsonPackage`     | `string`  | `"encoding/json"` | Sets the Go package used for JSON marshal/unmarshal. It is always imported as `json "..."` and should be STDLIB compatible. |
 
 Example with all options:
 
@@ -74,7 +74,7 @@ const config = {
   version 1
   plugins [
     {
-      src "varavelio/vdl-plugin-go@v0.1.3"
+      src "varavelio/vdl-plugin-go@<version>"
       schema "./schema.vdl"
       outDir "./gen"
       options {
