@@ -33,8 +33,9 @@ When updating this document, do so with the context of the entire document in mi
 - `biome.json`: Biome formatting/linting configuration.
 - `dprint.json`: dprint formatting/linting configuration.
 - `vitest.config.ts`: Vitest configuration for unit and e2e test runs.
-- `tsconfig.json`: TypeScript project configuration.
-- `tsconfig.vitest.json`: TypeScript config used by tests.
+- `tsconfig.json`: TypeScript solution file referencing app and test projects (required by `vdl-plugin check`).
+- `tsconfig.app.json`: TypeScript project configuration for plugin sources. Sets `composite false` to avoid SDK base emit conflict.
+- `tsconfig.test.json`: TypeScript config used by tests. Sets `composite false` for same reason.
 
 ### `src/` (Core Generator)
 

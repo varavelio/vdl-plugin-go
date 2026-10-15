@@ -1,4 +1,3 @@
-"use strict";
 var __defProp = Object.defineProperty;
 var __defProps = Object.defineProperties;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -37,6 +36,7 @@ var __copyProps = (to, from, except, desc) => {
   return to;
 };
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 var __accessCheck = (obj, member, msg) => member.has(obj) || __typeError("Cannot " + msg);
 var __privateGet = (obj, member, getter) => (__accessCheck(obj, member, "read from private field"), getter ? getter.call(obj) : member.get(obj));
 var __privateAdd = (obj, member, value) => member.has(obj) ? __typeError("Cannot add the same private member more than once") : member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
@@ -48,16 +48,45 @@ __export(index_exports, {
 });
 module.exports = __toCommonJS(index_exports);
 
+// node_modules/@varavel/vdl-plugin-sdk/dist/core/errors.js
+var _a;
+var PluginError = (_a = class extends Error {
+  constructor(message, position) {
+    super(message);
+    this.name = "PluginError";
+    this.position = position;
+  }
+}, __name(_a, "PluginError"), _a);
+
 // node_modules/@varavel/vdl-plugin-sdk/dist/core/define-plugin.js
 function definePlugin(handler) {
-  return handler;
+  return (input) => {
+    try {
+      return handler(input);
+    } catch (error) {
+      return {
+        files: [],
+        errors: [toPluginError(error)]
+      };
+    }
+  };
 }
 __name(definePlugin, "definePlugin");
+function toPluginError(error) {
+  if (error instanceof PluginError) return {
+    message: error.message,
+    position: error.position
+  };
+  if (error instanceof Error) return { message: error.message };
+  return { message: "An unknown generation error occurred." };
+}
+__name(toPluginError, "toPluginError");
 
 // src/shared/errors.ts
 var _GenerationError = class _GenerationError extends Error {
   constructor(message, position) {
     super(message);
+    __publicField(this, "position");
     this.name = "GenerationError";
     this.position = position;
   }
@@ -105,8 +134,8 @@ function compact(arr) {
 __name(compact, "compact");
 
 // node_modules/@varavel/gen/dist/index.js
-var _a;
-var Generator = (_a = class {
+var _a2;
+var Generator = (_a2 = class {
   constructor() {
     this.chunks = [];
     this.indentLevel = 0;
@@ -214,7 +243,7 @@ var Generator = (_a = class {
   toString() {
     return this.chunks.join("");
   }
-}, __name(_a, "Generator"), _a);
+}, __name(_a2, "Generator"), _a2);
 function newGenerator() {
   return new Generator();
 }
@@ -233,27 +262,6 @@ function getAnnotationArg(annotations, name) {
   return anno === null || anno === void 0 ? void 0 : anno.argument;
 }
 __name(getAnnotationArg, "getAnnotationArg");
-
-// node_modules/@varavel/vdl-plugin-sdk/dist/utils/strings/words.js
-var ACRONYM_TO_CAPITALIZED_WORD_BOUNDARY_RE = /([A-Z]+)([A-Z][a-z])/g;
-var LOWERCASE_OR_DIGIT_TO_UPPERCASE_BOUNDARY_RE = /([a-z0-9])([A-Z])/g;
-var NON_ALPHANUMERIC_SEQUENCE_RE = /[^A-Za-z0-9]+/g;
-var WHITESPACE_SEQUENCE_RE = /\s+/;
-function words(str) {
-  const normalized = str.replace(ACRONYM_TO_CAPITALIZED_WORD_BOUNDARY_RE, "$1 $2").replace(LOWERCASE_OR_DIGIT_TO_UPPERCASE_BOUNDARY_RE, "$1 $2").replace(NON_ALPHANUMERIC_SEQUENCE_RE, " ").trim();
-  return normalized.length === 0 ? [] : normalized.split(WHITESPACE_SEQUENCE_RE);
-}
-__name(words, "words");
-
-// node_modules/@varavel/vdl-plugin-sdk/dist/utils/strings/pascal-case.js
-function capitalize(word) {
-  return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-}
-__name(capitalize, "capitalize");
-function pascalCase(str) {
-  return words(str).map(capitalize).join("");
-}
-__name(pascalCase, "pascalCase");
 
 // node_modules/@varavel/vdl-plugin-sdk/dist/utils/ir/unwrap-literal.js
 function unwrapLiteral(value) {
@@ -286,6 +294,27 @@ function unwrapLiteralValue(value) {
 }
 __name(unwrapLiteralValue, "unwrapLiteralValue");
 
+// node_modules/@varavel/vdl-plugin-sdk/dist/utils/strings/words.js
+var ACRONYM_TO_CAPITALIZED_WORD_BOUNDARY_RE = /([A-Z]+)([A-Z][a-z])/g;
+var LOWERCASE_OR_DIGIT_TO_UPPERCASE_BOUNDARY_RE = /([a-z0-9])([A-Z])/g;
+var NON_ALPHANUMERIC_SEQUENCE_RE = /[^A-Za-z0-9]+/g;
+var WHITESPACE_SEQUENCE_RE = /\s+/;
+function words(str) {
+  const normalized = str.replace(ACRONYM_TO_CAPITALIZED_WORD_BOUNDARY_RE, "$1 $2").replace(LOWERCASE_OR_DIGIT_TO_UPPERCASE_BOUNDARY_RE, "$1 $2").replace(NON_ALPHANUMERIC_SEQUENCE_RE, " ").trim();
+  return normalized.length === 0 ? [] : normalized.split(WHITESPACE_SEQUENCE_RE);
+}
+__name(words, "words");
+
+// node_modules/@varavel/vdl-plugin-sdk/dist/utils/strings/pascal-case.js
+function capitalize(word) {
+  return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+}
+__name(capitalize, "capitalize");
+function pascalCase(str) {
+  return words(str).map(capitalize).join("");
+}
+__name(pascalCase, "pascalCase");
+
 // src/shared/comments.ts
 var DEFAULT_DEPRECATED_MESSAGE = "This symbol is deprecated and should not be used in new code.";
 function writeDocComment(g, options) {
@@ -297,8 +326,8 @@ function writeDocComment(g, options) {
 }
 __name(writeDocComment, "writeDocComment");
 function buildDocCommentLines(options) {
-  var _a4, _b, _c;
-  const lines = (_c = (_b = (_a4 = options.doc) != null ? _a4 : options.fallback) == null ? void 0 : _b.split("\n")) != null ? _c : [];
+  var _a5, _b, _c;
+  const lines = (_c = (_b = (_a5 = options.doc) != null ? _a5 : options.fallback) == null ? void 0 : _b.split("\n")) != null ? _c : [];
   const deprecatedMessage = getDeprecatedMessage(options.annotations);
   if (!deprecatedMessage) return lines;
   if (lines.length === 0) return [`Deprecated: ${deprecatedMessage}`];
@@ -320,126 +349,172 @@ function getDeprecatedMessage(annotations) {
 }
 __name(getDeprecatedMessage, "getDeprecatedMessage");
 
-// node_modules/@varavel/vdl-plugin-sdk/dist/_virtual/_@oxc-project_runtime@0.115.0/helpers/checkPrivateRedeclaration.js
+// node_modules/@varavel/vdl-plugin-sdk/dist/_virtual/_@oxc-project_runtime@0.154.0/helpers/esm/checkPrivateRedeclaration.js
 function _checkPrivateRedeclaration(e, t) {
   if (t.has(e)) throw new TypeError("Cannot initialize the same private elements twice on an object");
 }
 __name(_checkPrivateRedeclaration, "_checkPrivateRedeclaration");
 
-// node_modules/@varavel/vdl-plugin-sdk/dist/_virtual/_@oxc-project_runtime@0.115.0/helpers/classPrivateFieldInitSpec.js
+// node_modules/@varavel/vdl-plugin-sdk/dist/_virtual/_@oxc-project_runtime@0.154.0/helpers/esm/classPrivateFieldInitSpec.js
 function _classPrivateFieldInitSpec(e, t, a) {
   _checkPrivateRedeclaration(e, t), t.set(e, a);
 }
 __name(_classPrivateFieldInitSpec, "_classPrivateFieldInitSpec");
 
-// node_modules/@varavel/vdl-plugin-sdk/dist/_virtual/_@oxc-project_runtime@0.115.0/helpers/assertClassBrand.js
+// node_modules/@varavel/vdl-plugin-sdk/dist/_virtual/_@oxc-project_runtime@0.154.0/helpers/esm/assertClassBrand.js
 function _assertClassBrand(e, t, n) {
   if ("function" == typeof e ? e === t : e.has(t)) return arguments.length < 3 ? t : n;
   throw new TypeError("Private element is not present on this object");
 }
 __name(_assertClassBrand, "_assertClassBrand");
 
-// node_modules/@varavel/vdl-plugin-sdk/dist/_virtual/_@oxc-project_runtime@0.115.0/helpers/classPrivateFieldGet2.js
+// node_modules/@varavel/vdl-plugin-sdk/dist/_virtual/_@oxc-project_runtime@0.154.0/helpers/esm/classPrivateFieldGet2.js
 function _classPrivateFieldGet2(s, a) {
   return s.get(_assertClassBrand(s, a));
 }
 __name(_classPrivateFieldGet2, "_classPrivateFieldGet2");
 
-// node_modules/@varavel/vdl-plugin-sdk/dist/node_modules/ohash/dist/shared/ohash.D__AXeF1.js
-function serialize(o) {
-  return typeof o == "string" ? `'${o}'` : new c().serialize(o);
+// node_modules/@varavel/vdl-plugin-sdk/dist/node_modules/ohash/dist/_chunks/is-equal.js
+function serialize(input) {
+  if (typeof input === "string") return `'${input}'`;
+  return new Serializer().serialize(input);
 }
 __name(serialize, "serialize");
-var c = /* @__PURE__ */ (function() {
-  var _t = /* @__PURE__ */ new WeakMap();
-  const _o = class _o {
+var asciiOrder = " _-,;:!?.'\"()[]{}@*/\\&#%`^+<=>|~$0123456789abcdefghijklmnopqrstuvwxyz";
+var asciiWeights = /* @__PURE__ */ (function() {
+  const weights = /* @__PURE__ */ new Uint8Array(128);
+  for (let i = 0; i < 69; i++) weights[asciiOrder.charCodeAt(i)] = i + 1;
+  for (let code = 65; code <= 90; code++) weights[code] = weights[code + 32];
+  return weights;
+})();
+function compareStrings(a, b) {
+  if (a === b) return 0;
+  const length = Math.min(a.length, b.length);
+  let tieBreaker = 0;
+  for (let i = 0; i < length; i++) {
+    const codeA = a.charCodeAt(i);
+    const codeB = b.charCodeAt(i);
+    if (codeA === codeB) continue;
+    const weightA = codeA < 128 && asciiWeights[codeA] ? asciiWeights[codeA] : codeA + 128;
+    const weightB = codeB < 128 && asciiWeights[codeB] ? asciiWeights[codeB] : codeB + 128;
+    if (weightA !== weightB) return weightA < weightB ? -1 : 1;
+    if (tieBreaker === 0) tieBreaker = codeA > codeB ? -1 : 1;
+  }
+  if (a.length !== b.length) return a.length < b.length ? -1 : 1;
+  return tieBreaker;
+}
+__name(compareStrings, "compareStrings");
+var Serializer = /* @__PURE__ */ (function() {
+  var _context = /* @__PURE__ */ new WeakMap();
+  const _Serializer = class _Serializer {
     constructor() {
-      _classPrivateFieldInitSpec(this, _t, /* @__PURE__ */ new Map());
+      _classPrivateFieldInitSpec(this, _context, /* @__PURE__ */ new Map());
     }
-    compare(t, r2) {
-      const e = typeof t, n = typeof r2;
-      return e === "string" && n === "string" ? t.localeCompare(r2) : e === "number" && n === "number" ? t - r2 : String.prototype.localeCompare.call(this.serialize(t, true), this.serialize(r2, true));
+    compare(a, b) {
+      const typeA = typeof a;
+      const typeB = typeof b;
+      if (typeA === "string" && typeB === "string") return compareStrings(a, b);
+      if (typeA === "number" && typeB === "number") return a - b;
+      return compareStrings(this.serialize(a, true), this.serialize(b, true));
     }
-    serialize(t, r2) {
-      if (t === null) return "null";
-      switch (typeof t) {
+    serialize(value, noQuotes) {
+      if (value === null) return "null";
+      switch (typeof value) {
         case "string":
-          return r2 ? t : `'${t}'`;
+          return noQuotes ? value : `'${value}'`;
         case "bigint":
-          return `${t}n`;
+          return `${value}n`;
         case "object":
-          return this.$object(t);
+          return this.$object(value);
         case "function":
-          return this.$function(t);
+          return this.$function(value);
       }
-      return String(t);
+      return String(value);
     }
-    serializeObject(t) {
-      const r2 = Object.prototype.toString.call(t);
-      if (r2 !== "[object Object]") return this.serializeBuiltInType(r2.length < 10 ? `unknown:${r2}` : r2.slice(8, -1), t);
-      const e = t.constructor, n = e === Object || e === void 0 ? "" : e.name;
-      if (n !== "" && globalThis[n] === e) return this.serializeBuiltInType(n, t);
-      if (typeof t.toJSON == "function") {
-        const i = t.toJSON();
-        return n + (i !== null && typeof i == "object" ? this.$object(i) : `(${this.serialize(i)})`);
+    serializeObject(object) {
+      const objString = Object.prototype.toString.call(object);
+      if (objString !== "[object Object]") return this.serializeBuiltInType(objString.length < 10 ? `unknown:${objString}` : objString.slice(8, -1), object);
+      const constructor = object.constructor;
+      const objName = constructor === Object || constructor === void 0 ? "" : constructor.name;
+      if (objName !== "" && globalThis[objName] === constructor) return this.serializeBuiltInType(objName, object);
+      if ("toJSON" in object && typeof object.toJSON === "function") {
+        const json = object.toJSON();
+        return objName + (json !== null && typeof json === "object" ? this.$object(json) : `(${this.serialize(json)})`);
       }
-      return this.serializeObjectEntries(n, Object.entries(t));
-    }
-    serializeBuiltInType(t, r2) {
-      const e = this["$" + t];
-      if (e) return e.call(this, r2);
-      if (typeof (r2 === null || r2 === void 0 ? void 0 : r2.entries) == "function") return this.serializeObjectEntries(t, r2.entries());
-      throw new Error(`Cannot serialize ${t}`);
-    }
-    serializeObjectEntries(t, r2) {
-      const e = Array.from(r2).sort((i, a) => this.compare(i[0], a[0]));
-      let n = `${t}{`;
-      for (let i = 0; i < e.length; i++) {
-        const [a, l2] = e[i];
-        n += `${this.serialize(a, true)}:${this.serialize(l2)}`, i < e.length - 1 && (n += ",");
+      const keys = Object.keys(object).sort(compareStrings);
+      let content = `${objName}{`;
+      for (let i = 0; i < keys.length; i++) {
+        const key = keys[i];
+        content += `${key}:${this.serialize(object[key])}`;
+        if (i < keys.length - 1) content += ",";
       }
-      return n + "}";
+      return content + "}";
     }
-    $object(t) {
-      let r2 = _classPrivateFieldGet2(_t, this).get(t);
-      return r2 === void 0 && (_classPrivateFieldGet2(_t, this).set(t, `#${_classPrivateFieldGet2(_t, this).size}`), r2 = this.serializeObject(t), _classPrivateFieldGet2(_t, this).set(t, r2)), r2;
+    serializeBuiltInType(type, object) {
+      const handler = this["$" + type];
+      if (handler) return handler.call(this, object);
+      if (typeof object.entries === "function") return this.serializeObjectEntries(type, object.entries());
+      throw new Error(`Cannot serialize ${type}`);
     }
-    $function(t) {
-      const r2 = Function.prototype.toString.call(t);
-      return r2.slice(-15) === "[native code] }" ? `${t.name || ""}()[native]` : `${t.name}(${t.length})${r2.replace(/\s*\n\s*/g, "")}`;
+    serializeObjectEntries(type, entries) {
+      const sortedEntries = Array.from(entries).sort((a, b) => this.compare(a[0], b[0]));
+      let content = `${type}{`;
+      for (let i = 0; i < sortedEntries.length; i++) {
+        const [key, value] = sortedEntries[i];
+        content += `${this.serialize(key, true)}:${this.serialize(value)}`;
+        if (i < sortedEntries.length - 1) content += ",";
+      }
+      return content + "}";
     }
-    $Array(t) {
-      let r2 = "[";
-      for (let e = 0; e < t.length; e++) r2 += this.serialize(t[e]), e < t.length - 1 && (r2 += ",");
-      return r2 + "]";
+    $object(object) {
+      let content = _classPrivateFieldGet2(_context, this).get(object);
+      if (content === void 0) {
+        _classPrivateFieldGet2(_context, this).set(object, `#${_classPrivateFieldGet2(_context, this).size}`);
+        content = this.serializeObject(object);
+        _classPrivateFieldGet2(_context, this).set(object, content);
+      }
+      return content;
     }
-    $Date(t) {
+    $function(fn) {
+      const fnStr = Function.prototype.toString.call(fn);
+      if (fnStr.slice(-15) === "[native code] }") return `${fn.name || ""}()[native]`;
+      return `${fn.name}(${fn.length})${fnStr.replace(/\s*\n\s*/g, "")}`;
+    }
+    $Array(arr) {
+      let content = "[";
+      for (let i = 0; i < arr.length; i++) {
+        content += this.serialize(arr[i]);
+        if (i < arr.length - 1) content += ",";
+      }
+      return content + "]";
+    }
+    $Date(date) {
       try {
-        return `Date(${t.toISOString()})`;
+        return `Date(${date.toISOString()})`;
       } catch (_unused) {
-        return "Date(null)";
+        return `Date(null)`;
       }
     }
-    $ArrayBuffer(t) {
-      return `ArrayBuffer[${new Uint8Array(t).join(",")}]`;
+    $ArrayBuffer(arr) {
+      return `ArrayBuffer[${new Uint8Array(arr).join(",")}]`;
     }
-    $Set(t) {
-      return `Set${this.$Array(Array.from(t).sort((r2, e) => this.compare(r2, e)))}`;
+    $Set(set) {
+      return `Set${this.$Array(Array.from(set).sort((a, b) => this.compare(a, b)))}`;
     }
-    $Map(t) {
-      return this.serializeObjectEntries("Map", t.entries());
+    $Map(map) {
+      return this.serializeObjectEntries("Map", map.entries());
     }
   };
-  __name(_o, "o");
-  let o = _o;
-  for (const s of [
+  __name(_Serializer, "Serializer");
+  let Serializer2 = _Serializer;
+  for (const type of [
     "Error",
     "RegExp",
     "URL"
-  ]) o.prototype["$" + s] = function(t) {
-    return `${s}(${t})`;
+  ]) Serializer2.prototype["$" + type] = function(val) {
+    return `${type}(${val})`;
   };
-  for (const s of [
+  for (const type of [
     "Int8Array",
     "Uint8Array",
     "Uint8ClampedArray",
@@ -449,17 +524,59 @@ var c = /* @__PURE__ */ (function() {
     "Uint32Array",
     "Float32Array",
     "Float64Array"
-  ]) o.prototype["$" + s] = function(t) {
-    return `${s}[${t.join(",")}]`;
+  ]) Serializer2.prototype["$" + type] = function(arr) {
+    return `${type}[${arr.join(",")}]`;
   };
-  for (const s of ["BigInt64Array", "BigUint64Array"]) o.prototype["$" + s] = function(t) {
-    return `${s}[${t.join("n,")}${t.length > 0 ? "n" : ""}]`;
+  for (const type of ["BigInt64Array", "BigUint64Array"]) Serializer2.prototype["$" + type] = function(arr) {
+    return `${type}[${arr.join("n,")}${arr.length > 0 ? "n" : ""}]`;
   };
-  return o;
+  return Serializer2;
 })();
 
+// node_modules/@varavel/vdl-plugin-sdk/dist/_virtual/_@oxc-project_runtime@0.154.0/helpers/esm/typeof.js
+function _typeof(o) {
+  "@babel/helpers - typeof";
+  return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(o2) {
+    return typeof o2;
+  } : function(o2) {
+    return o2 && "function" == typeof Symbol && o2.constructor === Symbol && o2 !== Symbol.prototype ? "symbol" : typeof o2;
+  }, _typeof(o);
+}
+__name(_typeof, "_typeof");
+
+// node_modules/@varavel/vdl-plugin-sdk/dist/_virtual/_@oxc-project_runtime@0.154.0/helpers/esm/toPrimitive.js
+function toPrimitive(t, r) {
+  if ("object" != _typeof(t) || !t) return t;
+  var e = t[Symbol.toPrimitive];
+  if (void 0 !== e) {
+    var i = e.call(t, r || "default");
+    if ("object" != _typeof(i)) return i;
+    throw new TypeError("@@toPrimitive must return a primitive value.");
+  }
+  return ("string" === r ? String : Number)(t);
+}
+__name(toPrimitive, "toPrimitive");
+
+// node_modules/@varavel/vdl-plugin-sdk/dist/_virtual/_@oxc-project_runtime@0.154.0/helpers/esm/toPropertyKey.js
+function toPropertyKey(t) {
+  var i = toPrimitive(t, "string");
+  return "symbol" == _typeof(i) ? i : i + "";
+}
+__name(toPropertyKey, "toPropertyKey");
+
+// node_modules/@varavel/vdl-plugin-sdk/dist/_virtual/_@oxc-project_runtime@0.154.0/helpers/esm/defineProperty.js
+function _defineProperty(e, r, t) {
+  return (r = toPropertyKey(r)) in e ? Object.defineProperty(e, r, {
+    value: t,
+    enumerable: true,
+    configurable: true,
+    writable: true
+  }) : e[r] = t, e;
+}
+__name(_defineProperty, "_defineProperty");
+
 // node_modules/@varavel/vdl-plugin-sdk/dist/node_modules/ohash/dist/crypto/js/index.js
-var z = [
+var H = [
   1779033703,
   -1150833019,
   1013904242,
@@ -469,7 +586,7 @@ var z = [
   528734635,
   1541459225
 ];
-var R = [
+var K = [
   1116352408,
   1899447441,
   -1245643825,
@@ -535,78 +652,129 @@ var R = [
   -1090935817,
   -965641998
 ];
-var S = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
-var r = [];
-var _a2;
-var k = (_a2 = class {
-  constructor() {
-    this._data = new l();
-    this._hash = new l([...z]);
-    this._nDataBytes = 0;
-    this._minBufferSize = 0;
-  }
-  finalize(e) {
-    e && this._append(e);
-    const s = this._nDataBytes * 8, t = this._data.sigBytes * 8;
-    return this._data.words[t >>> 5] |= 128 << 24 - t % 32, this._data.words[(t + 64 >>> 9 << 4) + 14] = Math.floor(s / 4294967296), this._data.words[(t + 64 >>> 9 << 4) + 15] = s, this._data.sigBytes = this._data.words.length * 4, this._process(), this._hash;
-  }
-  _doProcessBlock(e, s) {
-    const t = this._hash.words;
-    let i = t[0], o = t[1], a = t[2], c2 = t[3], h = t[4], g = t[5], f = t[6], y = t[7];
-    for (let n = 0; n < 64; n++) {
-      if (n < 16) r[n] = e[s + n] | 0;
-      else {
-        const d = r[n - 15], j = (d << 25 | d >>> 7) ^ (d << 14 | d >>> 18) ^ d >>> 3, B = r[n - 2], x = (B << 15 | B >>> 17) ^ (B << 13 | B >>> 19) ^ B >>> 10;
-        r[n] = j + r[n - 7] + x + r[n - 16];
-      }
-      const m = h & g ^ ~h & f, p = i & o ^ i & a ^ o & a, u = (i << 30 | i >>> 2) ^ (i << 19 | i >>> 13) ^ (i << 10 | i >>> 22), b = (h << 26 | h >>> 6) ^ (h << 21 | h >>> 11) ^ (h << 7 | h >>> 25), w = y + b + m + R[n] + r[n], M = u + p;
-      y = f, f = g, g = h, h = c2 + w | 0, c2 = a, a = o, o = i, i = w + M | 0;
-    }
-    t[0] = t[0] + i | 0, t[1] = t[1] + o | 0, t[2] = t[2] + a | 0, t[3] = t[3] + c2 | 0, t[4] = t[4] + h | 0, t[5] = t[5] + g | 0, t[6] = t[6] + f | 0, t[7] = t[7] + y | 0;
-  }
-  _append(e) {
-    typeof e == "string" && (e = l.fromUtf8(e)), this._data.concat(e), this._nDataBytes += e.sigBytes;
-  }
-  _process(e) {
-    let s, t = this._data.sigBytes / 64;
-    e ? t = Math.ceil(t) : t = Math.max((t | 0) - this._minBufferSize, 0);
-    const i = t * 16, o = Math.min(i * 4, this._data.sigBytes);
-    if (i) {
-      for (let a = 0; a < i; a += 16) this._doProcessBlock(this._data.words, a);
-      s = this._data.words.splice(0, i), this._data.sigBytes -= o;
-    }
-    return new l(s, o);
-  }
-}, __name(_a2, "k"), _a2);
+var base64KeyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+var W = [];
 var _a3;
-var l = (_a3 = class {
-  constructor(e, s) {
-    e = this.words = e || [], this.sigBytes = s === void 0 ? e.length * 4 : s;
+var SHA256 = (_a3 = class {
+  constructor() {
+    _defineProperty(this, "_data", new WordArray());
+    _defineProperty(this, "_hash", new WordArray([...H]));
+    _defineProperty(this, "_nDataBytes", 0);
+    _defineProperty(this, "_minBufferSize", 0);
   }
-  static fromUtf8(e) {
-    const s = unescape(encodeURIComponent(e)), t = s.length, i = [];
-    for (let o = 0; o < t; o++) i[o >>> 2] |= (s.charCodeAt(o) & 255) << 24 - o % 4 * 8;
-    return new _a3(i, t);
+  finalize(messageUpdate) {
+    if (messageUpdate) this._append(messageUpdate);
+    const nBitsTotal = this._nDataBytes * 8;
+    const nBitsLeft = this._data.sigBytes * 8;
+    this._data.words[nBitsLeft >>> 5] |= 128 << 24 - nBitsLeft % 32;
+    this._data.words[(nBitsLeft + 64 >>> 9 << 4) + 14] = Math.floor(nBitsTotal / 4294967296);
+    this._data.words[(nBitsLeft + 64 >>> 9 << 4) + 15] = nBitsTotal;
+    this._data.sigBytes = this._data.words.length * 4;
+    this._process();
+    return this._hash;
+  }
+  _doProcessBlock(M, offset) {
+    const H2 = this._hash.words;
+    let a = H2[0];
+    let b = H2[1];
+    let c = H2[2];
+    let d = H2[3];
+    let e = H2[4];
+    let f = H2[5];
+    let g = H2[6];
+    let h = H2[7];
+    for (let i = 0; i < 64; i++) {
+      if (i < 16) W[i] = M[offset + i] | 0;
+      else {
+        const gamma0x = W[i - 15];
+        const gamma0 = (gamma0x << 25 | gamma0x >>> 7) ^ (gamma0x << 14 | gamma0x >>> 18) ^ gamma0x >>> 3;
+        const gamma1x = W[i - 2];
+        const gamma1 = (gamma1x << 15 | gamma1x >>> 17) ^ (gamma1x << 13 | gamma1x >>> 19) ^ gamma1x >>> 10;
+        W[i] = gamma0 + W[i - 7] + gamma1 + W[i - 16];
+      }
+      const ch = e & f ^ ~e & g;
+      const maj = a & b ^ a & c ^ b & c;
+      const sigma0 = (a << 30 | a >>> 2) ^ (a << 19 | a >>> 13) ^ (a << 10 | a >>> 22);
+      const sigma1 = (e << 26 | e >>> 6) ^ (e << 21 | e >>> 11) ^ (e << 7 | e >>> 25);
+      const t1 = h + sigma1 + ch + K[i] + W[i];
+      const t2 = sigma0 + maj;
+      h = g;
+      g = f;
+      f = e;
+      e = d + t1 | 0;
+      d = c;
+      c = b;
+      b = a;
+      a = t1 + t2 | 0;
+    }
+    H2[0] = H2[0] + a | 0;
+    H2[1] = H2[1] + b | 0;
+    H2[2] = H2[2] + c | 0;
+    H2[3] = H2[3] + d | 0;
+    H2[4] = H2[4] + e | 0;
+    H2[5] = H2[5] + f | 0;
+    H2[6] = H2[6] + g | 0;
+    H2[7] = H2[7] + h | 0;
+  }
+  _append(data) {
+    if (typeof data === "string") data = WordArray.fromUtf8(data);
+    this._data.concat(data);
+    this._nDataBytes += data.sigBytes;
+  }
+  _process(doFlush) {
+    let processedWords;
+    let nBlocksReady = this._data.sigBytes / 64;
+    if (doFlush) nBlocksReady = Math.ceil(nBlocksReady);
+    else nBlocksReady = Math.max((nBlocksReady | 0) - this._minBufferSize, 0);
+    const nWordsReady = nBlocksReady * 16;
+    const nBytesReady = Math.min(nWordsReady * 4, this._data.sigBytes);
+    if (nWordsReady) {
+      for (let offset = 0; offset < nWordsReady; offset += 16) this._doProcessBlock(this._data.words, offset);
+      processedWords = this._data.words.splice(0, nWordsReady);
+      this._data.sigBytes -= nBytesReady;
+    }
+    return new WordArray(processedWords, nBytesReady);
+  }
+}, __name(_a3, "SHA256"), _a3);
+var _a4;
+var WordArray = (_a4 = class {
+  constructor(words2, sigBytes) {
+    _defineProperty(this, "words", void 0);
+    _defineProperty(this, "sigBytes", void 0);
+    words2 = this.words = words2 || [];
+    this.sigBytes = sigBytes === void 0 ? words2.length * 4 : sigBytes;
+  }
+  static fromUtf8(input) {
+    const str = unescape(encodeURIComponent(input));
+    const strlen = str.length;
+    const words2 = [];
+    for (let i = 0; i < strlen; i++) words2[i >>> 2] |= (str.charCodeAt(i) & 255) << 24 - i % 4 * 8;
+    return new _a4(words2, strlen);
   }
   toBase64() {
-    const e = [];
-    for (let s = 0; s < this.sigBytes; s += 3) {
-      const t = this.words[s >>> 2] >>> 24 - s % 4 * 8 & 255, i = this.words[s + 1 >>> 2] >>> 24 - (s + 1) % 4 * 8 & 255, o = this.words[s + 2 >>> 2] >>> 24 - (s + 2) % 4 * 8 & 255, a = t << 16 | i << 8 | o;
-      for (let c2 = 0; c2 < 4 && s * 8 + c2 * 6 < this.sigBytes * 8; c2++) e.push(S.charAt(a >>> 6 * (3 - c2) & 63));
+    const base64Chars = [];
+    for (let i = 0; i < this.sigBytes; i += 3) {
+      const byte1 = this.words[i >>> 2] >>> 24 - i % 4 * 8 & 255;
+      const byte2 = this.words[i + 1 >>> 2] >>> 24 - (i + 1) % 4 * 8 & 255;
+      const byte3 = this.words[i + 2 >>> 2] >>> 24 - (i + 2) % 4 * 8 & 255;
+      const triplet = byte1 << 16 | byte2 << 8 | byte3;
+      for (let j = 0; j < 4 && i * 8 + j * 6 < this.sigBytes * 8; j++) base64Chars.push(base64KeyStr.charAt(triplet >>> 6 * (3 - j) & 63));
     }
-    return e.join("");
+    return base64Chars.join("");
   }
-  concat(e) {
-    if (this.words[this.sigBytes >>> 2] &= 4294967295 << 32 - this.sigBytes % 4 * 8, this.words.length = Math.ceil(this.sigBytes / 4), this.sigBytes % 4) for (let s = 0; s < e.sigBytes; s++) {
-      const t = e.words[s >>> 2] >>> 24 - s % 4 * 8 & 255;
-      this.words[this.sigBytes + s >>> 2] |= t << 24 - (this.sigBytes + s) % 4 * 8;
+  concat(wordArray) {
+    this.words[this.sigBytes >>> 2] &= 4294967295 << 32 - this.sigBytes % 4 * 8;
+    this.words.length = Math.ceil(this.sigBytes / 4);
+    if (this.sigBytes % 4) for (let i = 0; i < wordArray.sigBytes; i++) {
+      const thatByte = wordArray.words[i >>> 2] >>> 24 - i % 4 * 8 & 255;
+      this.words[this.sigBytes + i >>> 2] |= thatByte << 24 - (this.sigBytes + i) % 4 * 8;
     }
-    else for (let s = 0; s < e.sigBytes; s += 4) this.words[this.sigBytes + s >>> 2] = e.words[s >>> 2];
-    this.sigBytes += e.sigBytes;
+    else for (let j = 0; j < wordArray.sigBytes; j += 4) this.words[this.sigBytes + j >>> 2] = wordArray.words[j >>> 2];
+    this.sigBytes += wordArray.sigBytes;
   }
-}, __name(_a3, "l"), _a3);
-function digest(_) {
-  return new k().finalize(_).toBase64();
+}, __name(_a4, "WordArray"), _a4);
+function digest(message) {
+  return new SHA256().finalize(message).toBase64();
 }
 __name(digest, "digest");
 
@@ -860,7 +1028,7 @@ function renderPrimitiveGoType(primitiveName, position) {
 }
 __name(renderPrimitiveGoType, "renderPrimitiveGoType");
 function renderGoType(typeRef, context, inlineTypeGoName, position) {
-  var _a4;
+  var _a5;
   switch (typeRef.kind) {
     case "primitive":
       return renderPrimitiveGoType(typeRef.primitiveName, position);
@@ -889,7 +1057,7 @@ function renderGoType(typeRef, context, inlineTypeGoName, position) {
       );
     }
     case "array":
-      return `${"[]".repeat((_a4 = typeRef.arrayDims) != null ? _a4 : 1)}${renderGoType(expectValue(typeRef.arrayType, "Encountered an array type reference without an element type.", position), context, inlineTypeGoName, position)}`;
+      return `${"[]".repeat((_a5 = typeRef.arrayDims) != null ? _a5 : 1)}${renderGoType(expectValue(typeRef.arrayType, "Encountered an array type reference without an element type.", position), context, inlineTypeGoName, position)}`;
     case "map":
       return `map[string]${renderGoType(expectValue(typeRef.mapType, "Encountered a map type reference without a value type.", position), context, inlineTypeGoName, position)}`;
     case "object":
@@ -907,7 +1075,7 @@ function renderGoType(typeRef, context, inlineTypeGoName, position) {
 }
 __name(renderGoType, "renderGoType");
 function renderAnonymousGoTypeExpression(typeRef, context, position, inlineTypeGoName) {
-  var _a4, _b;
+  var _a5, _b;
   switch (typeRef.kind) {
     case "primitive":
       return renderPrimitiveGoType(typeRef.primitiveName, position);
@@ -915,7 +1083,7 @@ function renderAnonymousGoTypeExpression(typeRef, context, position, inlineTypeG
     case "enum":
       return renderGoType(typeRef, context, void 0, position);
     case "array":
-      return `${"[]".repeat((_a4 = typeRef.arrayDims) != null ? _a4 : 1)}${renderAnonymousGoTypeExpression(expectValue(typeRef.arrayType, "Encountered an array type reference without an element type.", position), context, position, inlineTypeGoName)}`;
+      return `${"[]".repeat((_a5 = typeRef.arrayDims) != null ? _a5 : 1)}${renderAnonymousGoTypeExpression(expectValue(typeRef.arrayType, "Encountered an array type reference without an element type.", position), context, position, inlineTypeGoName)}`;
     case "map":
       return `map[string]${renderAnonymousGoTypeExpression(expectValue(typeRef.mapType, "Encountered a map type reference without a value type.", position), context, position, inlineTypeGoName)}`;
     case "object": {
@@ -942,7 +1110,7 @@ function renderAnonymousGoTypeExpression(typeRef, context, position, inlineTypeG
 }
 __name(renderAnonymousGoTypeExpression, "renderAnonymousGoTypeExpression");
 function renderAnonymousGoTypeExpressionPretty(typeRef, context, position, inlineTypeGoName) {
-  var _a4, _b;
+  var _a5, _b;
   switch (typeRef.kind) {
     case "primitive":
       return renderPrimitiveGoType(typeRef.primitiveName, position);
@@ -950,7 +1118,7 @@ function renderAnonymousGoTypeExpressionPretty(typeRef, context, position, inlin
     case "enum":
       return renderGoType(typeRef, context, void 0, position);
     case "array":
-      return `${"[]".repeat((_a4 = typeRef.arrayDims) != null ? _a4 : 1)}${renderAnonymousGoTypeExpressionPretty(expectValue(typeRef.arrayType, "Encountered an array type reference without an element type.", position), context, position, inlineTypeGoName)}`;
+      return `${"[]".repeat((_a5 = typeRef.arrayDims) != null ? _a5 : 1)}${renderAnonymousGoTypeExpressionPretty(expectValue(typeRef.arrayType, "Encountered an array type reference without an element type.", position), context, position, inlineTypeGoName)}`;
     case "map":
       return `map[string]${renderAnonymousGoTypeExpressionPretty(expectValue(typeRef.mapType, "Encountered a map type reference without a value type.", position), context, position, inlineTypeGoName)}`;
     case "object": {
@@ -1044,8 +1212,8 @@ function renderTypedValueExpressionPretty(typeRef, literal, context, position, n
 }
 __name(renderTypedValueExpressionPretty, "renderTypedValueExpressionPretty");
 function renderCompositeLiteralPretty(options) {
-  var _a4;
-  const typeExpression = (_a4 = options.typeExpression) != null ? _a4 : renderAnonymousGoTypeExpressionPretty(
+  var _a5;
+  const typeExpression = (_a5 = options.typeExpression) != null ? _a5 : renderAnonymousGoTypeExpressionPretty(
     options.typeRef,
     options.context,
     options.position,
@@ -1088,11 +1256,11 @@ function renderCompositeLiteralPretty(options) {
 }
 __name(renderCompositeLiteralPretty, "renderCompositeLiteralPretty");
 function renderArrayLiteralPretty(options) {
-  var _a4, _b, _c;
+  var _a5, _b, _c;
   if (options.literal.kind !== "array") {
     fail("Expected an array literal for a VDL array type.", options.position);
   }
-  const elementType = ((_a4 = options.typeRef.arrayDims) != null ? _a4 : 1) === 1 ? expectValue(
+  const elementType = ((_a5 = options.typeRef.arrayDims) != null ? _a5 : 1) === 1 ? expectValue(
     options.typeRef.arrayType,
     "Encountered an invalid array type while rendering a literal.",
     options.position
@@ -1118,7 +1286,7 @@ function renderArrayLiteralPretty(options) {
 }
 __name(renderArrayLiteralPretty, "renderArrayLiteralPretty");
 function renderMapLiteralPretty(options) {
-  var _a4;
+  var _a5;
   if (options.literal.kind !== "object") {
     fail("Expected an object literal for a VDL map type.", options.position);
   }
@@ -1127,18 +1295,18 @@ function renderMapLiteralPretty(options) {
     "Encountered an invalid map type while rendering a literal.",
     options.position
   );
-  const entries = ((_a4 = options.literal.objectEntries) != null ? _a4 : []).map(
+  const entries = ((_a5 = options.literal.objectEntries) != null ? _a5 : []).map(
     (entry) => `${JSON.stringify(entry.key)}: ${renderTypedValueExpressionPretty(valueType, entry.value, options.context, entry.position, options.namedTypeGoName)}`
   );
   return renderBlockLiteral(options.typeExpression, entries);
 }
 __name(renderMapLiteralPretty, "renderMapLiteralPretty");
 function renderObjectLiteralPretty(options) {
-  var _a4, _b;
+  var _a5, _b;
   if (options.literal.kind !== "object") {
     fail("Expected an object literal for a VDL object type.", options.position);
   }
-  const fields = (_a4 = options.typeRef.objectFields) != null ? _a4 : [];
+  const fields = (_a5 = options.typeRef.objectFields) != null ? _a5 : [];
   const entryByName = new Map(
     ((_b = options.literal.objectEntries) != null ? _b : []).map((entry) => [entry.key, entry])
   );
@@ -1204,12 +1372,12 @@ __name(isConstEligibleType, "isConstEligibleType");
 
 // src/shared/render/go-file.ts
 function renderGoFile(options) {
-  var _a4;
+  var _a5;
   const g = newGenerator().withTabs();
   const body = options.body.trim();
   const imports = getStandardImports(
     body,
-    (_a4 = options.jsonPackage) != null ? _a4 : "encoding/json"
+    (_a5 = options.jsonPackage) != null ? _a5 : "encoding/json"
   );
   g.line(`package ${options.packageName}`);
   if (imports.length > 0) {
@@ -1763,7 +1931,7 @@ function namedTypeNeedsStrictObjectSupport(descriptor, context) {
 }
 __name(namedTypeNeedsStrictObjectSupport, "namedTypeNeedsStrictObjectSupport");
 function typeRefNeedsStrictTraversal(typeRef, context, position, visited = /* @__PURE__ */ new Set()) {
-  var _a4;
+  var _a5;
   switch (typeRef.kind) {
     case "primitive":
     case "enum":
@@ -1783,7 +1951,7 @@ function typeRefNeedsStrictTraversal(typeRef, context, position, visited = /* @_
         visited
       ) : false;
     case "object": {
-      const fields = (_a4 = typeRef.objectFields) != null ? _a4 : [];
+      const fields = (_a5 = typeRef.objectFields) != null ? _a5 : [];
       if (fields.some((field) => !field.optional)) {
         return true;
       }
@@ -1823,7 +1991,7 @@ function renderPreFieldGoType(field, context) {
 }
 __name(renderPreFieldGoType, "renderPreFieldGoType");
 function renderPreTypeExpression(typeRef, context, position, inlineTypeGoName) {
-  var _a4;
+  var _a5;
   if (!typeRefNeedsStrictTraversal(typeRef, context, position)) {
     return renderGoType(typeRef, context, inlineTypeGoName, position);
   }
@@ -1832,7 +2000,7 @@ function renderPreTypeExpression(typeRef, context, position, inlineTypeGoName) {
     case "enum":
       return renderGoType(typeRef, context, inlineTypeGoName, position);
     case "array":
-      return `${"[]".repeat((_a4 = typeRef.arrayDims) != null ? _a4 : 1)}${renderPreTypeExpression(expectValue(typeRef.arrayType, "Encountered an array type reference without an element type.", position), context, position, inlineTypeGoName)}`;
+      return `${"[]".repeat((_a5 = typeRef.arrayDims) != null ? _a5 : 1)}${renderPreTypeExpression(expectValue(typeRef.arrayType, "Encountered an array type reference without an element type.", position), context, position, inlineTypeGoName)}`;
     case "map":
       return `map[string]${renderPreTypeExpression(expectValue(typeRef.mapType, "Encountered a map type reference without a value type.", position), context, position, inlineTypeGoName)}`;
     case "object":
@@ -2160,8 +2328,8 @@ function getTypeGoName(typeName, context, position) {
 }
 __name(getTypeGoName, "getTypeGoName");
 function getArrayItemTypeRef(typeRef, position) {
-  var _a4, _b;
-  return ((_a4 = typeRef.arrayDims) != null ? _a4 : 1) === 1 ? expectValue(
+  var _a5, _b;
+  return ((_a5 = typeRef.arrayDims) != null ? _a5 : 1) === 1 ? expectValue(
     typeRef.arrayType,
     "Encountered an array type reference without an element type.",
     position
@@ -2339,13 +2507,13 @@ __name(generateFiles, "generateFiles");
 
 // src/stages/model/constants.ts
 function populateConstantDescriptors(context, packageScopeSymbols) {
-  var _a4;
+  var _a5;
   const errors = [];
   const typeByConstantName = new Map(
     context.schema.types.filter((typeDef) => typeDef.name.startsWith("$Const")).map((typeDef) => [typeDef.name.slice("$Const".length), typeDef.typeRef])
   );
   for (const constantDef of context.schema.constants) {
-    const inferred = (_a4 = typeByConstantName.get(constantDef.name)) != null ? _a4 : inferTypeRefFromLiteral(constantDef.value);
+    const inferred = (_a5 = typeByConstantName.get(constantDef.name)) != null ? _a5 : inferTypeRefFromLiteral(constantDef.value);
     if (!inferred) {
       errors.push({
         message: `Could not infer a Go-compatible type for constant ${JSON.stringify(constantDef.name)}.`,
@@ -2372,7 +2540,7 @@ function populateConstantDescriptors(context, packageScopeSymbols) {
 }
 __name(populateConstantDescriptors, "populateConstantDescriptors");
 function inferTypeRefFromLiteral(literal) {
-  var _a4, _b;
+  var _a5, _b;
   switch (literal.kind) {
     case "string":
       return { kind: "primitive", primitiveName: "string" };
@@ -2383,7 +2551,7 @@ function inferTypeRefFromLiteral(literal) {
     case "bool":
       return { kind: "primitive", primitiveName: "bool" };
     case "array": {
-      const items = (_a4 = literal.arrayItems) != null ? _a4 : [];
+      const items = (_a5 = literal.arrayItems) != null ? _a5 : [];
       const firstItem = items[0];
       if (!firstItem) {
         return void 0;
@@ -2433,7 +2601,7 @@ function getEffectiveObjectEntries(entries) {
 }
 __name(getEffectiveObjectEntries, "getEffectiveObjectEntries");
 function typeRefsMatch(left, right) {
-  var _a4, _b, _c, _d;
+  var _a5, _b, _c, _d;
   if (left.kind !== right.kind) {
     return false;
   }
@@ -2448,7 +2616,7 @@ function typeRefsMatch(left, right) {
       if (!left.arrayType || !right.arrayType) {
         return false;
       }
-      return ((_a4 = left.arrayDims) != null ? _a4 : 1) === ((_b = right.arrayDims) != null ? _b : 1) && typeRefsMatch(left.arrayType, right.arrayType);
+      return ((_a5 = left.arrayDims) != null ? _a5 : 1) === ((_b = right.arrayDims) != null ? _b : 1) && typeRefsMatch(left.arrayType, right.arrayType);
     case "map":
       if (!left.mapType || !right.mapType) {
         return false;
@@ -2509,8 +2677,8 @@ function populateEnumDescriptors(context, packageScopeSymbols) {
 }
 __name(populateEnumDescriptors, "populateEnumDescriptors");
 function buildEnumDescriptor(enumDef, context, errors) {
-  var _a4;
-  const goName = (_a4 = context.enumGoNamesByVdlName.get(enumDef.name)) != null ? _a4 : enumDef.name;
+  var _a5;
+  const goName = (_a5 = context.enumGoNamesByVdlName.get(enumDef.name)) != null ? _a5 : enumDef.name;
   const usedMemberNames = /* @__PURE__ */ new Set();
   const members = [];
   const memberByValue = /* @__PURE__ */ new Map();
@@ -2599,8 +2767,8 @@ function populateNamedTypes(context, packageScopeSymbols) {
 }
 __name(populateNamedTypes, "populateNamedTypes");
 function buildTopLevelTypeDescriptor(typeDef, context, errors) {
-  var _a4, _b;
-  const goName = (_a4 = context.typeGoNamesByVdlName.get(typeDef.name)) != null ? _a4 : typeDef.name;
+  var _a5, _b;
+  const goName = (_a5 = context.typeGoNamesByVdlName.get(typeDef.name)) != null ? _a5 : typeDef.name;
   const fieldResult = buildFieldDescriptors({
     parentGoName: goName,
     fields: (_b = typeDef.typeRef.objectFields) != null ? _b : [],
@@ -2622,11 +2790,11 @@ function buildTopLevelTypeDescriptor(typeDef, context, errors) {
 }
 __name(buildTopLevelTypeDescriptor, "buildTopLevelTypeDescriptor");
 function buildInlineTypeDescriptor(options) {
-  var _a4;
+  var _a5;
   const goName = toInlineTypeName(options.parentGoName, options.fieldName);
   const fieldResult = buildFieldDescriptors({
     parentGoName: goName,
-    fields: (_a4 = options.typeRef.objectFields) != null ? _a4 : [],
+    fields: (_a5 = options.typeRef.objectFields) != null ? _a5 : [],
     context: options.context
   });
   options.errors.push(...fieldResult.errors);

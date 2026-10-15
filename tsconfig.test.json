@@ -1,0 +1,13 @@
+{
+  "extends": "@varavel/vdl-plugin-sdk/tsconfig.test.base.json",
+  "compilerOptions": {
+    "composite": false
+  },
+  "include": [
+    "src/**/*.test.ts",
+    "src/**/*.spec.ts",
+    "tests/**/*.ts",
+    "e2e/**/*.ts",
+    "vitest.config.ts"
+  ]
+}
